@@ -1,0 +1,48 @@
+when working with a linked list and we add node to end, e.g.:
+HEAD->11->3->23->7(<-TAIL) then 7 points to null pointer (nullptr)
+becomes
+HEAD->11->3->23->7->4(<-TAIL) then 4 points to null pointer (nullptr)
+say we add 4 and have 7 point to 4 node and tail point to 4 node, what's going on?
+
+what is a node?
+both (value and pointer) is a node, not just a value
+its similar to an unordered map e.g.:
+    {
+        "value": 4,
+        "next": nullptr
+    }'
+7 node is also similar to an unordered map
+so HEAD->11->3->23->{                  {
+                        "value": 7,         "Value": 4,
+                        "next": ->          "next": nullptr
+                    }               ,  }
+
+how do we have next pointer from 7 node point to 4 node?
+we do it by setting next from the seven node to be equal to the other node:
+{
+    "value": 7,
+    "next": {
+                "value": 4,
+                "next": nullptr
+            }
+}
+
+same for all of them
+linked list is similar to a set of nested unordered maps
+var head points to the first node
+
+head: {
+    "value": 11,
+    "next": {
+            {
+                "value": 7,
+                "next": {
+                            "value": 4,
+tail ->                     "next": nullptr
+                        }
+            }
+    }
+    etc.
+}
+
+var tail points to last node

@@ -1,0 +1,6 @@
+3 situations to code for
+HEAD->11->3->23->7->4(<-TAIL) then 4 points to null pointer (nullptr)
+If we have 2 or more items, we're going to move tail to previous node and delete
+node at end of LL
+
+empty linkedList, and edge case when we have 1 item in linked list
