@@ -1,0 +1,2059 @@
+A graph G + (V, E) is undirected if edge (x, y) implies
+that (y, x) is also in E. If not, we say graph is directed.
+
+Road networks between cities are undirected, since any
+large road has lanes going in both directions. However, street
+networks within cities are almost always directed, because
+there's a few one way streets lurking somewhere.
+
+Weighted vs unweighted. Each edge (or vertex) in a weighted graph
+G is assigned a numerical value, or weight. The edges of a road
+network might be weighted with their length or speed limit. in
+unweighted graphs, there's no cost distinction between various
+edges/vertices.
+The difference between weighted and weighted graphs becomes
+apparent in finding the shortest path between two vertices. For
+unweighted graphs, the shortest path must have the fewest num
+of edges, and can be found using BFS. Shortest paths in weighted
+graphs require more complex algs.
+
+Simple vs non simple. Certain type of edges complicate the
+task of workign with graphs. a self loop is an edge (x, x)
+involving only one vertex. An edge (x, y) is a multiedge
+if it occurs more than once in the graph. Both require
+special care when implementing graph algs, hence any graph
+that avoids them is called simple.
+
+Sparse vs dense. Graphs are sparse when only a small fraction
+of the possible vertex pairs ((n 2), for a simple, undir 
+graph on n vertices) actually have edges defined between
+them. Graphs where a large fraction of the vertex pairs
+define edges are called dense. There's no official boundary
+between what's called sparse and what's dense, but typically
+dense graphs have a quadratic num of edges, while sparse
+graphs are linear in size.
+Sparse graphs are usually sparse for application specific
+reasons, such as road networks, which must be sparse
+because of road junctions.
+
+Cyclic vs acyclic. An acyclic graph doesn't contain any cycles.
+Trees are connected, acyclic undirected graphs. Trees are the
+simplest interesting graphs and are inherently recursive
+structures because cutting any edge leaves two smaller trees.
+Directed acylic graphs are called DAGs. They arise naturally
+in scheduling problems, where a directed edge (x, y) indicates
+activity x must occur before y. An operation called topological
+sorting orders the vertices of a DAG to respect these
+precedence constraints. topological sorting is typically
+first step of any algorithm on a DAG.
+
+Embedded vs topological. A graph is embedded if the vertices
+and edges are assigned geometric positions. Thus, any
+drawing of a graph is an embedding, which may or may not
+have algorithmic significance.
+Ocassionally, structure of graph is completely defined
+by geometry of its embedding. E.g., if we're given a collection
+of points in the plane, and seek minimum cost tour visting all
+of them (i.e. travelling salesman problem) the underlying
+topology is the complete graph connecting each pair of
+vertices. Weights are typically defined by euclidean
+distance between each pair of points.
+Grids of points are another e.g. of topology from geometry.
+Many problems on an n*n grid involve walking between
+neighbouring points, so the edges are implicitly defined
+from the geometry.
+
+Implicit vs explicit. Certain graphs are not explicitly
+constructed and then traversed, but built as we use them.
+A good e.g. is in backtrack search. Vertices of this
+implicit search graph are states of search vector, while
+edges link pairs of states that can be directly generated
+from each other. Because you don't have to store the entire
+graph, it's often easier to work with an implicit graph
+then explicitly construct it prior to analysis.
+
+Labelled vs unlabelled. Each vertex is assigned a unique
+name or identifier in a Labelled graph to distinguish
+it from all other vertices, in unlabaled graphs, no
+such distinctions made.
+
+********************
+The Friendship Graph
+********************
+
+Lets consider a graph where the vertices are people, and there's
+an edge between two people if they're friends (a social network).
+
+Most graphs encountered IRL are sparse, friendship graph is
+a good example. Even most social people only know an
+insignifcant fraction of the world's population.
+
+If I'm your friend, does that mean you're my friend? Question
+asks us whether graph is directed. A graph is undirected
+if edge (x, y) always implies (y, x). Otherwise, graph's directed.
+
+How close a friend are you? In weighted graphs, each edge has
+an associated numerical attrib. We could model strength of
+a friendship by associating each edge with an appropriate val,
+perhaps from -10 (enemies) to 10 (blood brothers). A graph's
+said to be unweighted if all edges are assumed to be of equal
+weight.
+
+Am i my own friend? Question addressed whether graph is simple,
+meaning it contains no loops and no multiple edges. An edge
+from (x, x) is said to be a loop. Sometimes people are friends
+in different ways. Perhaps x and y were college classmaters and
+now work together at the same company. We can model such rels
+using multiedges (multiple edges (x, y) perhaps distinguished
+by diff labels). Simple graphs are much simpler to work with,
+therefore we might declare that no one is their own friend.
+
+Who has the most friends? The degree of a vertex is the num
+of edges adjacent to it. The most popular person defines
+the vertex of highest degree in the friendship graph.
+Remote hermits are associated with degree-zero vertices.
+In dense graphs, most vertices have high degrees, as opposed
+to sparse graphs with relatively few edges. In a regular
+graph, each vertex has exactly the same degree.
+
+Do my friends live near me? Social networks are not divorced
+from geography, many of youre friends are your friends only
+because they happen to live near you (e.g. neighbours) or
+used to live near you (e.g. college roomates).
+Thus, a full understanding of social networks requires an
+embedded graph where each vertex is associated with the point
+on this world where they live. This geog info may not
+be explicitly encoded, but the fact that graph is inherently
+embedded in plane shapes our interp of any analysis.
+
+Oh, you also know her? Social networking services such as
+MySpace and LinkedIn are built on premise of explicitly defining
+links between members and their member friends. Such graphs
+consist of directed edges from person/vertex x professing
+his friendship to person/vertex y.
+That said, complete friendship graph of world is represented
+implicitly. Each person knows who their friends are, but cannot
+find out about other people's friendships except by asking
+them. Six degrees of separation theory argues that there's A
+shortest path linking every two people in the world but offers
+no help in actually finding this path.
+
+Are you truly an individual or one of faceless crowd? This
+question boils down to whether friendship graph is Labelled
+or unlabeled. Does each vertex have a name/label which
+reflects its identity, and is this label important for our
+analysis?
+Study of social networks is unconcerned with labels on graphs.
+Often index number given a vertex in graph DS serves as its
+label, perhaps for convenience or need for anonymity. You may
+assert that you're a name, not a number, but try protesting to
+the guy who implements the alg. Someone studying how an infectious
+disease spreads through a graph may label each vertex with
+whether person is healthy or sick, it being irrelevant what
+their name is.
+
+**************************
+Data Structures for Graphs
+**************************
+
+An adjacency matrix is one of two classic ways to repr a graph.
+If a graph G = (V, E) has n vertices, we build an n * n matrix
+M where:
+M[i, j] = { 1 if there's an edge (i, j), 0 otherwise
+Using graph with vertices 1 to 5,
+Vertex 1 is connected to 2 and 5
+Vertex 2 is connected to 1, 3, 4, 5
+Vertex 3 is connected to 2 and 4
+Vertex 4 is connected to 2, 3, 5
+Vertex 5 is connected to 1, 2, 4
+Therefore adjacency matrix is:
+	1	2	3	4	5
+1	0	1	0	0	1
+2	1	0	1	1	1
+3	0	1	0	1	0
+4	0	1	1	0	1
+5	1	1	0	1	0
+How to read this,
+Row = source vertex
+Column = destination vertex
+Example: M[2][4] = 1 → edge (2,4) exists
+Example: M[3][5] = 0 → no edge between 3 and 5
+Because this is an undirected graph, the 
+matrix is symmetric across the diagonal.
+Adjacency matrices are useful because they provide
+fast edge tests:
+Checking “is (i, j) an edge?” is O(1) — just look at M[i][j].
+and fast updates:
+Inserting or deleting an edge is also O(1) — flip a bit.
+This simplicity is why adjacency matrices are so 
+appealing conceptually.
+The downside is space, as adjacency matrices always use
+O(n^2) space even if graph is sparse. E.g.
+Manhattan street map example
+~3,000 intersections → vertices
+~6,000 roads → edges
+Adjacency matrix size:
+3000 × 3000 = 9,000,000 cells
+But only 6000 entries are 1s, almost everything is empty.
+that's why adjacency matrices “remain inherently quadratic 
+on sparse graphs”
+When adjacency matrices win vs lose
+| Task                      | Winner                        |
+| ------------------------- | ----------------------------- |
+| Test if (x, y) is an edge | **Adjacency matrix**          |
+| Insert/delete an edge     | **Adjacency matrix (O(1))**   |
+| Traverse the graph        | **Adjacency list (Θ(m + n))** |
+| Memory on sparse graphs   | **Adjacency list**            |
+| Most real problems        | **Adjacency list**            |
+
+Comparison Winner
+Faster to test if (x,y) is in graph? adjacency matrices
+Faster to find the degree of a vertex? adjacency lists
+Less memory on sparse graphs? adjacency lists (m + n) vs. (n^2)
+Less memory on dense graphs? adjacency matrices (a small win)
+Edge insertion or deletion? adjacency matrices O(1) vs. O(d)
+Faster to traverse the graph? adjacency lists Θ(m + n) vs. Θ(n^2)
+Better for most problems? adjacency lists
+
+Adjacency lists more efficiently represent sparse graphs
+by using linked lists to store neighbors adjacent to each
+vertex. Adjacency lists require pointers but aren't frightening
+once you have experience with linked structures. Adj lists
+make it harder to verify whether a given edge (i, j) is in G,
+since we must search through appropriate list to find edge.
+However, it's suprisingly easy to design graph algs that avoid
+any need for such queries. Typicially, sweep through all edges
+of graph in one pass via breadth first or depth first traversal,
+and update implications of current edge as we visit it.
+
+A single directed edge is stored in memory when using adjacency
+lists like so: in our graph, we have edgenode *edges[MAXV+1];,
+where:
+- edges[x] is the head of a linked list
+- That linked list contains all vertices that x points to
+so:
+- edges[x] = list of outgoing edges from x
+This is why the graph struct stores:
+- int degree[MAXV+1]; /* outdegree of each vertex */
+What an edgenode represents:
+typedef struct {
+    int y;                 /* adjacency info */
+    int weight;            /* edge weight, if any */
+    struct edgenode *next; /* next edge in list */
+} edgenode;
+Each edgenode represents one edge:
+- y → the vertex you go to
+- next → the next outgoing edge from the same source
+- weight → optional
+
+Concrete e.g:
+Suppose we have this directed graph:
+1 → 2
+1 → 4
+3 → 1
+Logical meaning:
+Edge (1,2)
+Edge (1,4)
+Edge (3,1)
+
+How's this stored in adjacency lists:
+
+Vertex 1:
+Edges leaving 1 are to 2 and 4:
+edges[1] → [ y=2 ] → [ y=4 ] → NULL
+This is what the sentence means for edge (1,2):
+“Represent directed edge (1,2) by an 
+edgenode 2 in 1’s adjacency list.”
+You do NOT store (1,2) as a pair.
+You store only the destination 2, inside vertex 1’s list.
+
+Vertex 3
+Edge leaving 3 is to 1
+edges[3] → [ y=1 ] → NULL
+This represents the directed edge (3,1).
+
+Vertex 2 and 4
+They have no outgoing edges, so:
+edges[2] = NULL
+edges[4] = NULL
+
+Key intuition
+A directed edge (x, y) is stored only once, 
+in x’s list, as a node containing y.
+The row is the source (x)
+The node value is the destination (y)
+Direction is implicit from which list the node is in
+
+Why this makes sense
+
+Fast traversal
+To find all vertices reachable from x:
+for (edgenode *p = g->edges[x]; p != NULL; p = p->next)
+    visit(p->y);
+This runs in Θ(outdegree(x)), 
+which is why adjacency lists are fast for traversal.
+
+What about undirected graphs?
+If the graph is undirected, edge {x,y} is stored twice:
+edges[x] → [ y ]
+edges[y] → [ x ]
+That’s why the struct has:
+bool directed;
+
+So the insertion logic knows whether to add one edgenode (directed)
+or two edgenodes (undirected).
+
+In an adjacency list representation, a directed edge (x, y) 
+is stored by inserting an edgenode containing y into the 
+adjacency list of vertex x, meaning x has an outgoing edge to y.
+
+******************
+Traversing a graph
+******************
+
+Most fundamental graph problem is to visit every edge and
+vertex in a graph
+
+Mazes are naturally repr by graphs, where each graph vertex
+denotes a junction of the maze, and each edge denotes A
+hallway in the maze. Therefore, any graph traversal should
+be powerful ennough to get us out of a maze. For efficiency
+make sure we don't get trapped in the maze and visit same
+place repeatedly. For correctness, must do traversal in A
+systematic way to guarantee we get out of maze (our search
+must take us through every edge and vert in graph)
+
+Key idea behind graph traversal is to mark each
+vertex when we first visit it and keep track of what we
+haven't yet completely explored. We'll rely on boolean
+flags or enumerated types. 
+
+Each vertex will exist in one
+of three states:
+
+Undiscovered (vertex in its initial stage, virgin state)
+Discovered (vertex has been found, we haven't checked out
+all incident edges)
+Processed (vertex after we've visited all incident edges)
+
+Vertex cannot be processed until after we discover it, so the
+state of each vertex progs over the course of traversal from
+undisc to disc to processed.
+Must also maintain a structure containing vertices that we've
+discovered but not yet compl processed. Only single start
+vert is considered to be discovered initially. To completely
+explore vertex v, we must eval each edge leaving v. If an edge
+goes to an Undiscovered vertex x, we mark x discovered and
+add it to list of work to do. We ignore an edge that goes
+to a processed vertex, because further contemplation tells
+us nothing new about the graph. Can also ignore any edge
+going to a discovered but not processed vertex, because
+dest already resides on list of vertices to process.
+Each undir edge will be considered exactly twice, once
+when each of its endpoints is explored. Dir edges only
+considered once, when exploring source vert. Every edge and
+vert in connected component must be eventually visited. Why?
+Suppose that there exists a vertex u that remains unvisited,
+whose neighbour v was visited. Neighbour v will be eventually
+explored, after which we will certainly visit u. Thus, we must
+find everything that there is to be found.
+
+********************
+Breadth-First Search
+********************
+Basic BFS: at some point during traversal, every node in
+graph changes state from undisc to disc. In BFS of an
+undir graph, we assign a direction to each edge, from
+discoverer u to discovered v. We thus denote u to be
+parent of v. Since each node has exactly one parent, 
+except for root, this defines a tree on the vertices of
+the graph. This tree, defines a shortest path from root
+to every other node in tree. This property makes BFS
+useful in shortest path problems.
+
+# Breadth-First Search starting from source vertex s
+BFS(G, s)
+
+    # Initialize all vertices (except the source) as undiscovered
+    for each vertex u ∈ V[G] − {s} do
+
+        # Mark vertex u as not yet seen by the search
+        state[u] = "undiscovered"
+
+        # Initialize parent of u to nil (no parent in BFS tree yet)
+        p[u] = nil
+
+
+    # Mark the source vertex as discovered
+    state[s] = "discovered"
+
+    # Source vertex has no parent because it is the BFS root
+    p[s] = nil
+
+    # Initialize the queue with the source vertex
+    Q = {s}
+
+
+    # Continue while there are vertices waiting to be explored
+    while Q ≠ ∅ do
+
+        # Remove the next vertex from the front of the queue
+        u = dequeue[Q]
+
+        # Perform any desired processing on vertex u
+        process vertex u as desired
+
+        # Examine all neighbors of vertex u
+        for each v ∈ Adj[u] do
+
+            # Perform any desired processing on edge (u, v)
+            process edge (u, v) as desired
+
+            # If neighbor v has not been seen before
+            if state[v] = "undiscovered" then
+
+                # Mark v as discovered so it is not added again
+                state[v] = "discovered"
+
+                # Record u as the parent of v in the BFS tree
+                p[v] = u
+
+                # Add v to the queue to explore later
+                enqueue[Q, v]
+
+
+        # Mark u as fully processed after all neighbors are examined
+        state[u] = "processed"
+
+graph edges that don't appear in BFS tree also have special
+properties. For undir graphs, nontree edges can point only to
+vertices on the same level as parent vertex, or to vertices on
+level directly below parent. these properties follow easily from
+fact that each path in tree must be shortest path in graph. For
+a dir graph, a back pointing edge (u, v) can exist whenever
+v lies closer to root than u does.
+
+Each vertex is processed exactly once because of these
+two lines:
+queue.enqueue(start)
+discovered[start] = True
+and later:
+if discovered[y] == False:
+    queue.enqueue(y)
+    discovered[y] = True
+A vertex enqueued only first time its discovered,
+once discovered[y] = True, it's never enqueued again so
+it can only be dequeued once, p_vert_early runs once
+and p_vert_late runs once.
+if (processed[y] == False or graph.is_directed):
+    process_edge(vertex, y)
+^ ensures that although each edge appears twice In
+adj list ((u, v) and (v, u)), bfs processes first
+as (u, v) but when it later sees (v, u), u already processed
+and condition fails.
+
+*************************
+quick x and y explanation
+*************************
+
+From graph where 1:  3 2
+When BFS dequeues 1:
+    x = 1
+    First neighbor:
+        y = 3
+        edge (1, 3)
+    Second neighbor:
+        y = 2
+        edge (1, 2)
+
+*************
+Finding paths
+*************
+
+Parent arr set within bfs() useful for finding interesting
+paths through a graph. Vertex that discovered vertex i is defined
+as parent[i]. Every vertex is discovered during course of
+traversal, so except for root every node has a parent.
+Parent relation defines tree of discovery with initial search
+node as root of tree.
+Because vertices are discovered in order of increasing distance
+from root, tree has a very important property. Unique tree path
+from root to each node uses smallest number of edges (or equiv,
+imetermediate nodes) possible on any root-to-x path in graph.
+We can reconstruct this path by following chain of ancestors from
+x to root. Note that we have to work backward. We can't find path
+from root to x, since that doesn't follow direction of parent
+pointers. Instead, we must find path from x to root.
+
+Parent pointers point from each node to its discovered, not from
+root to its children. Although BFS moves forward, parent[]
+pointers point backwards.
+
+During BFS, when vertex discovered, we do this:
+parent[child] = parent_vertex
+So pointer dir is child ──▶ parent
+E.g.:
+parent[4] = 2
+parent[2] = 1
+Is: 4 → 2 → 1
+That is a chain toward the root, not away from it.
+
+-----------------------------
+Why we can’t just go root → x
+-----------------------------
+
+Suppose you want the path from root 1 to vertex 4.
+What data do you have?
+parent[1] = None
+parent[2] = 1
+parent[4] = 2
+
+--------------
+back to skiena
+--------------
+
+Since this's reverse of how we normally want path, can either
+(1) store it and explicitly reverse it using a stack or
+(2) let recursion reverse it for us.
+
+------------------------------
+recursion to find reverse path
+------------------------------
+
+parent arr = discovery history
+(vertex that discovered vertex i is def as parent[i])
+When BFS first sees vertex, it records who found it:
+parent[i] = the vertex that discovered i
+So parent[] stores discovery information, not arbitrary structure.
+
+(b) This creates a discovery tree
+“Every vertex is discovered during the course of 
+traversal, so except for the root every node has a parent.”
+
+Start vertex (root) has no parent
+Every other vertex is discovered by exactly one vertex
+This forms a tree, called the BFS discovery tree
+Even though the original graph may have cycles, 
+BFS chooses one parent per vertex, so the parents define a tree.
+
+(c) Why this tree is special
+“Vertices are discovered in order of 
+increasing distance from the root.”
+BFS explores level by level:
+
+Distance 0: root
+
+Distance 1: neighbors of root
+
+Distance 2: neighbors of neighbors
+
+…
+
+So when a vertex x is discovered for the first time, 
+BFS has already found the shortest possible way to reach it.
+
+That’s why:
+
+“The unique tree path from the root to x uses the 
+smallest number of edges possible.”
+
+This is the shortest path property of BFS (unweighted graphs only).
+
+The recursive find_path function prints the shortest path 
+by first recursively moving from the destination vertex 
+back through its parents until the start vertex is reached, 
+and then printing the vertices on the way back out of the 
+recursion, which automatically reverses the order to give 
+the path from start to destination.
+
+Starting from the source vertex s, BFS prints:
+
+s first (level 0)
+
+All neighbors of s (level 1)
+
+All neighbors of those neighbors (level 2)
+
+And so on…
+
+Within the same level, the order depends on:
+
+the queue order
+
+the order of neighbors in the adjacency list
+
+Why this happens
+
+BFS uses a queue (FIFO):
+
+vertices are enqueued when discovered
+
+vertices are dequeued and printed in that same order
+
+this guarantees all vertices at distance d are 
+printed before any at distance d+1
+
+If the graph (starting at 1) has edges:
+
+1—2, 1—3
+2—4
+3—5
+
+BFS prints:
+
+1, 2, 3, 4, 5
+
+********************
+Applciations of BFS
+********************
+
+Most elementary graph algs make one or two traversals of
+graph while we update our knowledge of graph. Properly
+implemented using adjacency lists, any such alg is
+linear since BFS runs in O(n + m) time on both directed
+and undirected graphs. This's optimal, since it's as fast
+as one can hope to read any n-vertex, m-edge graph.
+Trick is seeing when traversal approaches are destined
+to work.
+
+----------------
+why's bfs O(n+m)
+----------------
+n = num vertices
+m = num edges
+constant work per vertex and per edge
+Cost for vertices -> O(n)
+in bfs, 
+- each vertex discovered once,
+- Enqueued once
+- Dequeued once
+- Marked processed once
+So all vertex-related work sums to:
+    O(n)
+
+Cost for edges -> O(m)
+BFS scans adjacency lists:
+for each vertex u:
+    for each v in Adj[u]:
+        examine edge (u, v)
+
+Key fact about adjacency lists:
+- Each edge appears once (directed graph)
+- Each edge appears twice (undirected graph, once per endpoint)
+
+Either way:
+- Each edge is examined a constant number of times
+- No edge is re-examined repeatedly
+
+So total edge work is:
+    O(m)
+
+********************
+Applications of BFS
+********************
+
+Six degs of separation theory argues there's always a short path
+linking every 2 ppl in world. We say graph is connected if
+there's path between any two vertices.
+A connected component of an undir graph is a maximal set
+of vertices such that there's a path between every pair of
+vertices. The components are separate pieces of graph such
+that there's no connection between pieces. 
+Alot of complex problems reduce to finding or counting
+connected components.
+Connected components can be found using BFS, since vertex
+order doesn't matter. We start from first vertex, anything
+we discover during search must be part of same connected
+component. We then repeat search from any undiscovered vert
+(if one exists) to define next component and so on until
+all vertices found.
+
+*******************
+Two-Coloring Graphs
+*******************
+
+Vertex coloring problem seeks to assign label/color to each
+vertex of a graph such that no edge links any two vertices
+of same color. Can easily avoid all conflicts by assigning
+each vertex a unique color, but the goal is to use as few
+colors as possible. Vertex coloring problems often arise
+in scheduling apps, such as register alloc in compilers.
+
+A graph is bipartite if it can be colored w/o conflicts
+while using only two colors. bipartite graphs are important
+because they arisee naturally in many apps. consider had sex
+with graph in a heterosexual world. Men have sex with only women,
+and vice versa, thus gender defines a legal two coloring in this
+simple model.
+But how can we find approp two coloring of a graph, thus separating
+men from women? Suppose we assume that starting vertex is male.
+All vertices adjacent to this man must be female, assuming graph
+is indeed bipartite.
+Can augment BFS so that whenever we discover a new vertex,
+we color it the opposite of its parent. We can check whether
+any nondiscovery edge links two vertices of the same
+color. Such a conflict means graph cannot be two-colored.
+Otherwise, we'll have constructed a proper two colouring
+whenever we terminate without conflict.
+
+------------------------------
+Two coloring short explanation
+------------------------------
+
+Goal:
+Color every vertex either WHITE or BLACK such that
+no edge connects two vertices of the same color
+If this is possible → the graph is bipartite
+If not → the graph is not bipartite
+
+Why BFS is perfect for this
+
+BFS explores the graph level by level.
+That gives us a natural rule:
+If a vertex is WHITE,
+then all of its neighbors must be BLACK
+and neighbors of those must be WHITE again
+So during BFS:
+When we discover a new vertex y from x
+we color y with the opposite color of x
+That’s exactly what this line does:
+color[y] = complement(color[x])
+
+What each special method is doing
+
+Two_color:
+Reset BFS bookkeeping
+Loop over all vertices
+If a vertex hasn’t been discovered yet:
+    start a new BFS (new connected component)
+    arbitrarily color the start vertex WHITE
+BFS then colors the entire component
+
+complement(color):
+This simply flips colors
+
+process_edge(x, y) — the key logic
+Checks for a conflict
+    If x and y already have the same color → illegal
+Assigns a color to y
+    Make y the opposite color of x
+This is where bipartiteness is enforced and checked.
+
+******************
+Depth-First Search
+******************
+
+Two primary graph traversal algs, BFS and DFS.
+Difference between BFS and DFS results in order in which they
+explore vertices. Order depends completely upon container DS
+used to sstore discovered but not processed vertices.
+Queue:
+By storing vertices in a FIFO queue, we explore oldest
+unexplored vertices first. Thus our explorations radiate
+out slowly from starting vertex, defining a BFS.
+Stack:
+By storing vertices in a LIFO stack, we explore vertices
+by lurching along a path, visiting a neighbor if one's
+available, and backing up only when we are surrounded
+by previously discovered vertices. Thus our explorations
+quickly wander away from our starting point, defining a
+DFS.
+Our implementation of DFS maintains a notion of traversal
+time for each vertex. Time clock ticks each time we enter
+or exit any vertex. Keep track of entry and exit times for
+each vertex.
+DFS has a neat recursive implementation, which eliminates
+need to explicitly use stack.
+
+# Perform a depth-first search starting from vertex u
+DFS(G, u)
+
+    # Mark vertex u as discovered when first visited
+    state[u] = "discovered"
+
+    # Perform any desired action when u is first encountered
+    process vertex u if desired
+
+    # Record the discovery (entry) time of vertex u
+    entry[u] = time
+
+    # Increment the global time counter after recording entry time
+    time = time + 1
+
+
+    # Iterate over all vertices adjacent to u
+    for each v ∈ Adj[u] do
+
+        # Perform any desired action on the edge from u to v
+        process edge (u, v) if desired
+
+        # If vertex v has not been visited yet
+        if state[v] = "undiscovered" then
+
+            # Record u as the parent of v in the DFS tree
+            p[v] = u
+
+            # Recursively perform DFS starting from v
+            DFS(G, v)
+
+
+    # Mark vertex u as fully processed after all descendants are explored
+    state[u] = "processed"
+
+    # Record the finishing (exit) time of vertex u
+    exit[u] = time
+
+    # Increment the global time counter after recording exit time
+    time = time + 1
+
+DFS does not visit all neighbors first (that’s BFS).
+Instead: Visit a vertex → immediately go to 
+its first undiscovered neighbor → repeat.
+- Start at vertex u
+- Pick the first neighbor v in Adj[u]
+- If v is undiscovered:
+- immediately recurse into v
+- From v, do the same thing again
+- Keep going until you hit a dead end
+- Then backtrack and try the next neighbor
+
+Time intervals have interesting and useful properties with respect
+to DFS.
+Who's an ancestor? Suppose x is an ancestor of y in DFS tree. This
+implies that we must enter x before y, since there's no way we can
+be born before our own father or grandfather. We also must exit y
+before we exit x, bc mechanics of DFS ensure we can't exit x until
+after we have backed up from search of all its descendants. Thus
+time interval of y must be properly nested within ancestor x.
+How many descendants? Difference between exit and entry times
+for v tells us how many descendants v has in the DFS tree. clock
+gets Incremented on each vertex entry and vertex exit, so half the
+time difference denotes number of descendants of v.
+
+We'll use these entry and exit times in several apps of DFS,
+particularly topological sorting and biconnected/strongly-connected
+components. Need to be able to take seperate actions on each entry
+and exit, thus motivating distinct process_vertex_early and
+process_vertex_late routines called from dfs.
+Other important property of DFS is that it partitions edges
+of a undirected graph into exactly two classes: tree edges
+and back edges. Tree edges discover new vertices, and those
+encoded in the parent relation. Back edges are those whose
+other endpoint is an ancestor of the vertex being expanded,
+so they point back into the tree.
+
+----------------------------------------
+explanation of tree edges and back edges
+----------------------------------------
+
+Tree edges discover a new vertex.
+When DFS goes from u to a neighbor v that's undiscovered.
+Recorded via parent[v] = unconcerned
+Tree edges grow DFS tree
+
+Back edges connect a vertex to one of its ancestors.
+When DFS sees an edge (u, v) where v is already discovered
+but not yet finished.
+Back edges point back into the tree.
+
+Consider this graph:
+1 —— 2
+|    |
+|    |
+4 —— 3
+
+edges:
+(1,2), (2,3), (3,4), (4,1)
+
+Run DFS starting at 1:
+parent[1] = None
+From 1, go to 2 (undiscovered)
+parent[2] = 1     ← tree edge (1,2)
+From 2, go to 3 (undiscovered)
+parent[3] = 2     ← tree edge (2,3)
+From 3, go to 4 (undiscovered)
+parent[4] = 3     ← tree edge (3,4)
+From 4, look at neighbor 1
+- 1 is already discovered
+- 1 is an ancestor of 4
+back edge (4,1)
+
+DFS guarantees that:
+- Either the edge leads to a new vertex → tree edge
+- Or it leads back to an ancestor → back edge
+
+**************
+back to Skiena
+**************
+
+An amazing property of DFS is that all edges fall into
+these two classes. Why can't an edge go to a brother or
+cousin node instead of an ancestor? All nodes reachable from
+a given vertex v are expanded before we finish with traversal
+from v, so such toplogies are impossible for undirected graphs.
+This edge classif proves fundamental to correctness of DFS
+based algs.
+
+******************
+DFS implementation
+******************
+
+DFS only produces back edges when the graph contains a cycle.
+
+*******************
+Applications of DFS
+*******************
+correctness of a dfs based alg depends upon specifics of exactly
+when we process edges and vertices. Can process vertex v either
+before we've traversed any outgoing edges from v (process_vert
+_early()) or after we've finished processing all (process_vert
+_late()). Sometimes we take special actions at both times, say
+process_vertex_early() to init a vertex specific data struct, 
+which'll be modified on edge processing opers and then analyzed
+afterwards using process_vert_late(). In undir graphs, each
+edge (x, y) sits in adjacency lists of vertex x and y. Thus
+there're two potential times to process each edge (x, y),
+namely when exploring x and when exploring y. Labeling of edges
+as tree edges or back edges occurs during first time edge is
+explored. First time we see an edge is usually a logical time
+to do edge specific processing. Sometimes, we may want
+to take different action second time we see an edge. But
+when we encounter edge (x, y) from x, how can we tell if
+we've previously traversed edge from y? Issue is easy
+if vertex y is undiscovered: (x, y) becomes a tree edge so this
+must be first time. The issue is also easy if y hasn't been
+completely processed: since we explored edge when we explored
+y this must've been second time. But what if y is an ancestor
+of x, and thus in discovered state? Careful reflection will
+convince you that this must be our first traversal unless
+y is an immediate ancestor of x, i.e. (y, x) is a tree edge.
+This can be established by testing if y == parent[x].
+
+****************************************************************
+When DFS sees an edge (x,y), how do we know whether we’re seeing 
+this edge for the first time or the second time?
+****************************************************************
+
+In undir graph, every edge appears twice in adj list:
+- once as (x,y)
+- once as (y,x)
+
+So DFS will encounter each edge twice — but we only 
+want to treat it as a tree edge or back edge once, 
+not double-count it.
+
+E.g. undir graph:
+1 — 2 — 3
+    |
+    4
+Edges:
+(1,2), (2,3), (2,4)
+Adj lists:
+1: 2
+2: 4 3 1
+3: 2
+4: 2
+Run DFS starting at 1.
+
+DFS tree that will be built:
+1
+└─ 2
+   ├─ 4
+   └─ 3
+
+Parents:
+parent[1] = None
+parent[2] = 1
+parent[4] = 2
+parent[3] = 2
+
+Case 1: y is undiscovered
+“The issue is easy if vertex y is undiscovered”
+Example: when DFS is at 2 and sees (2,4):
+discovered[4] == False
+This edge must be the first time we see it
+So:
+(2,4) is a tree edge
+We recurse into 4
+
+Case 2: y is not completely processed
+“The issue is also easy if y has not been completely processed”
+This means:
+discovered[y] == True
+processed[y] == False
+So y is on the recursion stack
+Example: when DFS is at 4 and sees (4,2):
+2 is discovered
+2 is not processed
+We already explored (2,4) earlier when DFS was at 2
+So:
+(4,2) is the second traversal of the same undirected edge
+This is not a new tree edge
+It’s just the reverse direction of the parent edge
+
+Case 3 (the subtle one): y is an ancestor of x
+“But what if y is an ancestor of x, and thus in a 
+discovered state?”
+Example graph with a cycle:
+1 — 2 — 3
+     \__/
+Edges:
+(1,2), (2,3), (3,2)
+Now DFS order:
+1 → 2 → 3
+Parents:
+parent[2] = 1
+parent[3] = 2
+At vertex 3, DFS sees edge (3,2):
+discovered[2] == True
+processed[2] == False
+2 is an ancestor of 3
+Now the key question:
+Is this the first time we’ve seen this edge, or the second?
+“This must be our first traversal unless y is 
+the immediate ancestor of x.”
+Why?
+If y == parent[x], then (y,x) was already used as a tree edge
+So (x,y) is the second traversal of the same undirected edge
+Otherwise, this edge has never been used before
+At (3,2):
+- parent[3] == 2
+- So (3,2) is just the reverse of (2,3)
+- This is not a new edge
+- Ignore it for cycle detection
+But if we had (3,1):
+- 1 is an ancestor of 3
+- parent[3] != 1
+- So this edge has not been traversed before
+- This is a back edge
+- Indicates a cycle
+
+**************
+Finding cycles
+**************
+
+Back edges are key to finding cycle in an undir graph.
+If there's no back edge, all edges are tree edges, and no
+cycle exists in a tree. But any back edge going from x to
+an ancestor y creates a cycle with tree path from y to x.
+Such a cycle is easy to find using DFS.
+
+process_edge(int x, int y)
+{
+    if (parent[x] != y) { /* found back edge! */
+        printf("Cycle from %d to %d:",y,x);
+        find_path(y,x,parent);
+        printf("\n\n");
+        finished = TRUE;
+    }
+}
+
+This code finds a back edge because process_edge(x, y)
+only called when:
+y is already discovered
+AND
+(y is not fully processed OR the graph is directed)
+For an undirected graph, this means:
+- y is already discovered
+- y is still on the recursion stack
+- therefore y is an ancestor of x
+So by the time we reach process_edge(x, y), we already know:
+“This edge goes from x to an ancestor y.”
+And because its not an immediate ancestor, we haven't seen
+this edge before.
+
+Correctness of this cycle detection depends upon processing
+each undir edge exactly once. Otherwise, spurious two vertex
+cycle (x, y, x) could be composed from two traversals of
+any single undir edge. We use the finished flag to terminate
+after finding first cycle.
+
+^
+In an undirected graph, every edge 
+(x,y) appears twice in the adjacency lists:
+once as 
+(x,y)
+once as
+(y,x)
+If your DFS logic is not careful, it might treat both 
+traversals as meaningful, which can create a fake cycle.
+What is a “spurious two-vertex cycle (x, y, x)”?
+Suppose the graph is:
+x — y
+There is no real cycle here — just a single edge.
+But DFS will see:
+Edge (x, y) when expanding x
+Edge (y, x) when expanding y
+If the algorithm treats both as back edges, it 
+might incorrectly claim:
+x → y → x
+That looks like a cycle, but it’s not a real cycle — 
+it’s just the same undirected edge seen twice.
+Why “processing each undirected edge exactly once” matters
+To correctly detect cycles in an undirected graph:
+- Each edge must be logically examined once
+- The reverse traversal must be ignored
+It ensures:
+- (x, parent[x]) is ignored
+- only true back edges are considered
+Without this discipline, DFS would:
+- detect fake 2-node cycles everywhere
+- report cycles in trees (which is wrong)
+Why the finished flag is used
+Once a real cycle is found:
+- finished = TRUE;
+DFS immediately stops.
+Why?
+- Prevents further edge processing
+- Avoids printing overlapping or duplicate cycles
+- Ensures only one valid cycle is reported
+- Avoids accidentally forming fake (x, y, x) cycles 
+  during continued traversal
+
+*********************
+Articulation vertices
+*********************
+
+Suppose you're a vandal seeking to disrupt telephone network.
+Which station in below figure should you choose to blow up
+to cause max damage?
+
+      1
+    /   \
+___ 2    6
+|   |
+|   3
+|   |
+|   4
+|   |
+|___5
+
+Figure: DFS tree of graph containing two articulation vertices
+(1 and 2). Back edge (5, 2) keeps vertices 3 and 4 being cut
+nodes. Vertices 5 and 6 escape as leaves of DFS tree.
+Vertex 1 is the root of the DFS tree and has 2 children, and
+if removed, vertex 6 becomes isolated and vertexes 2, 3, 4
+and 5 remain connected among themselves. So removing vertex
+1 splits the graph (vert 1 is an articulation vertex, a root
+is an articulation vertex if it has more than one DFS child).
+Vertex 2 has vertices 3, 4 and 5 below it and there's a back
+edge from 5 -> 2, but back edge only connects subtree back to 2,
+doesn't reach vert 1, so if we remvoe vert 2, subtree 3, 4, 5
+becomes disconnected from 1 and vert 6 stays connected to 1.
+3 and 4 can't be articulation vertexes because back edge
+5->2 saves them, if we remove vert 3, path 4->5->2-> exists,
+if remove vert 4, path 5->-2->1 exists, so subtrees can still
+reach ancestor above them.
+A vertex is not an articulation point if its subtree has a 
+back edge to an ancestor.
+
+observe that there's a single point of failure - a single vert
+whose deletion disconnects a connected component of the graph.
+Such a vertex is called an articulation vertex or cut node.
+Any graph that contains an articulation vertex is inherently
+fragile, because deleting that single vertex causes a loss of
+connectivity between other nodes.
+Connectivity of a graph is smallest number of vertices
+whose deletion will disconnect graph. Connectivity is one
+if graph has an articulation vertex. More robust graphs
+without such a vertex are said to be biconnected.
+Testing for articulation vertices by brute force is easy.
+Temporarily delete eacah vertex v, and then do BFS or DFS
+of remaining graph to establish whether it's still connected.
+Total time for n such traversals is O(n(m + n)). There's
+a linear time alg that tests all vertices of a connected
+graph using a single DFS.
+What does a DFS tree tell us about articulation vertices?
+This tree connects all vertices of graph. If DFS tree
+represented entirety of graph, all internal (nonleaf) nodes
+would be articulation vertices, since deleting any of them
+would seperate a leaf from root. Blowing up a leaf can’t
+disconnect the tree, sicne it connects no one but itself
+to main trunk.
+Root of tree is a special case. If it has only one child,
+it functions as a leaf. But if root has two or more children,
+its deletion disconnects them, making root articulation
+vertex.
+General graphs are more complex than trees. But a DFS
+of a general graph partitions edges into tree edges
+and back edges. Think of these back edges as cables
+linking a vertex back to one of its ancestors.
+Cable from x back to y ensures none of vertices on tree
+path between x and y can be articulation vertices.
+Deleting any of these vertices means cable still holds
+all of them to rest of tree.
+Finding articulation vertices requires maintaining extent
+to which back edges (i.e. cables) link chunks of DFS tree
+back to ancestor nodes.
+
+Let reachable_ancestors[v] denote earliest reachable
+ancestor of vertex v, meaning oldest ancestor of v that we
+can reach by a combination of tree edges and back edges.
+Initially, reachable_ancestor[v] = v
+
+/* earliest reachable ancestor of v */
+int reachable_ancestor[MAXV+1];
+/* DFS tree outdegree of v */
+int tree_out_degree[MAXV+1];
+
+process_vertex_early(int v)
+{
+    reachable_ancestor[v] = v;
+}
+
+We update reachable_ancestor[v] whenever we encounter a
+back edge that takes us to an earlier ancestor than we've
+previously seen. Relative age/rank of our ancestors can
+be determined from entry_time's"
+
+process_edge(int x, int y)
+{
+    int class; /* edge class */
+    class = edge_classification(x,y);
+
+    if (class == TREE)
+        tree_out_degree[x] = tree_out_degree[x] + 1;
+
+    if ((class == BACK) && (parent[x] != y)) {
+        if (entry_time[y] < entry_time[ reachable_ancestor[x] ] )
+            reachable_ancestor[x] = y;
+    }
+}
+
+^
+
+if ((x,y) is a BACK edge and y is not parent[x]) {
+    if (entry_time[y] < entry_time[reachable_ancestor[x]])
+        reachable_ancestor[x] = y;
+}
+
+Meaning:
+
+“If x has a back edge to an ancestor y that is older 
+than any ancestor we’ve seen so far, update 
+reachable_ancestor[x] to that older ancestor.”
+
+E.g.:
+Graph:
+1
+|
+2
+|
+3
+|
+4
+|
+5
+ \____
+      |
+      2
+Edges:
+1–2, 2–3, 3–4, 4–5, 5–2
+DFS Traversal (starting at 1)
+vertex:        1   2   3   4   5
+entry_time:    1   2   3   4   5
+1 → 2 → 3 → 4 → 5
+parent[2]=1
+parent[3]=2
+parent[4]=3
+parent[5]=4
+
+The critical moment: back edge (5,2)
+Classify the edge
+- 2 is discovered
+- 2 is an ancestor
+- parent[5] = 4, so y != parent[x]
+
+Updating reachable_ancestor
+Before seeing (5,2):
+reachable_ancestor[5] = 5   (itself)
+Now check:
+entry_time[y] < entry_time[reachable_ancestor[5]] ?
+entry_time[2] = 2
+entry_time[5] = 5
+Sicne 2 < 5, update:
+reachable_ancestor[5] = 2
+As DFS unwinds:
+reachable_ancestor[4] becomes 2
+reachable_ancestor[3] becomes 2
+
+why do reachable_ancestor[4] and [3] also become 2?
+Because of propagation when DFS unwinds.
+This happens AFTER recursion returns
+
+Why this matters (articulation logic)
+Now check vertex 2:
+Its child 3 has reachable_ancestor[3] = 2
+That means the subtree cannot reach above 2
+Removing 2 would disconnect {3,4,5}
+Vertex 2 is an articulation vertex
+
+**************
+back to Skiena
+**************
+
+Key issue is determining how reachability relation impacts 
+whether vertex v is an articulation vertex. There're 
+three cases:
+Root cut nodes
+If root of DFS tree has two or more children, it must be
+an articulation vertex. No edges from subtree of second
+child connect to subtree of first child.
+Bridge cut nodes. If earliest reachable vertex from V
+is v, then deleting the single edge (parent[v], v)
+disconnects the graph. Clearly parent[v] must be an
+articulation vertex, since it cuts v from the graph.
+Vertex v is also an articulation vertex unless it's A
+leaf of the DFS tere. For any leaf, nothing falls off
+when you cut it.
+Parent cut nodes
+If earliest reachable vertex from v is parent of v,
+then deleting the parent must sever v from the tree
+unless the parent is the root.
+
+Routine below evaluates the three conditions as we
+back up from the vertex after traversing all out
+going edges. We use entry_time[v] to represent the
+age of vertex v. reachability time time_v calced
+below denotes oldest vertex that can be reached
+using back edges. Getting back to an ancestor
+above v rules out possibility of v being a cut
+node.
+
+process_vertex_late(int v)
+{
+    bool root;          /* true if parent[v] is the DFS root */
+    int time_v;         /* earliest entry time reachable from v's subtree */
+    int time_parent;    /* earliest entry time reachable from parent[v]'s subtree */
+
+    /*
+     * Case 1: v is the ROOT of the DFS tree
+     * A root is an articulation vertex iff it has more than one DFS child.
+     */
+    if (parent[v] < 1) {               /* v has no parent ⇒ v is root */
+        if (tree_out_degree[v] > 1)    /* multiple independent DFS subtrees */
+            printf("root articulation vertex: %d\n", v);
+        return;                        /* root case handled, stop */
+    }
+
+    /*
+     * Determine whether parent[v] is the root.
+     * This affects how articulation rules are applied.
+     */
+    root = (parent[parent[v]] < 1);
+
+    /*
+     * Case 2: PARENT articulation vertex
+     * If v's subtree can only reach back as far as parent[v],
+     * then removing parent[v] disconnects v's subtree.
+     */
+    if ((reachable_ancestor[v] == parent[v]) && (!root))
+        printf("parent articulation vertex: %d\n", parent[v]);
+
+    /*
+     * Case 3: BRIDGE articulation vertex
+     * If v's subtree cannot reach ANY ancestor of v,
+     * then the edge (parent[v], v) is a bridge.
+     */
+    if (reachable_ancestor[v] == v) {
+        printf("bridge articulation vertex: %d\n", parent[v]);
+
+        /*
+         * If v is not a leaf, then v itself also becomes
+         * an articulation vertex when the bridge is removed.
+         */
+        if (tree_out_degree[v] > 0)
+            printf("bridge articulation vertex: %d\n", v);
+    }
+
+    /*
+     * Propagate reachable ancestor information upward.
+     * If v can reach an ancestor earlier than parent[v] can,
+     * update parent[v]'s reachable ancestor.
+     */
+    time_v = entry_time[reachable_ancestor[v]];
+    time_parent = entry_time[reachable_ancestor[parent[v]]];
+
+    if (time_v < time_parent)
+        reachable_ancestor[parent[v]] = reachable_ancestor[v];
+}
+
+example graph showing all three articulation 
+cases:
+        1
+      /   \
+     2     6
+     |
+     3
+     |
+     4
+     |
+     5
+Back edge:
+5 → 2
+DFS tree (starting at 1)
+Parents:
+parent[1] = -1
+parent[2] = 1
+parent[3] = 2
+parent[4] = 3
+parent[5] = 4
+parent[6] = 1
+Case 1: Root articulation vertex (vertex 1)
+- Vertex 1 has two DFS children: 2 and 6
+- Removing 1 disconnects {6} from {2,3,4,5}
+if (parent[v] < 1 && tree_out_degree[v] > 1)
+    root articulation vertex: 1
+
+Case 2: Parent articulation vertex (vertex 2)
+- Subtree rooted at 3 can only reach back to 2
+- reachable_ancestor[3] == 2
+- Removing 2 disconnects {3,4,5} from 1
+if (reachable_ancestor[v] == parent[v] && !root)
+    parent articulation vertex: 2
+
+Case 3: Bridge articulation vertex (edge 3–4)
+- Imagine no back edge from 5 → 2.
+- reachable_ancestor[4] == 4
+- Subtree rooted at 4 cannot reach any ancestor
+- Edge (3,4) is a bridge
+if (reachable_ancestor[v] == v)
+    bridge articulation vertex: 3
+    bridge articulation vertex: 4
+Meaning
+- Removing edge (3,4) disconnects the graph
+- Both endpoints become articulation vertices
+
+**************
+back to skiena
+**************
+
+last lines of routine govern when we back up a
+node's highest reachable ancestor to its parent,
+namely whenever it is higher than the parent's
+earliest ancestor to date.
+Can talk alternately about reliability in terms
+of edge failures instead of vertex failuires.
+Perhaps our vandal would find it easier to cut
+a cable instead of blowing up a switching
+station. A single edge whose deletion disconnects
+the graph is called a bridge, any grapph without
+such an edge is said to be edge-biconnected.
+Identifying whether a given edge (x, y) is a bridge
+is easily done in linear time by deleting the edge
+and testing whether the resulting graph is connected.
+In fact, all bridges can be identified in the same
+O(n + m) time. Edge (x, y) is a bridge if (1) it is
+a tree edge and (2) no back edge connects from y or
+below to x or above. This can be computed with a minor
+mod to the reachable_ancestor func.
+
+A forward edge (u, v) such that v is the ancestor of
+node u but isn't part of the DFS tree. e.g.
+
+  1
+ / \
+2   3
+|   |
+4   5
+|  / \
+6  7  8
+
+edge from 1 to 8 is a forward edge because it goes
+from a vertex to one of its descendants but is not
+the tree edge that originally discovered the
+descendant.
+
+5->4 is a cross edge because it connects two nodes
+that don't have any ancestor and descendant relation
+between them.
+
+**********************
+DFS on directed graphs
+**********************
+
+DFS on an undirected graph is useful because it
+organizes the edges of the graphs in a very precise
+way.
+When traversing undir graphs, every edge is either in
+the DFS tree or a back edge to an ancestor in the tree.
+Suppose we encounter a forward edge (x, y) directed
+toward a descendant vertex. In this case, we'd have
+discovered (x, y) while exploring y, making it a back
+edge. Suppose we encounter a cross edge (x, y) linking
+two unrelated vertices, again we'd have discovered this
+edge when we explored y, making it a tree edge.
+For directed graphs, DFS search labeling can take on
+a wider range of possibilities. All 4 edge cases can
+occur in traversing directed graphs. Still, this classif
+proves useful in organizing algs on dir graphs. We
+typically take a different action on edges from each diff
+case.
+Correct labeling of each edge can be readily determined
+from the state, discovery time, and parent of each vert,
+as encoded in the following func:
+int edge_classification(int x, int y)
+{
+    /* 
+     * TREE EDGE:
+     * y was first discovered from x, so (x,y) is part of the DFS tree.
+     */
+    if (parent[y] == x)
+        return(TREE);
+
+    /*
+     * BACK EDGE:
+     * y has been discovered but not yet processed,
+     * meaning y is an ancestor of x still on the recursion stack.
+     */
+    if (discovered[y] && !processed[y])
+        return(BACK);
+
+    /*
+     * FORWARD EDGE:
+     * y has already been completely processed AND
+     * y was discovered after x, so y is a descendant of x.
+     * The edge goes from an ancestor to a descendant but is not a tree edge.
+     */
+    if (processed[y] && (entry_time[y] > entry_time[x]))
+        return(FORWARD);
+
+    /*
+     * CROSS EDGE:
+     * y has already been completely processed AND
+     * y was discovered before x, so the edge goes between
+     * different DFS subtrees (neither ancestor nor descendant).
+     */
+    if (processed[y] && (entry_time[y] < entry_time[x]))
+        return(CROSS);
+
+    /*
+     * Should never happen if DFS invariants are correct.
+     * This indicates an unexpected state or bug in the traversal logic.
+     */
+    printf("Warning: unclassified edge (%d,%d)\n", x, y);
+}
+
+as with bfs, this implementation of DFS alg includes places
+to optionally process each vertex and edge - say to copy 
+them, print them or count them. Both algs will traverse all
+edges in same connected component as starting point. Since
+we need to start with a vertex in each component to traverse
+a disconnected graph, we must start from any vertex remaining
+undiscovered after a component search. With proper init,
+this completes the traversal alg:
+DFS-graph(G)
+    for each vertex u ∈ V [G] do
+        state[u] = “undiscovered”
+            for each vertex u ∈ V [G] do
+        if state[u] = “undiscovered” then
+            initialize new component, if desired
+            DFS(G,u)
+
+explanation of above.
+DFS (like BFS) is written in a generic way:
+- It has hooks to process vertices (e.g. print, count, color, 
+  label)
+- It has hooks to process edges (e.g. detect cycles, classify 
+  edges)
+One DFS call only explores one connected component:
+- Starting DFS at a single vertex can only reach vertices 
+  that are connected to it.
+Graphs may be disconnected:
+- There might be vertices you cannot reach from your start 
+  vertex.
+So to traverse the whole graph, you must:
+- Run DFS again from any vertex still undiscovered
+- Each such DFS call discovers one connected component
+
+DFS-graph(G)
+    for each vertex u ∈ V[G] do
+        state[u] = “undiscovered”
+
+Meaning
+- Reset the DFS bookkeeping
+- Mark every vertex as undiscovered
+- This ensures DFS starts cleanly and correctly
+
+for each vertex u ∈ V[G] do
+
+Meaning
+- Loop through all vertices in the graph
+- This is what allows us to handle disconnected graphs
+
+        if state[u] = “undiscovered” then
+- If u hasn’t been visited yet…
+- …then u must belong to a new connected component
+Start a DFS from u
+- This DFS call will:
+- Discover every vertex reachable from u
+- Exactly one connected component
+
+DFS explores exactly one connected component per call, so to 
+traverse a disconnected graph we must run DFS from every 
+vertex that remains undiscovered after previous searches.
+
+*******************
+Topological sorting
+*******************
+
+Topological sorting is the most important operation on
+directed acyclic graphs (DAGs). It orders vertices on 
+a line such that all directed edges go from left to
+right. Such an ordering cannot exist if the graph
+contains a directed cycle, because there's no way you
+can keep going right on a line and return back to where
+you started from!
+Each DAG has at least one topological sort. Importance
+of topological sorting is that it gives us an ordering to
+process each vertex before any of its successors. Suppose
+edges represented precedence constraints, such that edge
+(x, y) means job x must be done before job y. Then, any
+toplogic sort defs a legal schedule. Indeed, there can be
+many such orderings for a given DAG.
+Suppose we seek shortest/longest path from x to y in a DAG,
+no vertex appearing after y in topolog order can contrib
+to any such path, because there's no way to get back to y.
+We can appropriately process all vertices from left to right
+in topological order, considering impact of their outgoing
+edges, and know that we'll have looked at everything we need
+before we need it. Toplogical sorting proves very useful in
+essentialy any alg problem on dir graphs.
+Toplogical sorting can be performed efficiently using DFS. a
+dir graph is a DAG if and only if no back edges are seen.
+Labelled vertices in reverse order that they are Marked
+processed finds a topological sort of a DAG: Why? consider
+what happens to each directed edge {x, y} as we encounter
+it exploring vert x
+- if y's currently undiscovered, we start a DFS of y
+  before we can continue with x. Thus y is Marked
+  completed before x is, and x appears before y in
+  topological order, as it must.
+- if y's discovered but not completed, then {x, y} is a
+  back edge, which is forbidden in a DAG.
+- if y's processed, then it'll have been labeled before x,
+  therefore, x appears before y in topological order, as it
+  must.
+
+-------------------------------------------
+explanation of 3 points on topological sort
+-------------------------------------------
+
+in a DFS of a DAG, if you list vertices in reverse order
+of completion (exit time), every directed edge points
+forward in that list - which is exactly what a topolog
+order reqs.
+
+consider this DAG:
+1 → 2 → 4
+↓
+3 → 4
+Edges:
+1 → 2
+1 → 3
+2 → 4
+3 → 4
+This is a DAG (no cycles).
+Step 1: Run DFS
+Assume DFS starts at vertex 1, and we visit neighbors in 
+numerical order.
+DFS(1)
+ ├─ DFS(2)
+ │   └─ DFS(4)
+ └─ DFS(3)
+Step 2: Record completion (exit) times
+A vertex is completed when DFS finishes exploring all its 
+outgoing edges.
+4 finishes first (no outgoing edges)
+2 finishes next
+3 finishes next
+1 finishes last
+completion order: [4, 2, 3, 1]
+Step 3: Reverse the completion order
+[1, 3, 2, 4] (topological order)
+
+now for 3 cases
+
+Case 1
+“If y is currently undiscovered…”
+Tree edge case
+Example graph
+x → y
+DFS behavior
+- DFS starts at x
+- Edge (x, y) is seen
+- y is undiscovered
+- DFS recursively visits y before finishing x
+enter(x)
+    enter(y)
+    exit(y)
+exit(x)
+reverse finishing order: x, y
+Topological sort requires:
+x comes before y
+and thats what happens
+
+Case 2
+“If y is discovered but not completed…”
+Back edge case — forbidden
+Example graph
+x → y
+↑   |
+└───┘
+This graph has a cycle.
+
+Why this breaks topological sorting
+A toplogical order reqs:
+x before y   (because x → y)
+AND
+y before x   (because y → x)
+Impossible.
+
+Case 3
+“If y is already processed…”
+Forward or cross edge case
+
+Example graph
+x → y
+but DFS reached y earlier via another path.
+a → y
+|
+└→ x → y
+Even though y was discovered earlier:
+- x finishes after y
+- Reverse finishing order still places x before y
+
+**************
+back to skiena
+**************
+
+study following implementation:
+
+/*
+ * Called after vertex v has finished exploring all outgoing edges.
+ * Pushing v here ensures that all vertices reachable from v
+ * are already in the stack, which is the key property for topological sorting.
+ */
+process_vertex_late(int v)
+{
+    push(&sorted, v);
+}
+
+/*
+ * Called whenever DFS examines an edge (x, y).
+ * Used here to detect cycles in a directed graph.
+ */
+process_edge(int x, int y)
+{
+    int class;  /* classification of edge (x, y) */
+
+    /*
+     * Determine whether the edge is TREE, BACK, FORWARD, or CROSS.
+     */
+    class = edge_classification(x, y);
+
+    /*
+     * A BACK edge in a directed graph means there is a cycle.
+     * Cycles make topological ordering impossible.
+     */
+    if (class == BACK)
+        printf("Warning: directed cycle found, not a DAG\n");
+}
+
+/*
+ * Topological sort using depth-first search.
+ * Vertices are output in reverse order of DFS completion times.
+ */
+topsort(graph *g)
+{
+    int i;  /* loop counter */
+
+    /*
+     * Initialize the stack that will store vertices
+     * in reverse completion order.
+     */
+    init_stack(&sorted);
+
+    /*
+     * Run DFS from every undiscovered vertex.
+     * This ensures all connected components are covered.
+     */
+    for (i = 1; i <= g->nvertices; i++)
+        if (discovered[i] == FALSE)
+            dfs(g, i);
+
+    /*
+     * Printing the stack outputs vertices in topological order.
+     */
+    print_stack(&sorted);
+}
+
+DFS pushes each vertex onto a stack only after all its outgoing 
+edges have been explored, so popping vertices in reverse 
+completion order produces a valid topological ordering unless a 
+back edge (cycle) is detected.
+
+*****************************
+Strongly connected components
+*****************************
+
+Often concerned with strongly connected components - that is,
+partioning graph into chunks such that directed paths exist 
+b/w all pairs of vertices within any given chunk. A directed
+graph is strongly connected if there's a directed path between
+any two vertices.
+It's straightforward to use graph traversal to test whether a
+graph G = (V, E) is strongly connected in linear time. First,
+do traversal from some arbitrary vertex v. Every vertex In
+graph had better be reachable from v (and hence discovered
+on the BFS or DFS starting from v), otherwise G cannot
+possible be strongly connected. Now construct a graph 
+G' = (V, E') with the same vertex and edge set as G but with
+all edges reverse = i.e. dir edge (x,y) in E becomes dir edge
+(y, x) in E'. Thus, any path from v to z in G' corresponds to
+path from z to v in G. By doing a DFS from v in G', we find
+all vertices with paths to v in G. The graph's strongly
+connected iff all vertices in G can (1) reach v and (2)
+are reachable from v.
+Graph's that aren't strongly connected can be partiotioned
+into storngly connected components. The set of such components
+and the weakly connecting edges that link them together
+can be determined using DFS. Alg is based on observation
+that it's easy to find a directed cycle using DFS, since
+any back edge plus the down path in DFS gives such a cycle.
+All vertices in this cycle must be in the same strongly
+connected component. Thus, we can shrink (contract)
+the vertices on this cycle down to a single vertex repr
+the component and then repeat. This process terminates
+when no dir cycle remains, and each vertex repr a
+diff strongly connected component.
+
+Identify cycles in the DFS tree
+
+Look at the DFS tree:
+________1
+|       |
+|       2
+|      / \
+------3   4
+      |   |
+      6 - 8
+      |
+      7
+      |
+      5
+(also edge from 4 to 1, 5 to 2, 5 to 6)
+You can see loops formed by back edges
+Each loop corresponds to a directed cycle
+Every vertex on that loop can reach every other one
+
+Example
+- Vertices like {6, 7} form a small cycle
+- Vertices {1, 2, 3, 4} form a larger mutually reachable 
+  region
+- Vertex {8} is reachable from others but cannot return → its 
+  own SCC
+
+“Shrink (contract) the cycle” idea (left side of the figure)
+Once DFS finds a directed cycle:
+- All vertices on that cycle belong to the same SCC
+
+So the algorithm conceptually:
+1. Groups all vertices on that cycle
+2. Contracts them into a single “super-node”
+That’s what you see on the left diagram:
+- Each dashed oval encloses one SCC
+- Inside the oval, every vertex can reach every other
+For example:
+- {1,2,3,4} is one SCC
+- {5,6,7} is another SCC
+- {8} is its own SCC
+
+**************
+back to skiena
+**************
+
+Our approach to implemnting this is reminiscent of
+finding biconnected components. Update notion of oldest
+reachable vertex in response to (1) nontree edges and (2)
+backing up from vertex. Because we're working on a dir
+graph, we also must content with forward edges (from A
+vertex to a descendant) and cross edges (from vertex
+back to a non ancestor but previously disc vertex),
+Our alg will peel one strong component off tree at A
+time, and assign each of its vertices the num of
+component it's in.
+
+/*
+ * Finds all strongly connected components (SCCs) in a directed graph.
+ * Uses depth-first search with low-link values and a stack of active vertices.
+ */
+strong_components(graph *g)
+{
+    int i;  /* loop counter over vertices */
+
+    /*
+     * Initialize per-vertex SCC bookkeeping.
+     * low[i] will track the lowest-numbered vertex reachable from i
+     * scc[i] stores the component ID for vertex i (-1 means not yet assigned)
+     */
+    for (i = 1; i <= (g->nvertices); i++) {
+        low[i] = i;      /* initially, each vertex reaches itself */
+        scc[i] = -1;     /* mark vertex as not yet placed in any SCC */
+    }
+
+    /*
+     * No strongly connected components have been identified yet.
+     */
+    components_found = 0;
+
+    /*
+     * Initialize the stack that holds vertices currently active
+     * in the DFS recursion (potential members of the same SCC).
+     */
+    init_stack(&active);
+
+    /*
+     * Initialize DFS bookkeeping arrays such as discovered[] and processed[].
+     */
+    initialize_search(&g);
+
+    /*
+     * Run DFS starting from every undiscovered vertex.
+     * Each DFS call may identify one or more strongly connected components.
+     * This loop ensures disconnected parts of the graph are also processed.
+     */
+    for (i = 1; i <= (g->nvertices); i++)
+        if (discovered[i] == FALSE) {
+            dfs(g, i);
+        }
+}
+
+Define low[v] as oldest vertex known to be in same strongly connected
+component as v. This vertex is not necessarily an ancestor, but may
+also be a distant cousing of v bc of cross edges. Cross edges that point
+vertices from prev strongly connected components of the graph cannot
+help us, because there's no way back from them to v, but otherwise
+cross edges are fair game. Forward edges have no impact on reachability
+over depth first tree edges, and hence can be disregarded.
+
+int low[MAXV+1]; /* oldest vertex surely in component of v */
+int scc[MAXV+1]; /* strong component number for each vertex */
+process_edge(int x, int y)
+{
+    int class; /* edge class */
+    class = edge_classification(x,y);
+    if (class == BACK) {
+        if (entry_time[y] < entry_time[ low[x] ] )
+            low[x] = y;
+    }
+    if (class == CROSS) {
+        if (scc[y] == -1) /* component not yet assigned */
+            if (entry_time[y] < entry_time[ low[x] ] )
+                low[x] = y;
+    }
+}
+
+New strongly connected component is found whenever lowest reachable
+vertex from v is v. If so, we can clear stack of this component.
+Otherwise, give parent benefit of oldest ancestor we can reach
+and backtrack:
+process_vertex_early(int v)
+{
+    push(&active,v);
+}
+
+process_vertex_late(int v)
+{
+    if (low[v] == v) { /* edge (parent[v],v) cuts off scc */
+        pop_component(v);
+    }
+    if (entry_time[low[v]] < entry_time[low[parent[v]]])
+        low[parent[v]] = low[v];
+}
+
+pop_component(int v)
+{
+    int t; /* vertex placeholder */
+    components_found = components_found + 1;
+    scc[ v ] = components_found;
+    while ((t = pop(&active)) != v) {
+        scc[ t ] = components_found;
+    }
+}
+
+-----------------------------------------------------
+explanation of strongly connected components building
+-----------------------------------------------------
+
+The algorithm is based on DFS + reachability tracking:
+- During DFS, we track for each vertex v a value low[v]
+- low[v] means:
+    “What is the oldest (earliest discovered) vertex that v 
+    can reach and return from, staying within the same 
+    strongly connected component?”
+Key facts:
+- Back edges help, because they go up the DFS tree
+- Cross edges can help only if they point to a vertex that 
+  is still active (i.e. not yet assigned to an SCC)
+- Forward edges don’t help, because they don’t give a way back
+
+E.g
+Let’s use this directed graph:
+1 → 2 → 3 → 1     (cycle)
+3 → 4 → 5 → 4     (cycle)
+SCCs:
+{1, 2, 3}
+{4, 5}
+Initialization (strong_components)
+for (i=1; i<=n; i++) {
+    low[i] = i;
+    scc[i] = -1;
+}
+components_found = 0;
+init_stack(&active);
+initialize_search(&g);
+
+Meaning
+- Each vertex initially thinks it is the oldest in its SCC
+- No vertex is assigned to a component yet
+- active stack will track vertices currently in the DFS path
+
+DFS begins at vertex 1
+push(&active, 1);
+[1]
+DFS explores 1 → 2 → 3
+Active stack:
+[1, 2, 3]
+Entry times:
+1:1, 2:2, 3:3
+Back edge detected: 3 → 1
+process_edge(3,1)
+Edge classification: BACK
+if (entry_time[y] < entry_time[ low[x] ])
+    low[x] = y;
+entry_time[1] < entry_time[low[3]]
+Update:
+low[3] = 1
+Meaning:
+“From 3, I can reach 1 and come back → same SCC.”
+DFS continues: 3 → 4 → 5
+Active stack:
+[1, 2, 3, 4, 5]
+Back edge detected: 5 → 4
+process_edge(5,4)
+BACK edge
+Update:
+low[5] = 4
+Finishing vertex 5
+process_vertex_late(5)
+if (low[5] == 5) pop_component(5);
+low[5] = 4 ≠ 5 → not an SCC root
+Propagate upward:
+low[4] = low[5] = 4
+
+This DFS-based SCC algorithm tracks the oldest reachable vertex 
+using back and eligible cross edges, pushes vertices onto a stack 
+during exploration, and pops entire strongly connected components 
+whenever a vertex cannot reach an older one, peeling SCCs off 
+the graph one at a time.
