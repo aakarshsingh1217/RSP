@@ -1,0 +1,756 @@
+*********************
+Weighted graphs intro
+*********************
+
+There's another universe of problems for Weighted graphs.
+E.g. edges of road networks are bound to numerical vals
+such as construction cost etc. Finding shortest path
+in weighted graphs is more complicated than BFS in
+unweighted graphs.
+
+Graph data structure supports edge-weighted graphs.
+Adjacency list structure consists of array of linked
+lists, such that outgoing edges from vertex x appear
+in list edges[x].
+
+typedef struct {
+    edgenode *edges[MAXV+1]; /* adjacency info */
+    int degree[MAXV+1]; /* outdegree of each vertex */
+    int nvertices; /* number of vertices in graph */
+    int nedges; /* number of edges in graph */
+    int directed; /* is the graph directed? */
+} graph;
+
+Each edgenode is a record containing three fields, first
+being 2nd endpoint of edge (y), 2nd being edge weight
+and 3rd pointing to next edge in list.
+
+typedef struct {
+    int y; /* adjacency info */
+    int weight; /* edge weight, if any */
+    struct edgenode *next; /* next edge in list */
+} edgenode;
+
+**********************
+Minimum spanning trees
+**********************
+
+A spanning tree of graph G = (V, E) is a subset of edges
+from E forming a tree connecting all vertices of V. for
+edge weighted graphs, we're interested in the Minimum
+spanning tree (spanning tree whose sum of edge weights
+is as small as possible).
+
+MST are the answer when we need to connect a set of
+points by smallest amount of roadway, pipe etc. any
+tree is smallest possible connected graph in terms
+on num of edges, while MST is smallest connected 
+graph in temrs of edge weight. In geom probs,
+point set p1,...pn defines a complete graph, with 
+edge (vi, vj) assigned a weight equal to distance
+from pi to pj.
+
+a MST minimizes the total length over all possible
+spanning trees. However, there can be more than one
+MST in a graph. Indeed, all spanning trees of and
+unweighted (or equally weighted) graph G are MSTs,
+since each contains exactly n-1 equal weight edges.
+Such a spanning tree can be found using DFS or
+BFS.
+
+****************
+Prims' Algorithm
+****************
+
+Prim's MST starts from one vertex and grows rest
+of tree one edge at a time until all vertices are
+included.
+
+Greedy algs make the decision of what to do next
+by selecting the best local option from all avail
+choices without regard to global struct. Since we
+seek tree of min weight, natural greedy alg for
+MST repeatedly select smallest weight edge that'll 
+enlarge the num vertices in the tree.
+
+Prim-MST(G)
+    Select an arbitrary vertex s to start the tree 
+    from.
+        While (there are still nontree vertices)
+            Select the edge of minimum weight 
+            between a tree and nontree vertex
+
+            Add the selected edge and vertex to 
+            the tree Tprim.
+
+Prim's alg clearly creates a spanning tree, bc
+no cycle can be introed by adding edges between
+tree and nontree vertices. However, why should
+it be min weight over all spanning trees? We've
+seen ample evidence of other natural greedy
+heurestics that don't yield a global optimum.
+Therefore, we need to be careful to demonstrate
+any such claim.
+
+We use proof by contradict. Suppose that there
+existed a graph G for which Prim's alg did not
+return a MST. since we're building the tree
+incrementally, this means that there must've
+been some instant where we went wrong. Before
+we inserted edge (x, y), Tprim consisted of
+a set of edges that was a subtree of some
+MST Tmin, but choosing an edge (x, y) fatally
+took us away from a MST.
+
+How could we've gone wrong? There must be A
+path p from x to y in Tmin. This path must
+use edge (v1, v2) where v1 is in Tprim, but
+v2 isnt. This edge (v1, v2) must have a weight
+at least that of (x, y) or Prim's alg would've
+selected it before (x, y) when it had a chance.
+Inserting (x, y) and deleting (v1, v2) from 
+Tmin leaves a spanning tree no larger than before,
+meaning Prim's alg didn't make a fatal mistake in
+selecting edge (x, y). Therefore, by contradict,
+Prim's alg must construct a MST.
+
+--------------
+Implementation
+--------------
+
+Prim's alg grows MST in stages, starting from A
+given vertex. At each iter, we add one new vertex
+into the spanning tree. A greedy alg suffices
+for correctness: we always add loewst weight edge
+linking a vertex in tree to a vertex on outside.
+Simplest Implementation of this idea would assign
+each vertex a boolean denoting whether it's alr
+in tree (arr intree), and then search all edges
+at each iter to find minimum weight edge with 
+exactly one intree vertex.
+
+Smarter implementation keeps track of cheapest
+edge linking every nontree vertex in tree.
+Cheapest such edge over all remaining non-
+tree vertices gets added in each iter. We must
+update costs of getting to non-tree vertices
+after each insertion. However, since most recently
+inserted vertex is only change in tree, all
+possible edge weight updates come from outgoing
+edges.
+
+Prim’s grows the tree one vertex at a time by always 
+choosing the cheapest edge that connects a new 
+vertex to the already-built tree.
+
+--------
+Analysis
+--------
+
+Prim's alg is correct, but how efficient is it? Depends
+on data structures used to implement it. Prim's alg
+makes n iterations sweeping through all m edges on
+each iter, yielding O(mn) alg (in pseudocode)
+
+But our implement avoids need to test all m edges
+on each pass. Only considers <= n cheapest known
+edges repr in parent arr and <= n edges out of
+new tree vertex v to update parent. By maintaining
+bool flag along w/ each vertex to denote whether
+in tree or not, we test whether curr edge joins
+tree with non-tree vertex in const time.
+Result is O(n^2) implementation of Prims alg.
+
+Prim’s does not “go back” along the tree.
+At every step it looks at all edges that cross from 
+the current tree to outside the tree, and picks the 
+lobally cheapest such edge, regardless of where it is 
+attached.
+
+That’s why edges 5 and 6 can be chosen after edge 4, 
+even if they are not adjacent to the most recently 
+added vertex.
+
+*************
+Kruskal's alg
+*************
+
+Kruskal's alg is an alternate approach to finding MST
+that proves more efficient on sparse graphs. Like prim's
+, kruskal's is greedy. Unlike prim's, it doesn't start
+with a particular vertex.
+
+Kruskal's builds up connected components of vertices,
+culminating in a MST. Initially, each vertex forms its
+own seperate component in tree to be. Alg repeatedly
+considers lightest remaining edge and tests whether
+its two endpoints lie within same connected component.
+If so, this edge'll be discarded, because adding it
+would create a cycle in the tree-to-be. If endpoints
+are in different components, we insert edge and merge
+two components into one. Since each connected component
+is always a tree, we need never test for cycles.
+
+Kruskal-MST(G)
+    put edges in prio queue ordered by weight
+    count = 0
+    while (count < n - 1) do
+        get next edge(v, w)
+        if (component(v) != component(w))
+            add to Tkruskal
+            merge component (v) & component(w)
+
+Alg adds n-1 edges without creating a cycle, so it
+clearly creates a spanning tree for any connected
+graph. But why must this be a MST? Suppose it wasn't.
+Must be some graph on which it fails. In partic, must
+be a single edge (x, y) whose insertion first prevent
+tree Tkruskal from being a MST Tmin. Inserting this
+edge (x, y) into Tmin will create a cycle with path
+from x to y. Since x and y were in different
+components at time of inserting (x, y), at least
+one edge (v1, v2) on this path would've been evald
+by Kruskals later than (x, y). But this means
+w(v1, v2) >= w(x, y), so exchanging the two edges
+yields a tree of weight at most Tmin. Therefore, we
+couldn't have made a fatal mistake in selecting (x,y).
+What's time complexity of Kruskal's? Sorting m edges
+takes O(m lg m). The for loop makes m iters, each
+testing connectivity of two trees plus an edge.
+This can be implemented in BFS or DFS in a sparse
+graph with at most n edges and n vertices, yielding
+O(mn).
+
+However, faster implementation results if we can
+implement component test in faster than O(n) time.
+In fact, clever data structure called union find,
+can support queries in O(lg n) time.
+With this DS, kruskals runs in O(m lg m) time,
+which is faster than prims for sparse graphs.
+
+/* 
+ * Run Kruskal’s algorithm to compute a Minimum Spanning Tree (MST)
+ * of an undirected, weighted graph.
+ */
+kruskal(graph *g)
+{
+    /* Loop counter used to iterate over edges */
+    int i;
+
+    /* Disjoint-set (Union-Find) data structure to track components */
+    set_union s;
+
+    /* Array to store all edges of the graph as (x, y, weight) tuples */
+    edge_pair e[MAXV+1];
+
+    /* Comparator used by qsort to sort edges by increasing weight */
+    bool weight_compare();
+
+    /* Initialize the union-find structure:
+       each vertex starts in its own component */
+    set_union_init(&s, g->nvertices);
+
+    /* Convert the graph’s adjacency lists into an array of edges */
+    to_edge_array(g, e);
+
+    /* Sort all edges in nondecreasing order of weight */
+    qsort(&e, g->nedges, sizeof(edge_pair), weight_compare);
+
+    /* Iterate through edges from smallest weight to largest */
+    for (i = 0; i < g->nedges; i++) {
+
+        /* Check whether the endpoints of edge e[i]
+           are already in the same connected component */
+        if (!same_component(s, e[i].x, e[i].y)) {
+
+            /* If not, this edge does not form a cycle,
+               so it belongs in the MST */
+            printf("edge (%d,%d) in MST\n", e[i].x, e[i].y);
+
+            /* Merge the two components containing x and y */
+            union_sets(&s, e[i].x, e[i].y);
+        }
+        /* Otherwise, ignore the edge because it would form a cycle */
+    }
+}
+
+*************************
+Union-Find Data Structure
+*************************
+
+A set partition is a partioning of elements of some 
+universal set (say integers 1 to n) into a collection 
+of disjointed subsets. Thus, each elem must be in 
+exactly one subset, Set partitions naturally arise
+in graph problems such as connected components (each
+vertex is in exactly one connected component) and
+vertex coloring (a person may be male or female,
+but not both or neither). 
+
+The connected components in a graph can be represented 
+as a set partition.
+For Kruskal's alg to run efficiently, we need a
+data structure that efficiently supports the following
+operations:
+- Same component(v1, v2) - Do vertices v1 and v2 occur
+in same connected component of current graph?
+- Merge components(C1, C2) - Merge the given pair 
+of connected components into one component in
+response to an edge between them.
+
+The two obvious DS for this task each support only
+one of these opers efficiently. Explicitly labeling
+each element with its component number enables the
+same component test to be performed in constant
+time, but updating component numbers after a merger
+would require linear time. Alternately, we can treat
+the merge components operation as inserting an edge
+into graph, but then we must run a full graph traversal
+to identify connected components on demand.
+
+The union find DS repr each subset as a 'backwards'
+tree, with pointers from a node to its parent.
+Each node of this tree contains a set elem,
+and the name of the set is taken from the key at the
+root. We'll also maintain number of elems in subtree
+rooted in each vertex v.
+
+typedef struct {
+    int p[SET_SIZE+1]; /* parent element */
+    int size[SET_SIZE+1]; /* number of elements in subtree i */
+    int n; /* number of elements in set */
+} set_union
+
+We implement our desired component opers in terms of
+two simpler opers, union and find
+- find(i) find the root of the tree containing element i,
+  by walking up the parent pointers until there's no
+  where to go.
+- union(i, j) link the root of one of the trees (say
+  containing i) to the root of the tree containing the
+  other (say j) so find(i) now equals find(j)
+
+We seek to minimize time it takes to execute any sequence
+of unions and finds. Tree structures can be very unbalanced,
+so we must limit height of trees. Most obv means of control
+is decision of which of two component roots becomes root
+of combined component on each union.
+
+To minimize tree height, it's better to make the smaller
+tree the subtree of the bigger one, because the height of
+all nodes in the root subtree stay the same, while the height
+of the nodes merged into the tree all increase by one. Thus,
+merging in the smaller tree leaves the height unchanged on
+the larger set of vertices.
+
+--------
+Analysis
+--------
+
+On each union, tree with fewer nodes becomes child. But how
+tall can such a tree get a sa function of number of nodes in
+it? Consider smallest possible tree of heighh h. Single node
+trees have height 1, smallest tree of height 2 has two nodes:
+from union of two single node trees. When do we increase the
+height? Merging in single node trees wont do it, since they
+just become children of rooted tree of height 2. Only when
+we merge two height-2 trees do we get a tree hegiht of height
+3, now with 4 nodes.
+
+See the pattern? We must double num nodes in tree to get an
+extra unit of height. How many doublings can we do before
+we use up all n nodes? At most, lg base 2 n doublings can be
+performed. Thus, we can do both unions and finds in O(log n),
+good enough for Kruskals.
+
+-------------------------------------------
+Kruskal and UF example explanation analysis
+-------------------------------------------
+
+What tree height means:
+
+In union–find, each connected component is stored as a tree:
+- Each node points to a parent
+- The root points to itself
+- The height of the tree = longest chain of parent pointers 
+  from a node to the root
+example
+4 → 3 → 1
+Height = 3 (4 → 3 → 1)
+The cost of find(x) is proportional to this height.
+
+Rule we are using: union-by-size
+My union code does this:
+if size[root1] >= size[root2]:
+    parent[root2] = root1
+else:
+    parent[root1] = root2
+Meaning:
+Always attach the smaller tree under the larger tree
+
+Smallest possible trees by height (this is the key idea)
+Let’s build the smallest possible tree that has a given 
+height.
+Height 1 (smallest possible)
+1
+Nodes: 1
+
+Height 2 (smallest possible)
+To increase height, we must merge two trees of equal 
+height.
+1      2
+Union them:
+  1
+  ↑
+  2
+Height = 2
+Nodes = 2
+
+Height 3 (smallest possible)
+You cannot get height 3 by adding a single node to a height-2 
+tree.
+Why?
+Because union-by-size forces the smaller tree to attach under 
+the larger one:
+Height-2 tree (size 2)
+Height-1 tree (size 1)
+→ size-1 tree becomes a child → height stays 2
+To increase height, you must merge two height-2 trees:
+Tree A (2 nodes)     Tree B (2 nodes)
+
+    1                   3
+    ↑                   ↑
+    2                   4
+        1
+       / \
+      2   3
+           ↑
+           4
+Height = 3
+Nodes = 4
+h requires 2^(h-1) nodes
+
+Why this gives O(log n)
+If the tree has n nodes, the maximum possible height h 
+satisfies:
+
+2^(h-1) ≤ n
+h - 1 ≤ log₂ n
+h ≤ log₂ n + 1
+
+drop +1 and base 2
+worst case height is O(log n)
+
+That means:
+- find() is O(log n)
+- union() is O(log n)
+- Kruskal becomes O(m log n), dominated by sorting
+
+************************************
+Variations of minimum spanning trees
+************************************
+
+the MST alg has several interesting properties that help
+solve seveeral closely related problems.
+- Maximumum spanning trees: Suppose evil phone company's
+  contracted to connect a bunch of houses together, they'll
+  be paid a price proportional to amount of wire they install.
+  Naturally, they'll build the most expensive spanning tree
+  possible. Maximum spanning tree of any graph can be found
+  by simply negating weights of all edges and running Prim's
+  alg. The most negative tree in negated graph is max spanning
+  tree in original.
+  
+  Most graph algs don't adapt so easily to neg numbers. Indeed,
+  shortest path algs have trouble with neg numbers, and don't
+  gen the longest possible path using this technique.
+- Minimum product spanning trees: Suppose we seek the spanning
+  tree that minimizes the product of edge weights, assuming all
+  edge weights are positive. Since lg(a * b) = lg(a) + lg(b),
+  the min spanning tree on a graph whose edge weights are
+  replaced with their logs gives min product spanning tree
+  on original graph.
+
+**************
+Shortest paths
+**************
+
+A path is a sequence of edges connecting two vertices.
+
+The shortest path from s to t in an unweighted graph can be
+constructed using BFS from s. Minimum link path is recorded in
+the BFS tree, and it provides the shortest path when all edges
+have equal weight.
+
+However, BFS doesn't suffice to find shortest path in weighted
+graphs. Shortest weighted path might use a large num of edges,
+just as shortest route (timewise) from home to office may
+have complicated shortcuts using backroads.
+
+********************
+Dijkstra’s Algorithm
+********************
+
+Dijkstras alg is method of choice for finding shortest path in
+edge and or vertex weighted graph. Given a particular start
+vertex s, it finds shortest path from s to every other vertex
+in graph, including desired dest t.
+
+Suppose shortest path from s to t in graph G passes through a
+particular intermediate vertex x. Clearly, this path must contain
+shortest path from s to x as its prefix because if not, we
+could shorten our s to t path by using shorter s to x prefix.
+Thus, we must compute shortest path from s to x before we
+find path from s to t.
+
+Dijskstras proceeds in a series of rounds, where each round
+establishes shortest path from s to some new vertex. Specificially,
+x is vertex that minimizes dist(s, vi) + w(vi, x) over all unfinished
+1 <= i <= n, where w(i, j) is length of edge from i to j, and
+dist(i, j) is length of shortest ptah between them.
+
+-----------------------------------------------------------------
+explaining  'Specifically, x is the vertex that
+minimizes dist(s,vi) + w(vi,x) over all unfinished 1 ≤ i ≤ n, 
+where w(i,j) is the length of the edge from i to j, and dist(i,j) 
+is the length of the shortest path between them.'
+-----------------------------------------------------------------
+
+First, setting:
+- You have a start vertex s
+- Some vertices already have their shortest distance from s 
+  finalized
+- Other vertices are still unfinished (not finalized yet)
+
+Dijkstra works in rounds.
+Each round: pick exactly one new vertex and finalize its shortest 
+distance.
+
+The key sentence (rewritten)
+
+“Specifically, x is the vertex that minimizes
+dist(s, v_i) + w(v_i, x)
+over all unfinished vertices.”
+
+What each term means
+s: The source (start vertex)
+v_i, A vertex that is:
+- already finished (its shortest distance from s is known)
+- part of the growing “known shortest-path tree”
+x A vertex that is:
+- unfinished
+- adjacent to at least one finished vertex
+- a candidate to be finalized next
+dist(s, v_i)
+- The shortest known distance from s to v_i
+- This is already final and correct.
+w(v_i, x)
+- The weight of the edge from v_i to x
+dist(s, v_i) + w(v_i, x), The length of a path that:
+1. goes from s to v_i (known shortest)
+2. then takes one more edge from v_i to x
+3. This is a candidate distance to reach x.
+
+What “minimizes” means here
+Dijkstra considers all possible ways to reach unfinished vertices 
+from the finished set, and chooses the cheapest one.
+
+Among all unfinished vertices x, choose the one that can be reached
+with the smallest total distance via some already-finished vertex.
+
+Suppose we have:
+s = A
+Finished vertices so far:
+A (dist = 0)
+B (dist = 3)
+
+Edges:
+B → C (weight 2)
+A → D (weight 10)
+B → D (weight 4)
+
+Unfinished vertices: C, D
+
+Now compute:
+
+Candidate distances
+
+For C:
+dist(A,B) + w(B,C) = 3 + 2 = 5
+
+
+For D:
+dist(A,A) + w(A,D) = 0 + 10 = 10
+dist(A,B) + w(B,D) = 3 + 4 = 7
+
+Best path to D is 7.
+
+Compare candidates
+C → 5
+D → 7
+
+So Dijkstra chooses:
+x = C
+Because 5 is the minimum.
+
+Dijkstra’s algorithm repeatedly finalizes the unfinished vertex that 
+can be reached from the source with the smallest total distance via 
+any already-finalized vertex.
+
+--------------
+Back to Skiena
+--------------
+
+This suggest a dynamic prog like strategy. Shortest path from s to
+itself is trivial unless there's some negative weight edges, so
+dist(s, s) = 0. if (s, y) is lightest edge incident to s, then this
+implies dist(s, y) = w(s, y). Once we determine shortest path to A
+node x, we check all outgoing edges of x to see whether there's a
+better path from s to some unknown vertex through x.
+
+***************************
+explanation of above passge
+***************************
+
+Shortest path from s to itself is trivial”
+If there are no negative edges, the shortest path from s to s is 
+obviously:
+dist(s, s) = 0
+This is the base case
+
+If (s, y) is the lightest edge incident to s, 
+then dist(s, y) = w(s, y)
+- From the start vertex s, the first shortest path we can know for sure is 
+  to the neighbor connected by the smallest edge weight.
+- There’s no cheaper way to reach that neighbor yet, because every path 
+  must start at s.
+
+“Once we determine the shortest path to a node x…”
+When Dijkstra finalizes a node x, it means:
+- “We now know the absolute shortest path from s to x.”
+This value will never change again.
+
+“…we check all outgoing edges of x”
+- From x, we look at all neighbors y.
+- We ask:
+Is going s → x → y cheaper than the best way we currently know to 
+reach y?
+This is called relaxation.
+
+Short example (step by step)
+Consider this graph (all weights ≥ 0):
+s --2--> A
+s --5--> B
+A --1--> B
+A --4--> C
+B --2--> C
+
+Step 0: Initialize
+dist(s) = 0
+dist(A) = ∞
+dist(B) = ∞
+dist(C) = ∞
+
+Step 1: Look at edges from s
+s → A (2)
+s → B (5)
+Smallest edge is s → A.
+dist(A) = 2
+
+Step 2: Relax edges from A
+Outgoing edges from A:
+A → B (1)
+A → C (4)
+Check paths via A:
+To B:
+dist(s,A) + w(A,B) = 2 + 1 =  3
+This is better than current dist(B) = 5, so 
+update:
+dist(B) = 3
+
+To C:
+2 + 4 = 6
+dist(C) = 6
+
+Step 3: Pick next closest unfinished node
+Now:
+dist(B) = 3
+dist(C) = 6
+Pick B (smallest).
+Finalize B.
+
+Step 4: Relax edges from B
+Outgoing edge:
+B → C (2)
+dist(s,B) + w(B,C) = 3 + 2 = 5
+This improves:
+dist(C) = 5
+
+**************
+back to skiena
+**************
+
+# Compute the shortest path from source vertex s to target vertex t
+ShortestPath-Dijkstra(G, s, t)
+
+    # Initialize the set of vertices whose shortest distance from s is known
+    known = { s }
+
+    # Initialize all distances to infinity (unknown / very large)
+    for i = 1 to n do
+        dist[i] = ∞
+
+    # Set the distance to each neighbor v of s
+    # since the shortest path from s to v is just the edge (s, v)
+    for each edge (s, v) do
+        dist[v] = w(s, v)
+
+    # Track the most recently finalized vertex
+    last = s
+
+    # Continue until the target vertex t has been finalized
+    while (last ≠ t) do
+
+        # Choose the unknown vertex with the smallest tentative distance
+        select vnext such that:
+            vnext ∉ known
+            and dist[vnext] is minimized
+
+        # Relax all outgoing edges from vnext
+        # Try to improve distances to neighbors x via vnext
+        for each edge (vnext, x) do
+            dist[x] = min(
+                dist[x],
+                dist[vnext] + w(vnext, x)
+            )
+
+        # Mark vnext as the most recently finalized vertex
+        last = vnext
+
+        # Add vnext to the set of known (finalized) vertices
+        known = known ∪ { vnext }
+
+This basic idea similar to prim's alg. In each iteration, we add
+exactly one vertex to tree of vertices for which we know shortest
+path from s. as in prim's, we keep track of the best path seen to
+date for all vertices outside the tree, and insert them in order
+of increasing cost.
+
+Difference betweem Dijskstras and Prims is how they rate 
+desiriability of each outside vertex. In a MST problem, all we
+cared about was weight of next potential tree edge. In shortest
+path, we want to include closest outside vertex (in shortest
+path distance) to s. This is a function of both new edge weight
+and distance from s to tree vertex it's adjacent to.
+
+--------------
+implementation
+--------------
+
+This alg finds more than just shortest path from s to t. It finds
+shortest path from s to all other vertices. This defs shortest
+path spanning tree rooted in s. For undir graphs, this would be
+BFS, but in general it provides shortest path from s to all other
+verts.
+
+Analysis
