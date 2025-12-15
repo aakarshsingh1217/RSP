@@ -1,0 +1,292 @@
+*********************
+Introduction to big O
+*********************
+
+- Algorithm is recipe for computer to follow
+- takes input and produces output
+- an alg that takes an array called nums as input,
+and outputs largest number in nums:
+
+1. creates var maxNum = 0
+2. iterates over each num in nums
+3. if num > maxNum, maxNum = num
+4. print maxNum
+
+- Algorithms should be deterministic (Given same 
+input, always produce same output, no randomness)
+- Algorithm should be correct for any arbitrary
+valid input (e.g. nums is a non-empty arr of
+positive ints from example, but if nums contained
+negative numbers, input would be invalid as alg
+requires positive nums)
+- to fix above, init maxNum could be first elem
+of nums to ensure max val is always selected
+from arr.
+
+*****
+Big O
+*****
+
+- Big o notation describes computational Complexity
+of an alg.
+- computational complexity consists of:
+
+1. time complexity (amount of time alg needs to run 
+relative to input size)
+2. space complexity (amount of memory used by alg
+relative to input size)
+
+- time complexity: as input size grows, how much
+longer does alg take to complete?
+- space complexity: as input size grows, how much
+more memory does alg use?
+
+********************
+How complexity works
+********************
+
+- complexity described by math fomrula
+- variables defined by you, but should represent vals
+that affect alg (e.g. n, length of input arr e.g.
+n = length of nums)
+- "length of nums" is a val that changes between
+inputs and directly affects alg.
+- longer nums is, more elems need to iterate through,
+and alg takes longer to complete.
+- When dealing with ints, the larger the int, the
+more time operations like addition, multip. etc.
+will take.
+- Ignore this fact because difference is very small,
+so treat all ints the same.
+- If given arr of ints as input, only var you'd use
+is n to denote length of arr.
+- example complexities:
+
+- O(n)
+- O(n^2)
+- O(2^n)
+- O(log n)
+- O(n * m)
+
+- m in this case is another arr where n denotes
+length of first arr and m of second arr.
+
+**********************
+Calculating complexity
+**********************
+
+- Roughly, func calcs num of operations or amount of
+memory (depending on if analyzing time/space compl)
+your alg consumes relative to input size.
+- Using find largest num in nums, we have time compl
+O(n)
+- alg iters over each elem in nums (and n is defined
+as length of nums) and alg uses n steps.
+- if arr with length 10 passed, approx 10 steps
+performed.
+- Time complexity not exact repr of num of opers,
+e.g. initializing maxNum = 0 and outputting
+maxNum are operations. But point of time complexity
+is to how describe num of operations changes as
+input changes, and maxNum = 0 doesnt depend on
+nums, but number of iterations does.
+
+-----
+Rules
+-----
+
+- Ignore constants
+- O(9999999n) = O(8n) = O(n) = O(n / 500)
+- Why? Imagine you had two algs. Alg A uses n opers
+and alg B uses 5n opers.
+- When n = 100, A uses 100 opers and B uses 500 opers.
+- When n = 100 doubles, A uses 200 and B uses 1000 opers.
+- When n is doubled, both algs require double the amt of
+opers.
+- Point of complexity is to analyze alg as input size
+changes. Don't care that B is 5x slower than A.
+- For both algs, as input size increases, number of opers
+increases linearly. So, both algs O(n)
+
+- Second rule: consider complexity as vars tend to infinity.
+- When we have add/subtract between terms of same var, Ignore
+all except most powerful one.
+- E.g. O(2^n + n^2 - 500n) = O(2^n), because as n tends to
+infinity, 2^n becomes so large other two terms are basically
+0
+- if alg required n + 500 opers, its time compl is O(n),
+because for n = 5 the +500 term is significant, but as
+n -> infinity, 500 is nothing.
+- Best complexity is O(1) (constant time or space), means
+alg always uses same resources regardless of input
+- Constant time doesn't mean alg is fast (e.g. O(5000) = 
+O(1)), just means runtime is independent of input size
+- Complexity normally has three cases:
+
+- Best case
+- Average case
+- Worst case
+
+- In most algs, all three equal, but some algs have them
+differ. Never choose best case to repr alg's time and
+space complexity, most correct to use worst case, but
+should be able to talk about difference between cases.
+
+*************************
+Analyzing time complexity
+*************************
+
+- Analyze each pseudocode:
+
+// Given an integer array "arr" with length n,
+
+for (int num: arr) 
+{
+    print(num)
+}
+
+- Alg has time complexity of O(n) (in each for loop iter,
+perform a print which costs O(1). For loop iters n times,
+which gives O(1 * n) = O(n))
+
+// Given an integer array "arr" with length n,
+
+for (int num: arr) 
+{
+    for (int i = 0; i < 500,000; i++) 
+    {
+        print(num)
+    }
+}
+
+- Time compl O(n) (each inner for loop iter performs print,
+costs O(1). Inner loop iters 500000 times, means each outer 
+for loop costs O(500000) = O(1). Outer for loop iters n 
+times, which gives complexity O(n))
+- Even though first two algs have same time compl, reality
+2nd alg much slower than first
+- Correct to say both are O(n) but important to discuss
+differences between practicality and theory.
+
+// Given an integer array "arr" with length n,
+
+for (int num: arr) {
+    for (int num2: arr) {
+        print(num * num2)
+    }
+}
+
+- Time compl O(n^2) (each inner for loop iter perfs multip
+and print, both O(1). Inner for loop runs n times, meaning
+each outer for loop costs O(n), and outer for loop runs
+O(n) times, which gives time compl O(n * n) = O(n^2))
+
+// Given integer arrays "arr" with length n and "arr2" with length m,
+
+for (int num: arr) {
+    print(num)
+}
+
+for (int num: arr) {
+    print(num)
+}
+
+for (int num: arr2) {
+    print(num)
+}
+
+- Time compl O(n + m), first two loops O(n) and final loop O(m),
+O(2n + m) = O(n + m)
+
+// Given an integer array "arr" with length n,
+
+for (int i = 0; i < arr.length; i++) {
+    for (int j = i; j < arr.length; j++) {
+        print(arr[i] + arr[j])
+    }
+}
+
+- Time compl O(n^2). Inner loop dependent on what iter outer
+is on, first inner runs n times, second runs n - 1 times,
+n - 2 etc.
+- Total iters = 1 + 2 + 3 + ... + n, partial sum of series,
+which equals (n^2 + m) / 2. This is O(n^2) as add term in
+numerator and denom constant discarded
+
+----------------
+Logarithmic time
+----------------
+
+- Log is inverse oper to exponents. Time compl O(log n) is
+called log time and is very fast
+- Common time compl is O(n * log n) which is reasonbly fast
+and time compl of efficient sorting algs
+- Typically, base of log will be 2. Meaning if your input
+size is n, then alg will perform x opers, where 2^x = n.
+- Base of log doesn't matter for big O, since all logs
+are related by constant factor.
+- O(log n) means somewhere in alg, input's being reduced
+by a percentage at each step.
+- In binary search (which runs in O(log n) time), you
+initially consider n elems, then after first step consider
+n / 2 elems, after 2nd step n / 4 elems etc.
+- Each step you're reducing search space by 50%, which gives
+log time complexity.
+
+**************************
+Analyzing space complexity
+**************************
+
+- When initializing vars like arrs or strs, your alg is 
+allocating memory. Never count space used by input (bad 
+practice to modify input) and usually dont count space 
+used by output (answer) unless asked
+
+- Pseudocode examples (code only allocs memory, so consider
+everything we alloc as part of space compl)
+
+// Given an integer array "arr" with length n
+
+for (int num: arr) {
+    print(num)
+}
+
+- Space compl of O(1) (only space allocd integer var 
+num, which is constant relative to n)
+
+// Given an integer array "arr" with length n
+
+Array doubledNums = int[]
+
+for (int num: arr) {
+    doubledNums.add(num * 2)
+}
+
+- Space compl O(n), arr doubledNums stores n ints
+at end of alg
+
+// Given an integer array "arr" with length n
+
+Array nums = int[]
+int oneHundredth = n / 100
+
+for (int i = 0; i < oneHundredth; i++) {
+    nums.add(arr[i])
+}
+
+- Space compl O(n), arr nums stores first 1%
+of nums in arr, giving space compl O(n / 100)
+= O(n)
+
+// Given integer arrays "arr" with length n and "arr2" with length m,
+
+Array grid = int[n][m]
+
+for (int i = 0; i < arr.length; i++) {
+    for (int j = 0; j < arr2.length; j++) {
+        grid[i][j] = arr[i] * arr2[j]
+    }
+}
+
+- Space compl O(n * m), creating grid with
+dimensions n * m

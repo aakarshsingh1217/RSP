@@ -1,0 +1,91 @@
+- Recursion is implemented using a function
+that calls itself
+- opposite of recursive alg is iterative alg
+- print nums 1 to 10:
+
+function fn(i):
+    if i > 10:
+        return
+
+    print(i)
+    fn(i + 1)
+    return
+
+fn(1)
+
+- func needs a base case (if i > 10) to make 
+recursion stop, base cases are conditions at 
+start of recursive func that terminates calls.
+- after fn(10), fn(11) called, but base case
+triggered with empty return and goes all
+the way back to fn(1) until alg terminates
+- In recursion, calls cascade ontop of each
+other, pseudocode example:
+
+function fn(i):
+1.  if i > 3:
+2.    return
+
+3.  print(i)
+4.  fn(i + 1)
+5.  print(f"End of call where i = {i}")
+6.  return
+
+fn(1)
+
+- If you ran this code, you would see the 
+following in the output:
+
+// 1
+// 2
+// 3
+// End of call where i = 3
+// End of call where i = 2
+// End of call where i = 1
+
+- fn(4) triggers the base case, which returns. 
+We are now back in the function call where i = 3 
+and line 4 has finished, so we move to the line 5 
+which prints "End of call where i = 3"
+- every func call exists until it returns, when
+moving to new func call, old one waits till it
+returns, order in which calls happens is
+remembered
+- func call has its own local scope, f(3) call
+means there's 3 versions of i simultaneously
+
+**********************
+Breaking problems down
+**********************
+
+- Fibonacci nums are seq of nums starting w/ 0,
+1, then each num defined as sum of two previous
+nums (0, 1, 1, 2, 3, ...)
+- Called recurrence relation, Fn = Fn-1 + Fn-2
+- Pseudocode to return nth fibonacci num (0 
+indexed), which needs base cases F(0) = 0 and
+F(1) = 1:
+
+function F(n):
+    if n <= 1:
+        return n
+
+    oneBack = F(n - 1)
+    twoBack = F(n - 2)
+    return oneBack + twoBack
+
+- If you called F(3):
+
+oneBack = F(2)
+    oneBack = F(1)
+        F(1) = 1
+    twoBack = F(0)
+        F(0) = 0
+    F(2) = oneBack + twoBack = 1
+twoBack = F(1)
+    F(1) = 1
+F(3) = oneBack + twoBack = 2
+
+- F(3) broken down into two smaller subproblems - 
+F(2) and F(1) through combining recurrence rel
+and base cases

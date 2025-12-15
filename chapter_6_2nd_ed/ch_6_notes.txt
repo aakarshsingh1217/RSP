@@ -753,4 +753,380 @@ path spanning tree rooted in s. For undir graphs, this would be
 BFS, but in general it provides shortest path from s to all other
 verts.
 
+--------
 Analysis
+--------
+
+Complexity of Dijkstra's is O(n^2), same running time as proper
+version of Prim's alg, except for extension condition it is the
+same alg as Prim's.
+
+Length of shortest path from start to a given vertex t is exactly
+the value of distance[t]. How do we use dijkstra to find actual
+path? We follow backward parent pointers from t until we hit start
+(or -1 if no such path exists).
+
+Dijsktra works correctly on graphs without negative cost edges.
+Reason is that midway through execution we may encounter edge
+with weight so negative that it changes cheapest way to get
+from s to some other vertex already in tree. Indeed, most
+cost effective way from your home to neighbour would be
+repeatedly through lobby of any bank offering you enough
+money to make detour worthwhile.
+
+Most apps don't feature negative weight edges. Floyds alg
+work correctly unless there're negative cost cycles, which
+distorts shortest path structure. Unless bank limits its
+rewards to one per customer, you might benefit by making
+an infinite num of trips through lobby that you'd never
+decide to reach your dest!
+
+*****************************
+Shortest path with node costs
+*****************************
+
+Suppose we're given a graph whose weights are on vertices,
+instead of edges. Thus, cost of path from x to y is sum
+of weights of all vertices on path.
+
+Find an efficient alg for finding shortest path on
+weighted-vertex graphs.
+
+Sol: Natural idea would be to adapt alg for edge weighted
+graphs (Dijkstras) to new vertex weighted domain. It should
+be clear that we can do it. We replace any reference to weight
+of edge with weight of dest vertex. This can be looked up as
+needed from an array of vertex weights.
+
+however, pref approach leave Dijkstras alg intact and instead
+concentrate on constructing an edge weighted graph on which
+Dijkstras alg will give desired answer. Set weight of each
+directed edge (i, j) in input graph to cost of vertex j.
+Dijkstras now does job. Technique can be extended to variety
+of domains, such as when there's costs on both vertices and
+edges.
+
+***********************
+All-Pairs shortest path
+***********************
+
+Suppose you want to find center vertex in a graph - one that
+minimizes longest or avg distance to all other nodes. This
+might be to know graphs diamater - longest shortest path
+distance over all pairs of vertices.
+
+We could solve all pairs shortest path by calling Dijkstras
+alg from each of n possible starting vertices. But Floyds
+all pairs shortest path alg is a slick way to construct
+a n * n distance matrix from original weight matrix of
+graph.
+
+Floyds alg is best employed on adjacency matrix data structure,
+which is no extravagance since we must store all n^2 pairwise
+distances anyway. Our adj_matrix type allocs space for largest
+possible matrix, and keeps track of how many vertices in
+graph.
+
+typedef struct {
+int weight[MAXV+1][MAXV+1]; /* adjacency/weight info */
+int nvertices; /* number of vertices in graph */
+} adjacency_matrix;
+
+Critical issue in adj matrix implementation is how we denote
+edges absent from graph. A common convention for unweighted
+graphs denotes graph edges by 1 and non edges by 0. This
+gives wrong interp if numbers denote edge weights, for non
+edges get interp as a free ride between vertices. Instead,
+init each non edge to MAXINT. This way we can both test
+whether it's present and automatically ignore it in
+shortest path computations, since only real edges'll
+be used, provided MAXINT less than diameter of graph.
+
+Several ways to characterize shortest path between 2 nodes
+in graph. Floyd-Warshall alg starts by numbering vertices
+of graph from 1 to n. We use these numbers not to label
+vertices, but to order them. Define W[i, j]^k to be length
+of shortest path from i to j using only vertices numbered
+from 1, 2, ..., k as possible intermediate vertices.
+
+What does this mean? When k = 0, allowed no intermediate
+vertices, so only allowed paths are original edges in graph.
+Thus, init all pairs shortest path matrix consists of
+initial adjacency matrix. We'll perform n iterations,
+where kth iteration allows only first k vertices as
+possible intermediate steps on path between each pair
+of vertices x and y.
+
+At each new iteration, we allow a richer set of possible
+shortest paths by adding a new vertex as possible intermediate,
+allowing kyth vertex as a stop helps only if there's A
+short path that goes through k, so:
+W[i,j]^k = min(W[i,j]^(k−1),W[i,k]^(k−1) + W[k,j]^(k−1))
+
+Floyd warshall all pairs shortest path runs in O(n^3) time,
+which is asymptotically no better than n calls to Dijkstras.
+However, loops are so tight and program so short that it
+runs better in practice. It's notable as one of the rare 
+graph algs that work better on adj matrices than adj 
+lists.
+
+Output of Floyds alg does not enable one to reconstruct
+actual shortest path between any given vertices. these
+paths can be recovered if we retain parent matrix p
+of our choice of last intermediate vertex used for each
+vertex pair (x, y). Say this value's k. Shortest path from
+x to y is concat of shortest path from x to k with shortest
+path from k to y, which can be reconstruct recursively
+given matrix P.
+
+********************
+Transisitive Closure
+********************
+
+Floyd's alg has another important appl, that of computing
+transistive closure. In analyzing a dir graph, we're
+often interested in which vertices are reachable from
+a given node.
+
+As an e.g., consider blackmail graph, where there's a dir
+edge (i, j) if person i has sensitive info on pers j so that
+i can get j to do whatever he wants. You wish to hire one of these n ppl 
+to be your personal repr. Who has the most power in terms
+of blackmail potential?
+
+A simplistic ans would be vertex of highest degree, but an
+even better repr would be a person who has blackmail chains
+leading to the most other parties. Steve might only be able 
+to blackmail Miguel dir, but if miguel can blackmail every1
+else then steve is the man you want to hire.
+
+Vertices reachable from any single node can be computed
+using BFS or DFS. But whole batch can be computed using
+an all pairs shortest path. If shortest path from i to j
+remains MAXINT after runnign Floyds alg, you can be sure
+no directed path exists from i to j. Any vertex pair of
+weight less than MAXINT must be reachable, both in graph
+theoretic and blackmail senses of the word.
+
+************************************
+Network flows and bipartite matching
+************************************
+
+Edge weighted graphs can be interpreted as network of pipes,
+where weight of edge (i, j) determines capacity of pipe.
+Capacities can be thought of as a func of cross sectional
+area of pipe. A wide pipe might be able to carry 10 unit
+of flow, whilst a narrower pipe might only carry 5 units.
+Network flow problem asks for max amount of flow which
+can be sent from vertices s to t in a given weighted graph
+G while respecting max capacities of each pipe.
+
+------------------
+Bipartite matching
+------------------
+
+While network flow prob is of independent interest, its
+primary importance is in solving other important graph
+probs. A classic example is bipartite matching. a
+matching in a graph G = (V, E) is a subset of edges
+E' is a proper subset of E such that no two edges of E'
+share a vertex. A matching pairs off certain vertices
+such that every vertex is in, at most, one such pair.
+
+Graph G is bipartite or two colorable if vertices can
+be divided into two sets, L and R, such that all edges
+in G have one vertex in L and one vertex in R. E.g.
+certain vertices may repr jobs to be done and remaining
+vertices repr people who could do them. Existence of
+edge (j, p) means job j can be done by person p.
+
+Largest bipartite matching can be readily found using
+network flow. Create a source node s that's connected
+to every vertex in L by an edge weight of 1. Now, max
+possible flow from s to t defines largest matching in
+G. Certaingly, we can find a flow as large as matching
+by using only matching edges and their source to sink
+connections. Further, there can be no greater possible
+flow. How can we ever hope to get more than one flow
+unit through any vertex?
+
+--------------------
+explanation of above
+--------------------
+
+Maximum bipartite matching = maximum flow after converting 
+the bipartite graph into a flow network where every vertex 
+can be used at most once.
+
+Step-by-step idea
+
+You start with a bipartite graph:
+- Left side: L (e.g. jobs)
+- Right side: R (e.g. people)
+- Edge (j, p) means person p can do job j
+A matching means:
+- Each job is assigned to at most one person
+- Each person does at most one job
+
+Flow-network construction
+
+Convert it into a flow graph:
+1. Add a source s
+2. Add a sink t
+3. Connect:
+  - s → each job with capacity 1
+  - each person → t with capacity 1
+  - job → person edges (from original graph) with capacity 
+    1
+All capacities are 1.
+
+Why this works
+
+Capacity 1 on s → job
+→ a job can only be used once
+Capacity 1 on person → t
+→ a person can only be used once
+Capacity 1 on job–person edges
+→ a job-person pair can only be matched once
+
+So any flow path:
+s → job → person → t
+represents one valid match
+
+Small example
+Original bipartite graph
+
+Jobs: {J1, J2}
+People: {P1, P2}
+
+Edges:
+
+J1 → P1
+J1 → P2
+J2 → P2
+
+Flow network
+s → J1 → P1 → t
+s → J1 → P2 → t
+s → J2 → P2 → t
+
+Maximum flow
+
+One unit: s → J1 → P1 → t
+One unit: s → J2 → P2 → t
+Total flow = 2
+
+Because the flow network only includes edges that 
+existed in the original bipartite graph.
+If there was no edge between J2 and P1 originally, 
+then there is no path s → J2 → P1 → t.
+
+--------------------------------------
+Explanation of computing network flows
+--------------------------------------
+
+A network flow algorithm repeatedly looks for an augmenting 
+path—a path from source s to sink t along which we 
+can push more flow. To find these paths, we build 
+the residual graph, which shows how much extra flow can 
+still be sent forward on each edge, and how much flow 
+can be “sent back” (undone) if we want to reroute it. 
+If no path from s to t exists in the residual graph, 
+then the current flow is maximum. At that point, the 
+total flow equals the size of the minimum s–t cut 
+(the smallest set of edges whose removal disconnects 
+s from t).
+
+Tiny example
+Original graph G
+s ──(5)──► a ──(3)──► t
+s ──(4)──► b ──(4)──► t
+Edge labels are capacities.
+
+Step 1: Push flow
+- Send 3 units along s → a → t (limited by a → t)
+- Send 4 units along s → b → t (limited by s → b)
+- Total flow = 7
+
+Step 2: Build the residual graph R(G,f)
+
+For each edge (i,j) with capacity c and flow f:
+- Forward edge (i,j) with capacity c − f (if > 0)
+- Backward edge (j,i) with capacity f (if > 0)
+
+Result:
+
+a → t: 3 − 3 = 0 → gone
+t → a: capacity 3 (can undo flow)
+s → b: 4 − 4 = 0 → gone
+b → s: capacity 4
+s → a: 5 − 3 = 2
+b → t: 4 − 4 = 0
+
+Step 3: Look for augmenting paths
+
+In the residual graph:
+- There is no path from s to t
+- Therefore, no more flow can be pushed
+The flow is maximum
+
+Step 4: Minimum cut intuition
+
+The two edges into t:
+
+a → t (capacity 3)
+b → t (capacity 4)
+
+*****************************
+Design graphs, not algorithms
+*****************************
+
+Secret is learning to design graphs, not algs. We've
+already seen a few instances of this:
+
+- maximum spanning tree can be found by negating edge
+weights of input graph G and using a minimum spanning
+tree alg on the result. Most negative weight spanning
+tree will def max weight tree in G.
+
+-------------------------------
+Pink panthers passport to peril
+-------------------------------
+
+I'm looking for an alg to design natural routes for
+video game characters to follow through an obstacle
+filled room. How?
+
+Sol: Presumably the desired route should look like a
+path that an intelligent being would choose. Since
+intellig beings are either lazy or efficient, this
+should be modeled as a shartest path problem.
+
+But what's a graph? One approach might be to lay A
+grid of points in the room. Create a vertex for each
+grid point that's a valid place for the character to
+stand, i.e. that doesn't lie within an obstacle.
+There'll be an edge between any pair of nearby
+vertices, weighted proportionally to distance b/W
+them.
+
+---------------------
+Ordering the sequence
+---------------------
+
+Problem: DNA sequencing project generates experimental
+data consisting of small fragments. For each fragment
+f, we know certain other fragments are forced to lie
+left of f, and certain other frags are forced to be on
+right of f. How can we find a consistent ordering of
+fragments from left to right that satisfies all
+constraints?
+
+Sol: Create a directed graph, where each frag is assigned
+a unique vertex. Insert a directed edge ->(l, f) from any
+frag l that is forced to be to left of f, and a dir edge
+(f, r)-> to any frag r that's forced to be to right of f.
+We seek ordering of vertices such that all edges go from
+left to right. This is a topological sort of resulting
+directed acyclic graph. Graph mujst be acyclic, because
+cycles make consistent ordering impossible.
