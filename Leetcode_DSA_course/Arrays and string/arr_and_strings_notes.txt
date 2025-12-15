@@ -1,0 +1,39 @@
+**********************************************
+Time complexity of array and string operations
+**********************************************
+
+| Operation                    | Array/List | String (Immutable)  |
+|------------------------------|------------|---------------------|
+| Appending to end             | O(1)*      | O(n)                |
+| Popping from end             | O(1)       | O(n)                |
+| Insertion (not from end)     | O(n)       | O(n)                |
+| Deletion (not from end)      | O(n)       | O(n)                |
+| Modifying an element         | O(1)       | O(n)                |
+| Random access                | O(1)       | O(1)                |
+| Checking if element exists   | O(n)       | O(n)                |
+
+| Why |
+|-----|
+- Arrays/lists usually have extra capacity, so appending just writes
+to the next slot (amortized). Strings are immutable, so a new string 
+of length n+1 must be created and copied.
+  - amortized O(1) (occasionally resizing costs O(n), but averaged 
+    out, e.g. lets say list reserved size is 8 elems and it doubles
+    when space runs out, and you want to push 50 elems, first 8 elems
+    is O(1), 9th triggers reallocation and 8 copies, followed by O(1)
+    push, etc. etc., all pushes have O(1) compl, O(1) copies and O(n)
+    realloc, this is a geom series and asymptotically equals O(n),
+    therefore whole oper of pushing n obj onto list is O(n), amortized
+    per elem is O(n) / n = O(1))
+- Arrays/lists just decrement size. Strings must create a new string 
+missing the last character, copying all n−1 characters.
+- Arrays/lists must shift elements to make space. Strings must copy 
+all characters into a new string with the insertion.
+- Arrays/lists shift elements left to fill the gap. Strings must copy 
+everything except the deleted character.
+- Arrays/lists allow direct overwrite at an index. Strings can’t be 
+changed, so a full copy is needed.
+- Both arrays and strings store elements contiguously, so index-based 
+access is constant time.
+- No ordering or hashing assumed, so a linear scan is required in both 
+cases.
