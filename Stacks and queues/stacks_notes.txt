@@ -1,0 +1,52 @@
+- Stack is an ordered collection of elems. where elems.
+are only added/removed from same end.
+- In real world, e.g. of a stack would be a stack of
+plates in kitchen - you add/remove plates from top of
+pile.
+- In software, good e.g. of stack is history of current
+browser tab.
+  - Let's say you're on site A and click a link to go to
+  site B, then from B you go to site C, everytime you 
+  click a link, you're adding to stack and your history
+  is [A, B, C].
+  - When you click back arrow, you're removing from stack
+  , click once and you have [A, B].
+- Term for stacks is LIFO (last in, first out), because
+last (most recent) elem. placed inside is first elem.
+to come out.
+
+- Stacks're simple to implement.
+- In python, you can just use a list stack = [] and use
+stack.append(elem) or stack.pop().
+- Inserting into stack is called pushing and removing
+from stack is called popping.
+- Can also peek (looking at elem. on top of stack).
+
+- Time complexitry of stack opers. is dependent on
+implementation.
+- With dynamic arr., time complexity of opers. is
+same as that of a dynamic arr. (O(1) push, pop and
+random access, and O(n) search).
+- Stack can also be implemented with a LL w/ a tail
+ptr.
+
+- Characteristic that makes something a stack is that
+you can only add & remove elems. from same end, doesn't
+matter how you implem. it, a "stack" is just an abstract
+interf.
+- Stacks and recursion are very similar, becaause recursion
+is done using a stack.
+- Func. calls are pushed on a stack, call at top of stack
+at any given moment is 'active' call, on a ret. statement
+or end of func. being reached, curr. call is popped off
+stack.
+
+- For alg. problems, stack is good option whenever you
+see LIFO pattern.
+- Usually, there'll be some component of the problem
+that involves elems. in the input interacting w/ each
+other.
+- Interacting could mean matching elems. together,
+querying some property i.e. "how far's the next largest
+elem." etc.
+- Sometimes LIFO property hard to see.

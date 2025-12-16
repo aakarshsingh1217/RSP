@@ -1,0 +1,42 @@
+- Monotonic: (of a func or quantity) varying in such
+a way that it either never decr. or never incr.
+
+- A monotonic stack/queue is one whose elems. are
+always sorted.
+- Can either be sorted ascending or descending.
+- Monotonic stacks & queues maintain their sorted
+property by removing elems. that would violate the
+property before adding new elems.
+- E.g., lets say you had a monotonically incr. 
+stack, current stack = [1, 5, 8, 15, 23].
+- You want to push 14 onto stack, to maintain sorted
+propr., need to first pop 15 and 23 before pushing 14,
+after push we have stack = [1, 5, 8, 14].
+
+- Pseudocode for maintaining a monotic incr. stack
+over an input arr:
+
+Given an integer array nums
+
+stack = []
+for num in nums:
+    while stack.length > 0 AND stack.top >= num:
+        stack.pop()
+    // Between the above and below lines, do some logic depending on the problem
+    stack.push(num)
+
+- Before we push a num onto stack, we first check if
+monotonic property would be violated, and pop elems.
+until it won't be.
+
+- Depsite nested loop, time compl. is still O(n), where
+n is length of arr., because inner while loop can only
+iter. over each elem. once across all for loop iters.,
+making for loop iters. amortized O(1).
+
+- Monotonic stacks/queues useful in probs. that, for each
+elem., involves finding "next" elem. based on some
+criteria, e.g., next greater elem.
+- Also good for when you have a dynamic window of elems.
+and want to maintain knowledge of max or min elem. as
+window changes.

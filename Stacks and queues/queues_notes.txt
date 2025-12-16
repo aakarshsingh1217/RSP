@@ -1,0 +1,35 @@
+- Queue follows FIFO pattern (first in first out).
+- Elems. are added and removed from opposite sides.
+
+- E.g. of a queue in real world is a fast food line,
+people leave line when they finish ordering (from 
+the front) and people enter line from back (opposite
+ends).
+- E.g. of queue in software is any system that handles
+jobs first come, first serve basis.
+
+- Queues trickier to implem. than stacks if you want
+to maintain good performance.
+- Like stack, could use dynamic arr., but opers. at
+front of array (adding or removal) are O(n), where
+n is size of array.
+- Adding to queue is called enqueue and deletions
+called dequeue, if you want them to be O(1) you
+need more sophisticated implem.
+
+- One way to implement an efficient queue is by
+using doubly LL.
+- W/ a doubly LL, if you have pointer to a node,
+you can add or del. at that location in O(1).
+- A doubly LL that maintains pointers to head and tail
+(both ends w/ sentinel nodes) can implem. an efficient
+queue.
+
+- Also a data struct. called a deque, short for
+double-ended queue.
+- In a deque, you can add or delete elems. from both
+ends, while a normal queue designated adding to
+one end and deleting from other end.
+
+- For alg. probs., queue less common then stacks,
+but can be used for BFS.
