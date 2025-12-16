@@ -1,0 +1,189 @@
+- A node is an elem., but with more info. than
+just one piece of data like an int or a string.
+- Say you had array [1, 2, 3], imagine each elem.
+as a node with 2 pieces of info.: int and index:
+  - data: 2
+    index: 1
+
+- Arrays under the hood are elements stored
+contiguously in memory.
+- If array holds 32 bit ints, each elem. in array
+is at an address 4 bytes (32 bits) away from
+neighbours, which is why you can access elems. in
+an array with indexing (e.g. arr[6]).
+
+- A Linked List is a data structure similar to an
+array which stores data in an ordered manner, but
+it's implemented with node objects that have next
+pointers which point at node representing next
+elem. in sequence.
+
+- First node is head because it's start of linked
+list.
+- Usually keep reference to head because it's only
+node where you can reach all elems. of linked list
+(can't go backwards), so by keeping reference to
+it you ensure you don't lose any elems.
+
+***********************************************
+Advantages and disadvantages compared to arrays
+***********************************************
+
+- Usually you're forced to use a linked list 
+because it's the input.
+
+- Main advantage of a linked list is you can add
+and remove elements at any position in O(1).
+- Caveat is you need to have reference to node
+at position you want to perf. add/remove, other
+wise oper. is O(n), because you need to iterate
+from start of head until you get to desired
+position.
+- Still much better than normal (dynamic) array,
+which requires O(n) for adding and removing from
+arbitrary position.
+
+- Main disadvantage of linked list is there's no
+random access
+- If you have a large linked list and want to
+access 150,000th elem., no better way than 
+starting at head and iterating 150,000 times.
+- While array has O(1) indexing, a LL could req.
+O(n) to access an elem.
+
+- Linked lists have advantage of not having fixed
+sizes.
+- While dynamic arrays can be resized, under the
+hood they're still alloc'd a fixed size - when
+size's exceeded, array is resized (which is 
+expensive).
+- LLs don't suffer from this, but have more 
+overhead than arrays - every elem. needs extra
+storage for pointers (if you're only storing
+small items like bools or chars, then you may
+be more than doubling space needed).
+
+**************************
+Mechanics of a linked list
+**************************
+
+- Assignment:
+  - When you assign a pointer to an existing
+  list node, pointer refers to obj in mem.
+  - Lets say you have a node head:
+    - ptr = head
+      head = head.next
+      head = None
+      - After these lines of code, ptr still
+      refers to original head node, even though
+      head var is changed.
+  - First important concept: variables remain at
+  nodes unless they're modified directly (ptr = 
+  something only way to modify ptr).
+
+- Chaining .next
+  - If you have multiple .next, e.g. head.next.next,
+  everything before final .next refers to one node.
+  - E.g. given LL 1 -> 2 -> 3, if you have head
+  pointing at first node, and you do head.next.next,
+  you're referring to 2.next, because head.next is 2.
+
+- Traversal
+  - Iterating forward done with simple loop:
+    - def get_sum(head):
+        ans = 0
+        while head:
+            ans += head.val
+            head = head.next
+    
+        return ans
+  - Traversal can also be done recursively:
+    - def get_sum(head):
+      if not head:
+          return 0
+    
+      return head.val + get_sum(head.next)
+
+*********************
+Types of linked lists
+*********************
+
+------------------
+Singly linked list
+------------------
+
+- Each node only has a pointer to next node (so you
+can move forward in list when interating).
+- If you want to add an elem. at position i, you 
+need pointer to elem. at position i - 1.
+- Next elem. (currently at pos. i), called x, will
+be pushed to elem. at pos. i + 1 after insertion
+(so x should become next node of one being added,
+and node being added should become next node to 
+node at i - 1).
+
+- # Let prev_node be the node at position i - 1
+  def add_node(prev_node, node_to_add):
+      node_to_add.next = prev_node.next
+      prev_node.next = node_to_add
+
+- When you have reference to node at i - 1, insertion
+and deletion is O(1).
+- Without this reference, you need to obtain reference
+by iterating from head, which is arbitrary pos. O(n).
+
+------------------
+Doubly linked list
+------------------
+
+- Like singly LL, but each node contains a pointer to
+prev. node, called prev. (allows iteration in both
+directions).
+
+- In a singly LL, need reference to node at i - 1 if
+you want to add/remove at i.
+- With doubly LL, only need reference to node at i, 
+because we can simply reference prev pointer of that
+node to get node at i - 1.
+- With doubly LL, need to do extra work to also update
+prev pointers.
+
+--------------------------------
+Linked lists with sentinel nodes
+--------------------------------
+
+- Start of LL is head and end is tail.
+- Sentinel nodes sit at start and end of LL and're used
+to make opers. and code needed to execute those opers.
+cleaner.
+- Idea is that, even when there's no nodes in LL, you
+still keep pointers to a head and tail.
+- Real head of LL is head.next and real tail is tail.prev,
+sentinel nodes themselves aren't part of LL.
+
+- E.g., if you're trying to delete last node in list,
+then nextNode will be null, and trying to access
+nextNode.next results in an error, with sentinel nodes,
+we don't need to worry because last node's next points 
+to sentinel tail.
+
+- Sentinel nodes allow us to easily add/remove from front
+or back of LL.
+- Recall add/remove is only O(1) if you have refr. to node
+at pos. we're performing oper. on (with sentinel node, we
+can perf. opers. at end of list in O(1)).
+
+--------------
+Dummy pointers
+--------------
+
+- Use a curr pointer when traversing so you don't lose ref
+to head
+
+**********
+Conclusion
+**********
+
+- Large part of linked lists is moving pointers around.
+- Point of problems is usually to manipulate pointers in a 
+clean way using O(1) space.
