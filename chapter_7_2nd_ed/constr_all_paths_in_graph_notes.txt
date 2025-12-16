@@ -1,0 +1,60 @@
+Backtracking alg to enumerate all simple paths from vertex
+s to vertex t in a graph.
+- simple path means no vertex repeated
+- build path one vertex at a time in array a[1..k]
+- at step k + 1, can only extend path to
+  - vertices adjacent to last vertex, and
+  - vertices not already used in curr path
+- every time last vertex equals t, we've found one valid path
+
+No formula for how many paths exists, depends entirely on
+graphs structure, so we must search them all.\
+
+Key idea of candidate construction:
+- Sk+1 = neighbors of ak that're not already in the path
+That's exactly what construct_candidates enforces
+
+What each function does (conceptually)
+
+construct_candidates
+- figures out which vertices can come next
+- prevents revisiting vertices (keeps path simple)
+- starts path a s (vert 1 in code)
+
+is_a_solution
+- checks: did we reach target t?
+
+process_solution
+- records solution (counts/prints path)
+
+Example graph:
+
+    1
+   /\
+2------3
+   \/
+    4
+
+Edges:
+1-2
+1-3
+2-3
+2-4
+3-4
+
+Start: s = 1
+Target: t = 4
+
+Step 1: k = 1
+a = [1]
+- special case: start must be 1
+- candidates = {1}
+
+Step 2: k = 2
+last vertex = 1
+neighbours of 1 = {2, 3}
+Not yet used -> both allowed
+Candidates = {2, 3}
+Branching begins:
+
+Branch 1: Path = 1->2

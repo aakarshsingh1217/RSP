@@ -1,0 +1,109 @@
+************************************
+Backtracking intro explanation pt. 1
+************************************
+
+Backtracking's a systematic way to explore
+all possible configs of a problem without repeats
+and without missing any.
+
+You:
+
+1. Build a solution step by step
+2. At each step, try all valid choices
+3. If a partial choice cannot possibly lead to a
+full solution, stop early and go back (backtrack)
+
+Commonly used for:
+
+- permutations
+- subsets
+- etc.
+
+Key idea: vector A = (a1, a2, ..., an)
+
+Model solution as a vector
+
+- a1 = first choice
+- a2 = second choice
+- ...
+- an = final choice
+
+Each ai chosen from finite set Si. Backtracking builds
+this vect from left to right, checking validity as it goes.
+
+How alg works:
+
+at step k, we have a partial solution:
+
+(a1, a2, ..., ak)
+
+We:
+- check if its a complete solution
+- otherwise, try all possible vals for a subscr k+1
+- recurse (depth first search)
+This implicitly builds a tree of partial solutions, explored
+using DFS.
+
+Pseudocode:
+
+Backtrack-DFS(A, k)
+
+# If the current partial solution is a complete valid solution
+if A = (a1, a2, ..., ak) is a solution then
+    report it
+
+else
+    # Move to the next position in the solution vector
+    k = k + 1
+
+    # Compute the set of all possible values for ak
+    compute Sk
+
+    # While there are still choices left to try
+    while Sk ≠ ∅ do
+
+        # Pick one candidate value for position k
+        ak = an element in Sk
+
+        # Remove this value so it isn’t reused
+        Sk = Sk − ak
+
+        # Recursively try to extend this partial solution
+        Backtrack-DFS(A, k)
+
+Simple example: generatingn all binary strings of length
+2
+
+Let:
+- a1, a2 be an element of {0, 1}
+
+Start:
+A = ()
+k = 0
+
+Choices:
+a₁ = 0 → a₂ = 0 → solution: 00
+                 → a₂ = 1 → solution: 01
+a₁ = 1 → a₂ = 0 → solution: 10
+                 → a₂ = 1 → solution: 11
+
+Backtracking tree (conceptually)
+
+        ()
+       /  \
+     (0)  (1)
+     / \  / \
+  (00)(01)(10)(11)
+
+Each node partial sol, and DFS ensures:
+- every config generated
+- no duplicates
+- no missed sols.
+
+-------
+Summary
+-------
+
+Backtracking is a DFS over a tree of partial sols, where
+we build sols incrementally and abandon paths that cannot
+lead to valid complete answers.

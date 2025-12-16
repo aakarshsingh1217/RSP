@@ -1,0 +1,125 @@
+bool finished = FALSE; /* found all solutions yet? */
+
+backtrack(int a[], int k, data input)
+{
+    int c[MAXCANDIDATES];   /* candidates for next position */
+    int ncandidates;        /* next position candidate count */
+    int i;                  /* counter */
+
+    if (is_a_solution(a, k, input))
+        process_solution(a, k, input);
+    else {
+        k = k + 1;
+
+        construct_candidates(a, k, input, c, &ncandidates);
+
+        for (i = 0; i < ncandidates; i++) {
+            a[k] = c[i];
+            make_move(a, k, input);
+            backtrack(a, k, input);
+            unmake_move(a, k, input);
+
+            if (finished) return; /* terminate early */
+        }
+    }
+}
+
+This implementation performs a DFS over the space of partial
+solutions stored in arr a.
+
+At any moment:
+- a[1..k] represents a partial solution
+- each recursive call extends sol by one position
+- every possible config is generated exactly once
+
+Correctness comes from systematic enumeration.
+Efficiency comes from never revisting a state and pruning via
+early termination (finished).
+
+Each recursive call has its own local candidate arr c,
+so choices at different depths don't interfere with each
+other.
+
+Role of the five application-specific routines
+
+is_a_solution(a, k, input)
+
+Checks whether the current prefix a[1..k] is a complete 
+valid solution.
+Usually checks if k == n (or some goal condition).
+
+construct_candidates(a, k, input, c, &ncandidates)
+
+Computes all valid choices for position k, 
+given the earlier choices a[1..k-1].
+This is where constraints are enforced 
+(e.g. “don’t reuse elements”).
+
+process_solution(a, k, input)
+
+Handles a completed solution:
+- print it
+- count it
+- store it
+- or stop early by setting finished = TRUE
+
+make_move(a, k, input)
+
+Updates auxiliary data structures to reflect choosing a[k].
+Used for incremental state updates (fast).
+
+unmake_move(a, k, input)
+
+Reverses the effects of make_move.
+Restores the state so the next candidate can be tried safely.
+
+Example: generating permutations of {1,2,3}
+
+Let:
+- input.n = 3
+- a[k] = number placed in position k
+- A boolean array used[x] tracks which numbers are already chosen
+
+How each routine defined:
+
+is_a_solution
+
+return (k == input.n);
+
+construct_candidates
+
+ncandidates = 0;
+for (int i = 1; i <= input.n; i++) {
+    if (!used[i]) {
+        c[ncandidates++] = i;
+    }
+}
+
+make_move
+
+used[a[k]] = TRUE;
+
+unmake_move
+
+used[a[k]] = FALSE;
+
+process_solution
+
+print a[1..k];   // e.g. 2 1 3
+
+One execution path (step-by-step)
+k=0
+→ choose a[1]=1
+   → choose a[2]=2
+      → choose a[3]=3
+         → is_a_solution → process_solution: (1,2,3)
+      → backtrack, try a[3]=?
+   → backtrack, try a[2]=3
+      → choose a[3]=2
+         → process_solution: (1,3,2)
+→ backtrack, try a[1]=2
+...
+
+
+This produces:
+123, 132, 213, 231, 312, 321
