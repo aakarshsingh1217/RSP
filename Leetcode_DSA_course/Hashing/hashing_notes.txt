@@ -1,0 +1,226 @@
+- Data structure is format for organizing data in efficient
+way
+- Can split into two things: interface and implementation
+
+- Interface is contract that specifies how we interact
+with data structure - what operations we can perform
+on it, what inputs it expects, and what outputs we
+can expects
+- E.g. dynamic arr allows appending (.append()) etc.
+
+- Implementation is code that makes the DS work.
+- Details of how data's stored and how opers are performed
+- E.g. dynamic arr might involve allocating memory for list
+in implementation
+
+- A hash func is a func that takes input and deterministically
+converts it into an int that is less than a fixed size set by
+programmer
+- Inputs called keys and same input always converted to same
+int
+
+- E.g. hash alg for stirng containing letters of alphabet:
+1. Declare int total
+2. Iterate over string, for each char, convert it to its position
+   in alphabet e.g. a -> 1, c -> 3
+3. Take that val, and multipply it by current pos in string 
+   (index + 1). Add this to total. E.g., given "abc", b is at pos
+   2 in alphabet and pos 2 in string, so it'd contribute 2 * 2 = 4
+   towards total
+4. After going through every char, total is the converted val
+
+- Above alg isn't a good hash function but is just an e.g.
+- Don't we need to limit total to fixed size? Correct!
+- Alg is currently wrong, lets say limit was x, then step 4
+is:
+  - after going through every char, total % x is the converted
+    val.
+- % is modulo oper, and makes sure final converted val is in
+range [0, x - 1]
+
+************************************
+What's the point of a hash function?
+************************************
+
+- Arrays have O(1) random access.
+- Given arbitrary index, we can access and update val in array
+in constant time.
+- Main constraints with arrays is that they're fixed size, and
+indices have to be integers.
+- Because has functions can convert any input into an int,
+can effectively remove constraint of indices needing to be
+integers.
+- When hash func is combined with an array, it creates a 
+hash map, also known as hash table or dictionary.
+
+- With arrays, we map indices to values.
+- With hash maps, we may keys to values, and a key can be
+almost anything.
+- Only constraint on hash map's key is that it's immutable,
+vals. can be anything.
+
+- Hash map is extremely powerful and allows you to reduce
+time complexity of alg by a factor of O(n) for many probs.
+- Python hash map is called dictionary and is declared
+with dic = {}
+
+- Hash map is unordered DS that stores key-value pairs.
+- Hash map can add or remove elements in O(1), as well as
+update vals associated with key and check if key exists, 
+also in O(1). 
+- You can iterate over both keys and vals of hash map,
+but iteration won't necessarily follow any order.
+- Ordered data structure is one where insertion order is
+'remembered', unordered DS is one where insertion order
+isn't relevant.
+
+--------------------------------------------
+Explanation of time complexities of hash map
+--------------------------------------------
+
+- Insert/remove/update/lookup: O(1) average time
+  - Hash map uses hash func to convert key directly into array
+  index, this lets map jump straight to where key should be,
+  instead of searching through elements.
+  - as long as collisions are rare (good hashing + resizing),
+  these operations take constant time on average.
+  - If a bucket is a linked list and element is at bottom:
+    - Lookup/remove/update in that bucket is O(k), where k
+    is length of the LL.
+    - In worst case, if all keys hash to same bucket, k = n,
+    so operations become O(n).
+  - Still O(1) on average because:
+    - Good hash functions spread keys evenly (expected bucket
+    size stays small (often constant))
+    - Load factor's controlled (has maps resize (rehash) When
+    load factor = n / num buckets gets too large)
+- Iteration: O(n) time
+  - To iterate, hash map must scan through all stored entries
+  (all buckets), so time grows linearly with num elements n
+- Unordered iteration
+  - Keys are placed based on their hash vals, not insertion
+  /sorted order, so order you see during iteration depends
+  on internal structure and lang implementation
+
+  --------
+  Key idea
+  --------
+
+  - Hash maps are fast (O(1) avg) because they trade ordering
+  for direct access via hashing.
+
+**********************
+Comparison with arrays
+**********************
+
+- In terms of time complexity, hash maps beat arrays.
+- Following opers. are all O(1) for hash map:
+  - Add an elem. and associate it with a val.
+  - Delete an elem. if it exists.
+  - Check if an elem exists.
+
+- Hash map also has same useful props. as an array with same
+time complexity:
+  - Find length/number of elems.
+  - Updating vals.
+  - Iterate over elems.
+
+- Hash maps easier/cleaner to work with.
+- Even if keys are ints and you could use array, if you don't
+know max size of your key, then you don't know how large arr 
+size should be.
+- With hash maps, don't need to worry about that, since key will
+be converted to a new int within size lim. anyways.
+
+- Some disadvantages to using hashmaps.
+
+- Biggest disadvantage of hash maps is that for smaller input
+sizes, they can be slower due to overhead.
+- Because big O ignores constants, O(1) time complexity can be
+deceiving - usually something more like O(10) because every key
+needs to go through hash func.
+
+- Hash maps take up more space.
+- Dynamic arrays are fixed size arrs that resize themselves when 
+going beyond capacity.
+- Hash tables also implemented using fixed size array, remember
+size is limit set by user.
+- Problem is, resizing hash table much more expensive because
+every existing key needs to be rehashed, and also hash table may
+use array that's significantly larger than num elements stored,
+resulting in huge waste of space.
+- Let's say limit is 10,000 items, but you only store 10. Okay,
+10,000 is too large, but then what if next test case needs to
+store 100,000 elems?
+- Point is, when you don't know how many elems. to store, arrays
+more flexibile with resizing and not wasting space.
+
+- Remember time compl. funcs. only involve vars. you def.
+- When we say hash map opers. are O(1), var. we're concerned with
+is usually n, which is size of hash map.
+- May be misleading, e.g. hashing a string requires O(m) time, 
+where m is length of string.
+- Constant time opers. are only constant relative to size of map.
+
+----------------------------------------------------
+Explanation of above dotpoints (hashmap time compl.)
+----------------------------------------------------
+
+- When we say hash map operations are O(1), the “1” is with respect 
+to n, the number of items in the map.
+
+- E.g. suppose you use a hash map with string keys:
+  - Inserting "cat" takes O(3) time to hash (3 chars.)
+  - Inserting "international" takes O(13) time to hash
+- So oper. is:
+  - O(m) to hash the key + O(1) to access the map
+    - E.g. hash("apple") = 7234 (costs O(m))
+    - Index = hash(key) mode table_size O(1)
+    - Table[index] (O(1) array access)
+    - Handle collisions (at table index, you find):
+      - Nothing -> done
+      - One elem. -> compare keys -> done
+      - Small linked list/tree -> scan a few items
+      - Because:
+        - Load factor kept low
+        - Buckets stay short on avg.
+  - Putting all together (for a string key):
+    - Total time = O(m) (hashing) + O(1) (indexing + lookup)
+    - We say "hash map access is O(1)":
+      - Because lookup doesn't depend on n (map-size), only on: 
+        - Key length m
+        - Avg bcuket size (kept constant)
+
+- Intuition (Think of it like):
+  - Hashing = reading the address written on an envelope (depends on 
+  how long the address is)
+  - Map access = jumping straight to the mailbox number (constant 
+  time)
+
+****
+Sets
+****
+
+- Set is another data struct. similar to a hash table.
+- Suses same mechanism for hashing keys into ints.
+- Difference between set and hash table is that sets don't map their
+keys into anything.
+- Sets more convenient to use when you only care about checking if 
+elems. exist.
+- Can add/remove/check if elem. exists all in O(1)
+- Sets don't track freq., if you have a set and add the same elem.
+100 times, first oper. adds it and next 99 do nothing.
+- Set is basically a hash map if you only consider keys.
+
+---------------
+Arrays as keys?
+---------------
+
+- Being immutable usually key requirement for being a hash map key.
+- Arrays are mutable, so how to store ordered collection of elems.
+as key?
+- Several ways to convert array into unique immutable key.
+- In Python, tuples are immutable, so do tuple(arr).
+- Another trick is convert array into a string, delimited by some
+char guaranteed not to show up in any elem.
+  - E.g. use comma to seperate ints ([1, 51] -> "1, 51").

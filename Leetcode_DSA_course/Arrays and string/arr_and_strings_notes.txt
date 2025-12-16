@@ -1,3 +1,22 @@
+- 1d arrays and strings are very similar: both represent
+ordered group of elems.
+
+- Python primarily uses list instead of arrays which're
+lenient.
+- Arrays can't be resized, but dynamic arrays can.
+
+- In Python, strings are immutable (need to recreate entire
+thing to change it)
+
+- Why does immutable vs mutable matter?
+- Imagine you have mutable arr = ["a", "b", "c"] and immutable
+string s = "abc"
+- Easily do arr[2] = "d", but if you wanted s = "abd", you'd
+need to recreate entirely from scratch.
+- For small string it's okay, but for strings with 100,000+
+chars, creating new versions to modify one string is very
+expensive (O(n), where n is size of string)
+
 **********************************************
 Time complexity of array and string operations
 **********************************************

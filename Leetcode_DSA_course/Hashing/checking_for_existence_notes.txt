@@ -1,0 +1,71 @@
+- One of most common apps. of a hash map/set is
+determining if an elem. exists in O(1).
+- Since an array needs O(n) to do this, using hash map/
+set can improve time compl. of an alg. greatly, usually
+from O(n^2) to O(n).
+
+- E.g. (Two Sum): given an array of int nums and int target,
+return indices of two numbers such that they add up to
+target. You cannot use same index twice.
+
+- To solve with brute force approach, simply check every
+pair of nums and see if they add up to target.
+- 1 for loop to iterate over array and at each iter., lock
+in number num, then inner for loop looks for target - num
+in array (because num + target - num = target).
+
+- Alg. is slow because inner loop (which finds target - num
+) costs O(n).
+- Thus, time compl. is O(n^2).
+- With hash map, can look for target - num in O(1), which
+greatly improves time compl. to O(n).
+
+- Can build hash map as we iterate along array, mapping each
+val. to index.
+- At each index i, where num = nums[i], we can check hash
+map for target - num.
+- Adding key value pairs and checking for target - num is
+O(1), so time compl. improves to O(n).
+
+- Seeking two nums that sum to target.
+- Iterate over input for each element num, we see if this
+elem. can be paired with another num to form target.
+- If another elem target - num exists, then their sum
+num + target - num = target is what we're looking for.
+- So we iterate over input, put elems. in hash map.
+- Then in future, can check if we've seen target - num
+for each num in O(1).
+- Problem wants us to return indices instead of nums,
+so associate each num with its index.
+
+- Time complexity is O(n) as hash map opers are O(1),
+solution also uses O(n) space as number of keys hash
+map stores scales linearly with input size.
+
+- E.g. 2 (First Letter to Appear Twice): Given a string
+s, return first character to appear twice, input guaranteed
+to have duplicate character.
+
+- Brute force would be to iterate along string, and for each
+char c, iterate again up to c to see if there's any match:
+
+class Solution:
+    def repeatedCharacter(self, s: str) -> str:
+        for i in range(len(s)):
+            c = s[i]
+            for j in range(i):
+                if s[j] == c:
+                    return c
+
+        return ""
+
+- Hash map sol. (repeated_char.py) improves time complexity
+to O(n) as each loop iteration now runs in constant time.
+
+- Space complexity is more interesting.
+- Many will argue space complexity is O(1) because input can
+only have chars from english alphabet, which is bounded by a 
+constant (26).
+- This is common with string probs. and technically correct.
+- Should also note space complexity could be O(m), where m is
+num. of allowable chars. in input.
