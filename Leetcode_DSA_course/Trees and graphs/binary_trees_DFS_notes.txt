@@ -1,0 +1,227 @@
+- Tree traversal is how you access elems. of
+a tree.
+
+- in a LL, you traverse like so:
+  - def get_sum(head):
+        ans = 0
+        while head:
+            ans += head.val
+            head = head.next
+        
+        return ans
+- Above code starts at head and visits each node to
+find sum of all vals. in LL.
+- For each node, there's a moment in code exect. where
+head var. is refrencing the node, we traverse by using
+.next attrib.
+
+- Traversing a binary tree follows same idea.
+- Start at root and traverse by using child pointers
+.left and .right.
+- When traversing LL, usually do it iteratively.
+  - W/ binary trees, we do it recursively.
+
+- Two main types of tree traversals.
+- First is called DFS.
+- For binary trees, there're three ways to perform
+DFS - preorder, inorder and postorder.
+
+************************
+Depth-first search (DFS)
+************************
+
+- Depth of a node is distance from root.
+
+- In a DFS, we prioritize depth by traversing as far
+down tree as possible in one direction (until reaching a 
+leaf node) before considering other direction.
+- E.g., let's say we choose left as our priority direction.
+- Move exclusively with node.left until left subtree has 
+been fully explored.
+- Then, explore right subtree.
+
+- Trees are named as such bc. they resemble real life trees,
+and you can think of paths of binary trees as branches
+growing from root.
+- DFS chooses a branch and goes as far down as possible,
+once fully explored branch, it backtracks until it finds
+another unexplored branch.
+
+- Because we need to backtrack up the tree after reaching
+end of branch, DFS is typically implemented using recursion,
+although it's sometimes done iteratively using a stack.
+- Simple e.g. of recursive DFS to visit every node:
+  - Each call to dfs(node) is visiting that node.
+  - In the code, we visit left child before visiting right
+  child.
+  - def dfs(node):
+        if node == None:
+            return
+
+        dfs(node.left)
+        dfs(node.right)
+
+        return  
+
+- During DFS, many calls to dfs(node) exist simultaneously
+with their own versions of node.
+
+- Structure for perf. DFS is similar:
+  1. Handle base case(s) (usually, an empty tree (node is
+  None)).
+  2. Do some logic for curr node.
+  3. Recursively call on curr node's children.
+  4. Return answer.
+    - Steps 2 and 3 may happen in different orders.
+
+- Each func. call solves and returns the answer to the
+original problem as if the subtree rooted at the current
+node was the input.
+- Logic done at each call (step 2) depends on problem.
+
+- There're 3 types of DFS, each differs only in order that
+they execute steps 2/3.
+
+- Will use following tree to talk as talking point:
+  -    0
+       /\
+      1  2
+     /\   \
+    3  4   5
+        \
+         6
+
+------------------
+Preorder traversal
+------------------
+
+- Logic is done on curr. node before moving to children.
+- Let's say we wanted to print val. of each node in tree
+to console.
+- In that case, at any given node, we'd print the curr.
+node's val., then recursively call on left child, then
+recursively call on right child.
+  - def preorder_dfs(node):
+        if not node:
+            return
+
+        print(node.val)
+        preorder_dfs(node.left)
+        preorder_dfs(node.right)
+
+        return
+
+- Running above code on example tree, we'd see nodes printed
+in order 0, 1, 3, 4, 6, 2, 5.
+- Because logic (printing) is done immediately at start of
+func. call, preorder handles nodes in the same order that
+func. calls happen.
+
+-----------------
+Inorder traversal
+-----------------
+
+- First recursively call left child, then perform logic
+(print in this case), then recursively call right child.
+- Means no logic will be done until we reach node without
+left chld since calling on left child takes priority over
+performing logic.
+  - def inorder_dfs(node):
+        if not node:
+            return
+
+        inorder_dfs(node.left)
+        print(node.val)
+        inorder_dfs(node.right)
+
+        return
+
+- Running above code on example tree, nodes printed in
+order: 3, 1, 4, 6, 0, 2, 5.
+- For any given node, val. is not printed until all vals.
+in left subtree are printed, and vals. in right subtree
+aren't printed until after that.
+
+-------------------
+Postorder traversal
+-------------------
+
+- We recursively call on children first and then perform
+logic on curr. node.
+- This means no logic's done until we reach a leaf node
+since calling on children takes priority over perf. logic.
+- In a postorder traversal, root is last node where logic's
+done.
+  - def postorder_dfs(node):
+        if not node:
+            return
+
+        postorder_dfs(node.left)
+        postorder_dfs(node.right)
+        print(node.val)
+
+        return
+
+- Running above code on e.g. tree, we'd see nodes printed in
+order: 3, 6, 4, 1, 5, 2, 0.
+- For any given node, no vals. in its right subtree are printed
+until all vals. in left subtree are printed, and its own val.
+is not printed until after that.
+
+- Name of each traversal describing when current node's logic
+is perform:
+  - Pre -> before children.
+  - In -> in the middle of children.
+  - Post -> after children.
+
+- Time complexity of tree question is almost always O(n), where
+n is the total number of nodes, because each node is only visited
+once, and at each node, O(1) work is done.
+- If more than O(1) work is done at each node, let's say O(k) work,
+then time complexity will be O(n * k).
+
+- For space complexity, even if you're using recursion, calls are
+still placed on call stack which counts as extra space.
+- Largest the stack will be (for either iterative or recursive)
+at any time will depend on tree.
+- For recursion, in worst case it's O(n) if tree is just a straight
+line, so usually, the correct answer to give for space complexity
+is O(n).
+- If tree is "complete" (all nodes have 0 or 2 children and each level
+except last is full), then space complexity is O(log n), but this's
+best case scenario.
+  - Extra space used by a tree alg. (recursive or iterative DFS) is
+  determined by max. depth of call stack, which equals height of tree.
+  - For a complete binary tree, each level doubles the amount of nodes:
+    - n = 2^h
+      h = log base 2 n
+        - E.g. binary tree: root with left and right child:
+        - Height = 2, num nodes = 2^h, num nodes = 2^2 = 4
+        - Even though n = 3, not exactly 4, it doesn't matter as Big-O
+        ignores constants and exact equality, only cares about growth
+        rate.
+        - Solving for height: h = log base 2 n, log base 2 (3) is approx.
+        1.58 which is approx. 2, therefore h = 2.
+  - At any moment, recursion only stores one node per level along
+  root-to-leaf path, so max. satck size is height h.
+    - Because recursive DFS only goes down one path at a time, not whole
+    tree.
+    - If you have if node is None: return, then dfs(node.left) and then
+    dfs(node.right), the func. calls behave like this:
+      - A recursive call must finish before its parent call can continue.
+      - So Python puts each call on call stack and pauses previous one.
+      - E.g., for tree:
+        -     A
+             / \
+            B   C
+      - Execution order:
+        1. dfs(A) → stack: [A]
+        2. dfs(B) → stack: [A, B]
+        3. dfs(None) → returns immediately
+        4. dfs(None) → returns immediately
+        5. dfs(B) finishes → stack back to [A]
+        6. dfs(C) → stack: [A, C]
+        7. dfs(C) finishes → stack back to [A]
+        8. dfs(A) finishes → stack empty
+      - At no point do we have: [A, B, C]
+  - Therefore, space complexity is O(h) = O(log n).

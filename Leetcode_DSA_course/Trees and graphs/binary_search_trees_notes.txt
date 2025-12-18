@@ -1,0 +1,47 @@
+- A binary search tree (BST) is a type of binary
+tree.
+- A BST has the following property:
+  - For each node, all values in its left subtree
+  are less then the value in the node, and all vals.
+  in its right subtree are greater than the val. in
+  the node.
+    - This property also implies that values in a
+    BST must be unique.
+
+- E.g. of a BST:
+  -    23
+       / \
+      8   37
+     /\   / \
+    6 17 29 50
+      /\
+     9  20
+
+- With a BST, opers. like searching, adding, removing can
+be done in O(log n) time on avg., where n is num. of nodes
+in the tree, using something called binary search.
+
+- Let's say you have example tree, and you want to check if
+val. 20 existed.
+- Starting at root, we can see 23 > 20, which means we can
+ignore right subtree, because every val. in subtree is also
+going to be greater than 20.
+- We start searching left subtree, at next step, 20 > 8, so
+we can ignore left subtree and move to right.
+- Next, 20 > 17 so we can ignore left subtree, finally we 
+find 20 after moving right once more.
+
+- This process has an avg. time complexity of O(log n), in
+worst case scenario, lets say tree had no right children
+and was just a straight line (basically a LL), time compl.
+would be O(n).
+  - In a BST, each comparison lets you discard about half
+  of remaining elems., because you go left or right based
+  on key.
+  - A balanced BST with height h has approx. 2^h nodes = n.
+  - Opers. (search/insert/delete) take time proportional to
+  tree height:
+    - Avg. time = O(height) = O(log n).
+
+- An inorder DFS traversal priotizing left before right on
+a BST will handle nodes in sorted order.

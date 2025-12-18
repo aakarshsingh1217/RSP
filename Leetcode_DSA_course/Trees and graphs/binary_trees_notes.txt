@@ -1,0 +1,149 @@
+****************
+Nodes and graphs
+****************
+
+- Trees & graphs're abstract data structs. that show up in real
+and software world.
+
+- A node is an abstract data type that stores two things: data
+(anything you want - int, bool, hash map etc.) and pointers to
+other nodes.
+
+- A graph is a collection of nodes and their pointers to other
+nodes.
+- LLs and trees are both types of graphs.
+
+- Even though tree is a type of graph, trees and graphs are
+considered diff. topics when it comes to alg. problems.
+
+- Nodes of a graph are called vertices, and pointers that
+connect them are called edges.
+- Nodes/vertices repr. with circles and edges are lines/
+arrows that connect circles.
+
+***************
+What is a tree?
+***************
+
+- Like a LL, a tree is a type of graph.
+- Start of a LL is called a head, start of binary tree is called
+the root.
+
+- In a LL, a node's pointer points to next node.
+- In tree, node has pointers to its children.
+- If node A is pointing to node B, then B is a child of A, and A 
+is the parent of B.
+- Root is only node that has no parent.
+- In a tree, node cannot have more than one parent.
+
+- In a binary tree, all nodes have a max. of two children.
+- These children referred to as left and right child.
+
+- Binary tree is just a collection of nodes, every node has
+between 0 to 2 children, and every node except root has
+exactly one parent.
+- E.g.:
+      3
+     / \
+    5  1
+   /\  /\
+   6 2 0 8
+    / \
+    7 4
+- Node with val. 3 is root node, every node has exactly one
+parent and at most 2 children, 6 is left child of 5 and 4 is
+right child of 2.
+
+- Trees (not just binary trees) all around us irl, e.g.:
+  - File systems
+  - Comment thread on app like Reddit/Twitter
+
+- In these e.g., the root notes and children would be:
+  - Root dir., and subfolders/files.
+  - Original post/tweet, and comments & replies.
+
+- If we modeled a company as a tree, each person is a node
+and an edge exists from A to B if A manages B.
+- CEO would be at root because they're at top of company 
+and aren't managed by any other employee.
+- Lets say CEO has 6 direct reports - people in C-Suite (CFO,
+COO etc.).
+- This means CEO has 6 children, which also means it's not
+binary tree.
+- Each of people in C-Suite will have people reporting to them,
+like VPs, etc. etc.
+
+- Important characteristics of company that makes it a tree
+are that each pers. only has 1 manager (parent), and the
+entire tree is connected (if you start at anyone and
+continously trace their managers, you'll always end up at the
+CEO).
+
+****************
+Tree terminology
+****************
+
+- Root node is node at top of tree.
+- Every node in tree is accessible starting from root node.
+- In most tree qns., the root of the tree will be given as 
+input, just like how in linked lists, head was given as input.
+
+- If you have node A with edge to node B, so A -> B, A is parent
+of node B, and B is child of node A.
+
+- If node has no children, it's called leaf node (leaf nodes
+are leaves of the tree).
+
+- Depth of a node is how far it is from root note.
+- Root has depth 0, and every child has a depth of
+parentsDepth + 1, so root's children have a depth of 1, their
+children have a depth of 2, etc.
+
+- A subtree of a tree is a node and all its descendants.
+- Trees are recursive - you can treat a substree as if was its
+own tree with the chosen node being the root.
+- Using company e.g. again, entire company is repr. by a tree
+rooted at CEO.
+- But what if we only cared about engineering dept.?
+- Let's say CTO has dir. report who's a SVP of eng., and all
+engineers are under this person.
+- Take this SVP and seperate them from rest of company (remove
+their connection to CTO) and what're you left with?
+- It's still valid tree, but now SVP is root!
+- Subtree now repr. eng. dept. instead of entire company.
+- Fundamental idea: you can take any given node and treat it
+as its own tree, allowing you to solve problems in recursive
+manner.
+
+- E.g.:
+      3_____
+     /| \   |
+    5 | 1   |
+   /\ | /\  |
+   6 2| 0 8 |
+      -------
+    / \
+    7 4
+- Enclosed in box is subtree rooted at node with val. 1 (Can be
+called right subtree of node with val. 3 (the root)).
+- Note that this subtree is a binary tree itself.
+
+*******************
+Code representation
+*******************
+
+- class TreeNode:
+    def __init__(self, val, left, right):
+        self.val = val
+        self.left = left
+        self.right = right
+
+- In binary tree probs., you'll be given reference to root of
+binary tree as input.
+- Can access root's left subtree with root.left and right 
+subtree with root.right.
+- Like LL, each node also carries a value val as data.
+- In a LL, the tail (last node) has its next pointer as None.
+- In a binary tree, if a node doesn't have a left child, then
+node.left is None, & vice-versa w/ the right child.
+- If both children are None, then node is a leaf.

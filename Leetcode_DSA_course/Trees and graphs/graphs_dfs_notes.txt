@@ -1,0 +1,315 @@
+*********************************
+E.g. 1: 547. Number of Provinces.
+*********************************
+
+- Problem statement:
+  - There are n cities. A province is a group of directly or 
+  indirectly connected cities and no other cities outside of 
+  the group. You are given an n x n matrix isConnected where 
+  isConnected[i][j] = isConnected[j][i] = 1 if the ith city
+  and the jth city are directly connected, and 
+  isConnected[i][j] = 0 otherwise. Return the total number of 
+  provinces.
+
+- We can see that this's a undirected graph where the graph
+is given as an adjacency matrix, and problem is asking for
+num. of connected components.
+- We can think of each city as a node and each connected
+component as a province.
+
+- Because graph is undirected, a DFS from any given node
+will visit every node in connected component it belongs to.
+- To avoid cycles with undir. graphs, we need to use a set
+seen to track which nodes we've already visited.
+- After performing a DFS on a connected component, all nodes
+in that component will be inside seen (because DFS will
+visit every node in the component).
+- Therefore, we can iterate from 0 until n, and each time we
+find a node that hasn't been visited yet, we know we also
+have a component that hasn't been, so we perform a DFS to
+"mark" the component as visited and increment our answer.
+- Use of a set will prevent us from counting same component
+more than once.
+
+- We can convert adj. matrix to a hash map that maps nodes
+to an array of their neighbours before starting.
+- Bool array seen can be faster than a set for some langs.
+
+- For code implement., DFS differs from trees.
+- With trees, we're given objects representing nodes.
+- Here, nodes aren't given to us.
+- We're told that there exists some nodes numbered from
+0 to n - 1, and we're given info. regarding the edges.
+
+- Thus, we treat ints. from [0, n - 1] as nodes.
+- This is why dfs(node) func. is taking int as an arg.
+- With trees, we pass node obj. as arg.
+- Here, we pass int. label of node.
+- With graphs, graph only exists as an idea, it's up to
+progr. to implement a method of repr. nodes and edges and
+traversing over them.
+- Most graph probs. will have nodes labeled from [0, n - 1],
+so we can reuse alot of logic between probs.
+
+- Time compl. of DFS on a graph is slightly different to a 
+binary tree.
+- W/ binary tree qns., each node is visited at most once,
+and each visit cost O(1).
+- With graphs, we also only visit each node at most once,
+but work isn't necessarily O(1), because there's a for loop
+that iterates over node's neighbours.
+
+- Visits were O(1) in a binary tree because a node could have
+at most 2 children/neighbours, so we didn't need a loop.
+- With a graph, a node could have any amount of neighbours,
+so we need a non-const. loop.
+
+- As such, time compl. for DFS on graphs is usually O(n + e),
+where n is num. of nodes and e is num. of edges.
+- In worst case scenario where every node is connected with
+every other node, e = n^2.
+  - Each node is visited only once.
+  - We iterate over a node's edges only when we're visiting
+  that node.
+  - Because we can only visit a node once, a node's edges are
+  only iterated over once.
+  - Therefore, all edges are iterated over only once, which
+  costs O(e).
+
+- Similar arg. for sliding window that justifies O(n) time compl.
+despite nested while loop, as nested while loop only iterates
+n times across entire alg.
+- In this graph prob., for loop inside func. iterates e times
+total across entire alg.
+
+- Technically in this prob., time compl. is O(n^2) because
+input is given as adj. matrix, so we always need O(n^2)
+to build hash map.
+- The e dominated by n^2 (because O(e < n^2)), so it can be
+ignored.
+
+- When we build graph, we're storing all edges in arrays.
+- We also need some space for recursion call stack (O(n)
+in worst case), as well as for seen.
+- Therefore space complexity is O(n + e).
+
+- Space complexity isn't O(n^2) because e is not necessarily
+dominated.
+- In worst case scenario, e = n^2 but e is still independent of
+n.
+- In time compl., we always iterated over entire matrix to
+build graph, but in terms of space compl., hash map only 
+grows if edges actually exist.
+
+*********************************
+Example 2: 200. Number of Islands
+*********************************
+
+- Problem statement:
+  - Given an m * n 2D binary grid which represents a map of 1
+  (land) and 0 (water), return num. of islands.
+  - An island is surrounded by water and is formed by connecting
+  adj. land cells horizontally or vertically.
+
+- A graph can be given in form of a matrix where squares
+are nodes and neighbours are adjacent squares.
+- In this problem, it says land is connected horizontally
+(left/right) or vertically (up/down).
+- We can think of each land square as a node, and up/down/left
+/right rel. forming edges.
+
+- Matrix is very common form of graph, we treat each land cell
+as a node, and edges are determined by prob. descr.
+
+- It says island is formed by connecting adj. land cells
+horiz. or vert., therefore, two land cells share an edge
+if they're adj.
+- For a node at (row, col), neighbours are (row - 1, col),
+(row, col - 1), (row + 1, col), (row, col + 1).
+
+- In an island, you can start at any land cell and reach any
+other land cell.
+
+- Therefore, find num. of islands = find. num of connected
+components.
+
+- In the code, we have a few tools to help us implement the
+alg.
+- First, we declare an array 
+directions = [(0, 1), (1, 0), (0, -1), (-1, 0)] which holds coord.
+deltas to move in four dirs.
+- This makes code cleaner when iterating over neighbours.
+- Next, we use helper func. valid that checks if a square
+is in bounds and an island.
+  - These tools make code cleaner and more modular.
+
+- Some code diffs: we only care about squares whose value is "1"
+(land).
+- We can def. a helper function valid that first checks if a given
+(row, col) is in bounds, and then checks if it is land.
+- We can also declare an array directions that makes iterating over
+the 4 neighbours cleaner.
+
+- Note: we can avoid using set by modifying input.
+- Point of the set is to avoid visiting same square multip. times.
+- We only visit squares with vals "1", so instead of putting square
+in a set, we could just change the square's val. to "0", but some
+times you can't modify input.
+
+- Previously said that DFS on a graph has time compl. O(node + edges),
+because we didn't know how many edges given node could have.
+- This prob. explicitly defines a node can have at most 4
+edges.
+- Therefore work done at each node is O(1), and since we're only
+visiting each node once, time compl. is equal to number of nodes,
+O(m * n).
+  - In problem, each cell is a node and each cell has at most
+  4 neighbours.
+  - Since max num. of edges per node is a const. (4), work done
+  per node is O(1) and total work is proportional only to
+  num. nodes.
+  - Therefore, num. nodes = m * n, each node visited once,
+  for each visit we check 4 dirs. (constant time).
+    - O(nodes to edges) -> O(mn + 4mn) = O(mn).
+
+******************************
+Example 4: 841. Keys and Rooms
+******************************
+
+- Problem statement:
+  - There're n rooms labeled from 0 to n - 1 and all rooms are
+  locked except for room 0.
+  - Goal is to visit all rooms.
+  - When you visit a room, you may find a set of distinct keys 
+  in it.
+  - Each key has a num. on it, denoting which room it unlocks,
+  and you can take all of them with you to unlock the other
+  rooms.
+  - Given an array rooms where rooms[i] is the set of keys
+  you obtain if you visited room[i], return true if you
+  can visit all rooms, or false otherwise.
+
+- Here, rooms[i] is an array of other rooms we can visit from
+curr. room, which makes this a graph given as an adj. list.
+- We start at room 0 and need to visit every room.
+- At every node i, neighbours are rooms[i].
+- If we start a DFS at 0 and visit every node, then answer
+is true.
+- How can we tell how many rooms we visited at end of DFS?
+  - All nodes we visited are stored in seen.
+
+- Every room's locked except 0, this indicates we start at 0.
+- When we visit a room, we find some keys that enable us to
+visit other rooms.
+- This tells us we can model problem as a graph, rooms are
+nodes and keys are edges.
+
+- Input of graph is convenient: an adj. list.
+- We don't need to build a graph like we did prev. because
+input serves that func. - if we want to find neighbours of
+a given node i, we can simply check rooms[i].
+
+- Probs. asking us if we can visit all rooms, equiv. to
+saying "starting DFS from 0, can you visit all nodes?".
+
+- We simply start DFS at 0, and check if we've visited all
+nodes after traversal finishes.
+- Because we add node to seen every time we visit, we simply
+compare size of seen against n (which is len. of rooms since
+input is adj. list).
+
+- Adj. lists are most convenient input format when nodes 
+are numbered 0 to n - 1 because we don't need to convert to
+hash map - it's basically already in that format.
+- As such, only extra space we're using is in seen and
+recursion call stack, both which are O(n).
+- Time complexity is O(n + e) as we visited each node once
+and for loops inside each visit will iterate up to e times
+total across entire alg.
+  - Nodes (n) = rooms, edges (e) = keys (a key from room i
+  to room j is a directed edge i -> j).
+  - Using DFS start from room 0:
+    - Each room is visited at most once -> O(n).
+    - For each visited room, iter. over all keys.
+    - Across entire run, each key is processed once -> total
+    key iters. = O(e).
+  - So total work is:
+    - O(rooms visited) + O(keys processed) = O(n + e).
+  - E.g. input rooms = [[1,2], [3], [3], []]
+    - Rooms visited: 0, 1, 2, 3 -> n = 4
+    - Keys processed: 1, 2, 3, 3 -> e = 4.
+
+***********************************************************
+E.g. 5: 1557. Minimum Number of Vertices to Reach All Nodes
+***********************************************************
+
+- Problem statement:
+  - Given a directed acyclic graph, with n vertices numbered 
+  from 0 to n-1, and an array edges where edges[i] = [x, y] 
+  represents a directed edge from node x to node y. Find the 
+  smallest set of vertices from which all nodes in the graph 
+  are reachable.
+
+- Problem wants the smallest set of nodes from which all
+other nodes can be reached.
+- Can be rephrased as smallest set of nodes that cannot
+be reached from other nodes, because if a node can be reached
+from another node, then we'd rather just include "parent"
+rather than "child" in our set.
+  - If a node has an incoming edge, it means some other node
+  can reach it.
+  - So you don't need to start from that node, you can start
+  from its parent instead.
+  - Therefore, smallest set of starting vertices is:
+    - All nodes with in-degree 0 (can't be reached from
+    any other node).
+  - E.g.: 0 -> 1 -> 2.
+    - Node 1 is reachable from 0.
+    - Node 2 is reachable from 1.
+    - So instead of starting from {1, 2}, we just start
+    from {0}.
+  - A directed acyclic graph only guaranteed no directed
+  cycles and directions on edges, so graph may have multip.
+  disconnected components.
+  - But for problem, we only need one starting node per
+  component, and within each component, only need earliest
+  nodes (nodes with in-degree 0).
+  - E.g.: disconnected DAG
+    - Comp. 1: 0 -> 1 -> 2.
+    - Comp. 2: 3 -> 4.
+    - Comp. 3: 5.
+  - 0, 3 and 5 have in-degree 0, and all other nodes
+  reachable from there, so that's the answer.
+
+- A node can't be reached from another node if it has an
+indegree of 0 (no edges entering the node).
+- Therefore, we just find indegree of all nodes and only
+include ones with a zero indegree.
+
+- If graph had cycles, we'd run into some edge cases.
+- Imagine if graph was just one cycle (circle), which
+node to return?
+  - Technically, returning any of them would be correct,
+  but our alg. would return nothing because none would
+  have indegree 0, but our given graph is acyclic so
+  don't need to worry about these cases.
+
+*************
+Personal note
+*************
+- E.g. graph:
+  -    A
+      / \
+     B   C
+    /
+   D
+- DFS in graphs:
+  - Explore one path as far as possible before backtracking
+  using stack/recursion.
+  - From e.g. graph, DFS is A -> B -> D -> C (go deep first,
+  then bactrack).
+- BFS in graphs:
+  - Explore level by level, visiting all neighbours first
+  (using queue).
+  - From e.g. graph, BFS is A -> B -> C -> D (visit all
+  neighbours before going deeper).

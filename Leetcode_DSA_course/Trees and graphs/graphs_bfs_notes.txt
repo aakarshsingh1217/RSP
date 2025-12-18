@@ -1,0 +1,113 @@
+- Like w/ trees, in many graph probs., it
+doesn't matter if you use DFS or BFS and
+one rarely outperforms the other, ppl.
+just choose DFS because it's faster/
+cleaner to implement, espec. recursively.
+
+- But in some cases BFS is clearly better
+than DFS, e.g. when asked to find shortest
+path.
+
+- In binary trees, BFS would visit all nodes
+at depth d before visiting any node at depth
+d + 1 (BFS visited nodes according to dist.
+from root).
+
+- Graph won't have tree struct. 99% of time,
+but logic still applies.
+- Imagine whatever node you start from is 
+root, then, neighbours of root repr. next
+level, and neighbours of those nodes repr.
+level after that.
+
+- BFS on a graph always visits nodes accord.
+to their dist. from starting point.
+- Every time you visit a node, you must've 
+reached min. steps possible from wherever
+you started your BFS.
+
+- In a graph, there could be many paths from
+given starting point to any other node.
+- Using BFS will ensure that out of all
+possible paths, you take shortest one.
+
+- To implement BFS, a queue is used iteratively.
+
+********************************************
+E.g. 1: 1091. Shortest Path in Binary Matrix
+********************************************
+
+- Problem statement:
+  - Given an n x n binary matrix grid, return the 
+  length of the shortest clear path in the matrix. 
+  If there is no clear path, return -1. A clear 
+  path is a path from the top-left cell (0, 0) to 
+  the bottom-right cell (n - 1, n - 1) such that 
+  all visited cells are 0. You may move 8-directionally 
+  (up, down, left, right, or diagonally).
+
+- We can treat matrix as graph where each square
+is a node and all squares have up to 8 edges to adj.
+squares (up to, bc. squares on edges have less due 
+to potential neighbours being out of bonds).
+- Could be many paths on matrix, but we want shortest 
+one.
+- Remember, with traversals, we only want to visit
+each square at most once, not just for efficiency
+but to avoid cycles.
+- If we were to do DFS, might not find shortest path.
+- E.g. matrix:
+  - [
+        [ |*0*|, *0*, 1, 1, 1, 1 ],
+        [ |0|, 1, *0*, 1, 1, 1 ],
+        [ |0|, 1, 1, *0*, 1, 1 ],
+        [ |0|, |0|, |0|, |0|, |*0*|, 1 ],
+        [ 1, 1, 1, 1, 0, |*0*| ],
+        [ 1, 1, 1, 1, 1, |*0*| ]
+    ]
+- Path marked by ** is optimal path (7 squares) and
+path marked by || is path using DFS (11 squares).
+- || path is longer and also uses up squares
+on ** path, therefore DFS doesn't prod. correct
+ans.
+- To find shortest path, use BFS, with BFS, every
+time we visit a node, it's guaranteed that we
+reached it in fewest steps possible.
+
+- In BFS on trees, every iter. of while loop repr.
+level/depth.
+- In e.g. matrix, every update is another "level"
+on the graph.
+- Each level has same dist. from start (0, 0) if
+you were to take optimal path.
+- With trees, a for loop's used inside of a while
+loop because we cared about levels as a whole -
+we wanted to analyze each level seperately (e.g.
+find max elem. etc.).
+- In graph BFS, we don't care about level as a
+whole, we just want to reach end (n - 1, n - 1).
+- Therefore, we don't need for loop, just while
+loop on a queue.
+- Can store num. steps we've taken with each
+node, and once we reach bottom right we have
+answer.
+  - Recall that this is because first time
+  we visit node with BFS, we know we must've
+  reached it with min. possib. steps.
+
+- If queue implement. efficient, then removing
+from left is O(1) which makes work at each node
+O(1).
+- This means time compl. equal to num. nodes,
+which is O(n^2), space compl. also O(n^2)
+as seen can grow to that size.
+
+- With efficient queue, BFS has same time and
+space compl. as DFS.
+
+- Steps taken to implem. BFS similar to DFS, at
+each node, do some logic, then iterate over
+neighbours (in this case 8 dirs.), check if
+neighbour is seen, and if not, add to seen
+and queue (main diff. is we're using queue
+instead of stack).

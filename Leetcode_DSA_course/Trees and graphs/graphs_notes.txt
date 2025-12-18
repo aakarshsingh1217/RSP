@@ -1,0 +1,274 @@
+- A graph is any collection of nodes and connections between
+those nodes.
+- Another term for nodes is vertices, and connections between
+nodes are called edges.
+
+- Binary tree is a graph w/ restrictions (e.g. every node has 
+at most one parent and at most two children), when restr.
+lifted, graphs can take many more forms.
+
+- Graphs're apart of our everyday lives, you can model any
+thing with a graph, e.g. social networks like Facebook or 
+roads in cities.
+
+*****************
+Graph terminology
+*****************
+
+- Edges of a node can either be directed or undirected.
+- Directed edges mean you can only traverse in one direction.
+- If node A has a directed edge to node B, you can move from 
+A -> B, but can't move from B -> A.
+- Dir. edges will be arrows between nodes.
+- Undirected edges mean that you can traverse in both directions,
+so A -> B and B -> A is possible.
+- Undir. edges are just straight lines between nodes.
+
+- In binary trees, edges were directed.
+- Binary trees are dir. graphs, you can't access a node's parent,
+only its children, and once you move to a child, you can't move
+back.
+
+- A connected component of a graph is a group of nodes that're
+connected by edges.
+- In binary trees, there must only be one connected component
+(all nodes are reachable from the root).
+
+- A node can have any number of edges connected to it.
+- If we have a directed graph, it can have any num. of edges
+leaving it and any num. of edges entering it.
+- The num. of edges that can be used to reach the node is 
+node's indegree.
+- Num. of edges that can be used to leave the node is the
+node's outdegree.
+- Nodes that are connected by an edge are called neighbours.
+  - So if you have a graph like A <-> B <-> C, A is neighbours
+  with B, B is neighbours with A and C, and C is neighbours
+  with B.
+- in binary trees, all nodes except the root have an indegree
+of 1 (due to their parent). All nodes have an outdegree of 0,
+1 or 2 (outdegree of 0 means that it's a leaf). Specific to
+trees, we use terms parent/child instead of neighbours.
+
+- A graph can be either cyclic or acyclic.
+- Cyclic means that the graph has a cycle, acyclic means that
+it doesn't.
+- A cycle is when you have a path in the edges that leads to
+visit the same nodes infinitely.
+- Binary trees by def. cannot have a cycle.
+
+************************************
+How are graphs given in alg. probs.?
+************************************
+
+- In graph probs., only info. about a graph is given, which can
+be one of multiple common formats.
+
+- In LL and binary trees you're given objects in memory that
+contain data and pointers, with graphs, the graph doesn't
+literally exist in memory.
+- Only the "idea" of the graph exists, the input will give you
+some info. about it, and it's up to you to figure out how to
+represent and traverse the graph with code.
+- Many times, the nodes of a graph will be labeled from 0 to n - 1.
+- The prob. statement may or may not explicitly state the input is
+a graph, sometimes there might be a story and you need to
+determine that input is a graph.
+  - E.g., "There are n cities labeled from 0 to n - 1", you can
+  treat each city as a node and each city has a unique label.
+
+- With graphs, a node can have any num. of neighbours.
+- Before we start traversal, usually need to do some more work to
+make sure that for any given node, we can immediately access all
+neighbours of said node.
+
+----------------------------------
+First input format: array of edges
+----------------------------------
+
+- Input will be a 2D array.
+- Each elem. of the array will be in form [x, y], which indicates
+that there's an edge between x and y.
+- Problem may have a story for these edges - using cities e.g., 
+story would be "[x, y] means there's a highway connecting city x
+and city y".
+
+- Edges could be undirected or directed.
+
+- Why can't we immediately start traversal?
+- Let's say we want to start a DFS from node 0 (sometimes prob.
+states which node you start from, sometimes you need to figure
+it out).
+- When we're at node 0, how do we find neighbours?
+- We'd need to iterate over entire input to find all edges that
+include 0.
+- When we move to a neighbour node, we'd need to iterate over
+entire input again to find all neighbours of that node.
+
+- At every node, we'd need to iterate over the entire input to
+find neighbours (very slow).
+
+- Before starting traversal, we can pre-process the input so that
+we can easily find all neighbours of a given node.
+- Ideally, you want a data structure where you can give node as an
+arg. and be returned a list of neighbours, most easily accomplished
+using a hash map.
+
+- Let's say you had a hash map graph that mapped integers to lists
+of integers.
+- We can iterate over the input and for each [x, y] pair, we can
+put y in the list associated with graph[x].
+- If edges are undirected, we'll also need to put x in the list
+associated with graph[y].
+- After building this hash map, we can do graph[0] and immediately
+have all neighbours of node 0.
+
+- Imagine you're on Facebook and you want to see a list of all your
+friends.
+- However, FB engineers decided to keep their graph in form of an
+array of edges.
+- You'd need to look at every single connection in the world (which
+is likely hundreds of billions) and find connections that involve
+you.
+- If graph is built beforehand, you can easily just click friends
+tab on your porfile to see only your friends.
+
+- E.g. graph:
+  -      2
+       / ^ \
+      /  |  \
+     /   |   \
+    <    |    >
+    0 -> 1    3
+- This e.g. graph can be repr. by an array of directed edges:
+  - edges = [[0, 1], [1, 2], [2, 0], [2, 3]].
+  - Note graph in image doesn't exist in memory, only as idea
+  derived from array.
+- E.g. code for building graph from array of edges:
+  - from collections import defaultdict
+
+    def build_graph(edges):
+        graph = defaultdict(list)
+
+        for x, y in edges:
+            graph[x].append(y)
+            # graph[y].append(x)
+            # uncomment the above line if the graph is undirected
+        
+        return graph
+
+------------------------------
+Second inpt. format: adj. list
+------------------------------
+
+- In an adjacency list, nodes numbered from 0 to n - 1.
+- Input'll be a 2D int array, e.g. one called graph,
+graph[i] will be a list of all outgoing edges from 
+ith node.
+- Graph above can be represented by the adj. list
+graph = [[1], [2], [0, 3], []].
+- Notice with this input, we can already access all
+neighbours of any given node, we don't need to do any
+pre-processing!
+- This makes adjacency list most convenient format,
+if we want all neighbours of node 6, we just check
+graph[6].
+
+------------------------------------
+Third input format: adjacency matrix
+------------------------------------
+
+- Once again, nodes numbered from 0 to n - 1.
+- You'll be given a 2D matrix of size n * n, e.g. one
+called graph.
+- If graph[i][j] == 1, that means there's an outgoing
+edge from node i to node j.
+- E.g., for above example graph, adj. matrix is:
+  -       [
+    [0, 1, 0, 0],
+    [0, 0, 1, 0],
+    [1, 0, 0, 1],
+    [0, 0, 0, 0]
+          ]
+
+- When given this format, you have two options.
+- During traversal, at any given node you can iter. over
+graph[node] and if graph[node][i] == 1, then you know
+that node i is a neighbour.
+- You can also pre - process the graph as we did w/ an
+array of edges.
+- Build a hash map and then iterate over the entire graph.
+- If graph[i][j] == 1, then put j in the list associated
+with graph[i].
+- This way, when performing traversal, you will not need
+to iterate n times at every node to find its neighbours.
+- This's especially useful when nodes have only a few
+neighbours and n is large.
+- Both these approaches will have time compl. of O(n^2).
+
+-------------------------
+Last input format: matrix
+-------------------------
+
+- Input'll be a 2D matrix and problem will describe a
+story.
+- Each square represents something, and squares'll be 
+connected in some way.
+- E.g., "Each square of the matrix is a village. Villages
+trade with their neigbhouring villages, which are the
+villages directly above, to the left, right or below
+them".
+- In this case, each square (row, col) of the matrix is
+a node, and the neighbours are (row - 1, col), (row, col - 1),
+(row + 1, col), (row, col + 1) (if in bounds).
+- Unlike other input formats, nodes in these graphs aren't
+numbered 0 until n.
+- Instead, each elem. in matrix represents a node.
+- Edges are determined by problem desc., not input.
+- In e.g. given above, problem desc. states that villages
+trade with those directly adjacent to them, thus edges
+are those within one square.
+
+*****************************************
+Code differences between graphs and trees
+*****************************************
+
+- While a binary tree has a root node to start traversal
+from, a graph doesn't always have an obvious "start" point.
+
+- For a binary tree, we're given objects for nodes, and
+each node has a pointer to its children.
+- In a graph, we might need to convert input into a hash
+map first.
+- When traversing a graph, we'll need to use a for loop
+to iterate over neighbours of curr. node, since a node
+could have any num. of neighbours.
+
+- Implementation of DFS for graphs can use recursion,
+which checks for base case, recursively calls on neighbours,
+does some logic to calc. answer and returns answer.
+- Can also do DFS iteratively using a stack.
+
+- In any undirected graph or directed graph with cycles,
+implementing DFS the same way we did with binary trees'll
+result in an infinite cycle (like LL cycles, where code 
+walks in a circle forever).
+- Like w/ trees, in most graph questions, we only need
+(and want) to visit each node once.
+- To prevent cycles and unnecessarily visiting a node
+more than once, we can use a set seen.
+- Before we visit a node, we first check if node is
+seen.
+- If it isn't, we add it to seen before visiting it,
+this allows us to only visit each node once in O(1) time
+because adding and checking for existence in a set
+takes constant time.
+- This wasn't necessary with trees because we started
+at roots and edges only moved "down" - once we left
+a node, no way to get back to it.
+- With graphs, you could have rel. A <-> B, and move
+between A and B forever.
+
+- As for which node we should be traversing from,
+this'll depend on the problem and what you're trying
+to solve.
