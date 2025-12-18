@@ -1,0 +1,110 @@
+- Heap is a data structure which is an implementation
+of a priority queue.
+
+- Priority queue is an abstract data structure, and a 
+heap is one of many ways to implement it, but people
+often use two terms interchangeably.
+
+- Heap is a container that stores elems. and supports
+following opers.:
+  - Add an element in O(log n).
+  - Remove min. elem. in O(log n).
+  - Find min. elem in O(1)
+
+- Heap can also find max elems. instead of min. elems.
+- If a heap is configured to find/remove min. elem,
+it's called a min heap, if configured to find/remove
+max elem., called max heap.
+
+- Ability to find max/min elem. in constant time,
+while only needing log. time to maintain this
+ability through changes makes heap powerful.
+
+*************************
+How's a heap implemented?
+*************************
+
+- We'll talk about min heaps, but logic is same for max
+heaps.
+
+- Most popular way to implement is using a binary heap.
+- Binary trees are implemented with a node object.
+
+- Binary heap implements a binary tree, but only with
+an array.
+- Idea is that each elem. in the array is a node in
+the tree.
+- Smallest elem. in tree is the root, and the following
+proper. is maintained at every node: if A is parent of B,
+then A.val <= B.val.
+- This proper. implies that root is smallest element.
+
+- Another constraint is that tree must be a complete
+tree.
+
+- Parent - child rels. are done using math with indices.
+- First elem. at index 0 is root, then elems. at indices
+1 and 2 are the root's children, the elems. at indices
+3 and 4 are children of element at index 1, 5 and 6
+are children of 2 etc.
+- If a node's at index i, then its children are at
+indices 2i + 1 and 2i + 2.
+- When elems. are added or removed, opers. are done
+to maintain the property of parent.val <= child.val,
+and the num. of opers. needed scales logarithmically
+with num. elements in heap, and process is known
+as "bubbling up".
+  - When you insert a new elem., you:
+    1. Place it at end (keeping tree complete).
+    2. Compare it with its parent.
+    3. If smaller, swap.
+    4. Repeat until heap propr. is restored or you reach
+    the root.
+  - E.g., insert 3 into this min heap:
+    -         5
+            /   \
+           7     8
+          /
+         10
+    - Insert at end:
+      -         5
+              /   \
+             7     8
+            / \
+           10  3
+    - Bubble up:
+      - 3 < 7 -> swap
+      - 3 < 5 -> swap
+    - Result:
+      -         3
+              /   \
+             5     8
+            / \
+           10  7
+  - Insert/remove are O(log n) because:
+    - A heap is complete, so its height is log n
+      - Complete binary trees grow exponentially
+      by level.
+      - Each level is fully filled except possibly
+      last.
+      - Last level is filled left to right.
+      - Struct forces tree to be short as possib.
+      - Total nodes for a tree: 2^(h+1) - 1
+      - Solve n <= 2^(h+1), take log base 2 of
+      both sides, therefore h = O(log n).
+      - Each level doubles num. nodes, doubling
+      repeatedly grows very fast, so to reach n
+      nodes, you need about log n levels.
+    - Bubbling up (insert) or bubbling down (remove
+    min) moves an elem. one level at a time.
+    - In worst case, you move from leaf to root: log
+    n steps.
+  - Finding min is O(1) because min. elem. is always
+  at root, and you just need to do heap[0].
+
+- In many probs., using a heap can improve an algs.
+time compl. from O(n^2) to O(n * log n), which is
+a massive imporvement (for n = 1,000,000, this is
+50,000 times faster).
+- A heap is a great option when you need to find
+max or min. of something repeatedly.
