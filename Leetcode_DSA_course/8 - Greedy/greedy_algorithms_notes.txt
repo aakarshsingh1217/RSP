@@ -1,0 +1,61 @@
+- A greedy alg. is any alg. that makes the locally optimal
+decision at every step.
+
+- What makes a decision optimal?
+- This'll depend on problem.
+- E.g, if we're choosing some elems. and the prob. wants us to
+find the max. sum of elements we take, then given a choice
+between two nums., it's optimal to take the larger one.
+
+- Second, what makes a decision local?
+- A decision is local when it considers only available options
+at the current step.
+- It's based on info. it has at the time, and doesn't consider
+any consequences that may happen in future from this decision.
+
+- Most greedy probs. will be asking for max. or min. of something,
+but not always.
+
+- Imagine you're delivering pizzas and had to visit 5 diff.
+houses.
+- You're not good at planning, so you decide to start w/
+nearest house.
+- After completing that delivery, you again choose to go to
+nearest of the 4 remaining houses, and so on until you finish
+deliveries.
+- Turns out if you went a different order there was a bridge
+between two of the houses that could've potentially reduced
+total travel time.
+- At each step, you were greedy and only cared about
+immeditae optimal choice, the choices were local because you
+only considered the next house and ignored all future
+decisions at the time of each decision.
+
+- Alot of algs. involving heaps can be considered greedy.
+- A heap gives us max. or min. elem., and generally greedy
+approaches'll be choosing max/min elems. at each "step".
+- Another thing to note is that in many greedy probs., you'll 
+be sorting input at start.
+- This is because we want to greedily choose max/min elems.
+in many problems, and sorting input makes this convenient.
+
+- Implementing a greedy alg. is usually easy, hard part is
+realizing/proving greedy strat. works.
+- In many probs., a greedy approach may lead to an answer
+that's very close to correct answer, but still wrong.
+- In context of LeetCode, we need fully correct sols., so using
+greedy alg. when it doesn't work isn't good.
+- But IRL, greedy algs. can give good approximations with
+significantly less computation.
+- A greedy approach to travelling salesman problem (TSP) yields
+an answer that is only wrong by about 25%, with a time compl.
+of O(n^2).
+- Haven't found an exact sol. for it yet faster than O(2^n).
+
+- "Greedy" isn't a data struct. and isn't any single alg.
+either, therefore it's hard to become "good" at greedy algs,
+and there isn't much to "learn" about it.
+- Concept of "greedy" is extremely general and main thing to
+practice is recognizing when it applies.
+- Greedy algs. usually very efficient, so important to use
+it to solve a problem. when you recognize greedy approach.

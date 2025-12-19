@@ -1,0 +1,43 @@
+************************************
+Example 1: 2126 Destroying Asteroids
+************************************
+
+- Problem statement:
+  - You are given an integer array asteroids and an integer 
+  mass representing the mass of a planet. The planet will 
+  collide with the asteroids one by one - you can choose the 
+  order. If the mass of the planet is less than the mass of 
+  an asteroid, the planet is destroyed. Otherwise, the planet 
+  gains the mass of the asteroid. Can you destroy all the 
+  asteroids?
+
+- We need to choose optimal order in which planet collides with
+asteroids.
+- Let's say that at start, only two asteroids have a mass less
+than or equal to planet, called x and y, where x < y < planet.
+- Which should we choose to collide first?
+- Ans. is that it doesn't matter.
+- Because our mass can only increase, if at any point we can
+destroy an asteroid, we'll always be able to destroy that
+asteroid in the future.
+- What's the easiest way to figure out what asteroids we can take
+at any given step?
+
+- To maintain asteroids we can destroy, we can sort input and
+iter. through it.
+- Then, we just greedily choose asteroid with smallest mass at
+each step.
+- If it any step, smallest remaining asteroid has a mass
+greater than our planet, then destroying all asteroids is
+impossible and no order of asteroids would allow us to cont.
+
+- Greedily choosing smallest remaining asteroid at every step
+is an intuitive and easy way to implem. strat.
+
+- After realizing that greedily choosing smallest asteroid
+is optimal method, implementing alg. is very simple.
+- Alg. has time compl. of O(n * log n) due to sort, where
+n's the num. of asteroids.
+- Amount of space is dependent on lang., e.g. Python 
+implements timsort which uses O(n) space, but a lang. that
+uses quicksort uses O(log n) space.
