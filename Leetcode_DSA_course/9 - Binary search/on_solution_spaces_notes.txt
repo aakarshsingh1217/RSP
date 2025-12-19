@@ -1,0 +1,57 @@
+- There's a more creative way to use binary search -
+on a solution space/answer.
+- A common type of prob. is "what is the max/min that
+something can be done".
+- Binary search can be used if following criteria
+are met:
+  1. You can quickly (in O(n) or better) verify if
+  task is possible for a given num. x.
+  2. If task is possible for a num. x, and you're
+  looking for:
+    - A max., then it's also possible for all nums.
+    less than x.
+    - A min., then it's also possible for all nums.
+    greater than x.
+  3. If task is not possible for a num. x, and
+  you're looking for:
+    - A max., then it's also impossible for all nums.
+    greater than x, or a min., then it's also
+    impossible for all numbers less than x.
+
+- The 2nd and 3rd reqs. imply that there're two
+zones.
+- One where it's possible and one where it's
+impossible.
+- Zones have no breaks, no overlap, and're
+seperated by a threshold
+
+- When a prob. wants you to find min/max, it wants
+you to find threshold where task transitions from
+impossible to possible.
+
+- First we establish possible sol. space by identifying
+min. possible answer and max. possib. ans.
+
+- Next, we binary search on this space.
+- For each mid, we perform a check to see if task is
+possible, depending on result, we halve search space.
+- Eventually, we find threshold.
+
+- If first req. is met (quick verification if mid's
+possible) then this'll give us time compl. of
+O(n * log k), where k is sol. space range.
+  1. Binary search on sol space:
+    - Answer lies in numeric range of size k.
+    - Binary search takes log k steps to find threshold.
+  2. Each step reqs. feasability check:
+    - To decide if candidate ans. mid possible, you
+    scan input.
+    - That check costs O(n).
+  - Multiply them = O(log k * n)
+- Even if possible sol. space is huge, logs. run so
+fast that this's a very efficient time compl.
+
+- We can write a func. check that takes an int. and
+checks if task is possible for that int.
+- In most cases, alg. we use in this func. will be
+a greedy one.
