@@ -1,0 +1,75 @@
+- One common type of prob. that can be solved
+with backtracking are probs. that ask you to
+gen. all of something.
+
+***************************
+Example 1: 46. Permutations
+***************************
+
+- Problem statement:
+  - Given an array nums. of distinct ints., 
+  return all possible permutations in any order.
+  - E.g., given nums = [1, 2, 3], return
+  [
+    [1, 2, 3], [1, 3, 2], [2, 1, 3], 
+    [2, 3, 1], [3, 1, 2], [3, 2, 1]
+  ].
+
+- A permutation contains all elems. of nums with
+no duplicates.
+- Let's build each permutation using a recursive
+func. backtrack(curr), where curr is current
+permutation being built.
+- Base case would be when curr.length == 
+nums.length - we have completed a perm. and can't
+go further.
+- On base case, add curr to ans. and return.
+
+- To build all permutations, we need all elems. at
+first index, and for each of those elems., we need
+all other elems. at second index, and so on.
+- Therefore, we should loop over entire input on
+each call to backtrack.
+- Because a perm. cannot have duplicates, we
+should check if a num is already in curr. b4.
+adding it to curr.
+- Each call to backtrack is like a visit to a node
+in a tree of possibilities.
+
+- Using nums = [1, 2, 3], ans. tree looks like:
+  -          Root
+         /    |    \
+        1     2     3
+       /\    /\     /\
+      2  3  1  3   1  2
+      |  |  |  |   |  |
+      3  2  3  1   2  1
+
+- When adding to answer, we need to create copy of
+curr because curr is only reference to array's
+address.
+- Time compl. of this alg. is very slow, but input
+says 1 <= nums.length <= 6, so it's expected.
+- Let n = nums.length.
+- Init. call to backtrack ("root" of tree) makes
+n calls.
+- Each of those calls makes n - 1 calls (avoiding
+duplicates), and each of those makes n - 2 etc.
+- As such, we can expected approx. O(n!) calls.
+- In this func., we have a loop over n input
+elems., and in each iter., we check if num's
+already in curr, which costs O(n).
+- Thus, we can estimate each func. call to
+cost about O(n^2).
+- Note we could optimize this processs by
+keeping track of elems. in curr using a seper.
+hash set, allowing us to perform checks in O(1).
+
+- Now, using this logic, we could say time compl.
+is O(n^2 * n!), or O(n * n!) if optimiz. implem.
+- However, this isn't try time compl. of alg.,
+which is extremeley complicated and requires
+higher - level maths (typical for backtracking
+probs. to have very difficult to calc. time
+compl. - but as long as you present logic you're
+good).

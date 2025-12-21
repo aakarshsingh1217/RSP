@@ -1,0 +1,167 @@
+- The most brute force way to solve a prob.
+is through exhaustive search.
+- Generate all possibilities and then check
+each for a solution.
+
+- Imagine you had letters a - z and were
+asked to generate strings of length n using
+the letters.
+- There're 26^n possibilities, as each of
+n letters could be a - z.
+- You can imagine all possibilities as a 
+tree.
+- Root is empty string "", and then all
+nodes have 26 children, with path from root
+representing string being built.
+- So if you started at root and went to "g"
+node, then from that node when to "p" node,
+that would repr. string "gp".
+- Depth of the tree is n, and leaf nodes 
+repr. answers.
+
+- Let's say we added a constraint so that 
+instead of all sols. of length n, we only
+wanted ones that meet the constraint.
+- Exhaustive search would still gen. all
+string of length n as "candidates", and then
+check each one for constraint.
+- This would have time compl. of O(k * 26^n),
+where k is work it costs to check if string
+meets constraint (very slow).
+
+- Backtracking is a way to efficiently run 
+through all possibilities in a prob.
+- It typically uses an optimization that
+involves abandoning a "path" once it's
+determined that path cannot lead to a sol.
+- Idea is very similar to BSTs - if you're
+looking for val. x, and root node has val.
+greater than x, then you know you can ignore
+entire right subtree.
+- Because num. nodes in each subtree is
+expontential relative to depth, Backtracking
+can save huge amounts of computation.
+- Imagine if constraint was string could
+only have vowels - exhaustive search would
+still gen. all 26^n strings, and check each
+one for if it only had vowels.
+- With backtracking, we discard all subtrees
+that have non-vowels, improving from O(26^n)
+candidates to O(5^n).
+
+- Abandoning a path is also sometimes called
+"pruning".
+- In an exhaustive search, we generate all
+possibilities and then check them for sols.
+- In backtracking, we prune paths that
+cannot lead to a sol., generating far fewer
+possibilities.
+
+- Backtracking's a great tool whenever a
+prob. wants you to find all of something,
+or there isn't a clear way to find sol.
+w/o checking all logical possibilities.
+- A strong hint that you should use
+backtracking in LC is if input constr.
+are very small (n <= ~15), as backtracking
+algs. usually have exponential time compl.
+
+- In interview, you'll not usually be told
+constraints, and even if you try clarify
+w/ interviewer, they'll give vague answer
+or just tell you to do your best.
+- This's why its important to build a good
+intutition for recognizing when to use
+certain alg.
+
+**************
+Implementation
+**************
+
+- Backtracking's usually implemented with
+recursion - it really doesn't make sense 
+to do it iteratively.
+- In most backtr. probs., you'll be
+building something, either directly (like
+modifying arr.) or indirectly (using vars.
+to repr. some state).
+- E.g. pseudocode:
+  - // let curr repr. thing you're building
+    // could be arr. or comb. of vars.
+
+    # Recursive function that builds a partial 
+    # solution "curr"
+    function backtrack(curr)
+    {
+        # If curr represents a complete and 
+        # valid solution
+        # (e.g. all choices have been made)
+        if (base case)
+        {
+            # Record the solution (increment 
+            # count or add curr to ans)
+            Increment or add to ans.
+            
+            # Stop exploring this path and 
+            # return to try other choices
+            return
+        }
+
+        # Try all possible next choices from 
+        # the current state
+        for (iterate over input)
+        {
+            # Choose: make a decision and 
+            # modify curr
+            Modify curr
+
+            # Explore: recurse with the 
+            # updated curr
+            backtrack(curr)
+
+            # Un-choose: undo the change to 
+            # restore curr
+            # so other choices can be tried
+            Undo whatever modif. done to curr.
+        }
+    }
+  - Example: gen. all subsets of [1, 2]
+    - Input: [1, 2], goal: list all subsets.
+    - How curr changes:
+      1. Start: curr = []
+      2. Choose 1 -> curr = [1]
+        - Choose 2 -> curr = [1, 2]
+                   -> base case -> add [1, 2]
+        - Undo 2 -> curr = [1]
+      3. Undo 1 -> curr = []
+      4. Choose 2 -> curr = [2]
+                  -> base case -> add [2]
+      5. Undo 2 -> curr = []
+      6. Base case at start -> add []
+    - Result: [[], [1], [1, 2], [2]].
+  - Backtracking works by choosing, exploring
+  recursively, and undoing choices, so all
+  possible sols. are generated w/o interfering
+  with each other.
+
+- Let's think back to analogy of possib. being
+repr. by a tree.
+
+- Each call to func. backtrack repr. a node in
+tree.
+- Each iter. in for loop repr. a child of curr.
+node, and calling backtrack in that loop repr.
+moving to a child.
+
+- Line where you undo modifications is the
+"backtracking" step and is equivalent to
+moving back up tree from a child to its
+parent.
+
+- At any given node, path from root to node repr.
+a candidate being built.
+- Leaf nodes are compl. sols. and repr. when the
+base caes is reached.
+- Root of this tree is an empty candidate and repr.
+scope that original backtrack call being made
+from.
