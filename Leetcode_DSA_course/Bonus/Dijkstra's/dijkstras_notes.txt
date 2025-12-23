@@ -1,0 +1,283 @@
+- We've looked at many graph problems with
+unweighted graphs.
+- When we used BFS to find "shortest" path,
+we were finding path with least num.
+edges.
+
+- A weighted graph is one where edges are
+assigned some val. (weight),
+- E.g.:
+  -           (0)
+           /  |  \
+        4 /   |   \ 2
+         ↓    |     ↓
+        (3)   |10   (1)
+         \    |       \
+        15\   |        \1
+           \  ↓         ↓
+            → (4)←───── (2)
+                    3
+
+- If we started at node 0, and wanted to
+find shortest path to node 4, what would
+ans. be?
+- 3 diff. paths:
+  1. 0 -> 1 -> 2 -> 4
+  2. 0 -> 3 -> 4
+  3. 0 -> 4
+
+- Path 3 has fewest edges, but is it
+"shortest" path?
+- We define weight of path as sum of
+edge weights.
+- Weight of each path is:
+  1. 6
+  2. 19
+  3. 10
+
+- Path 1 (which has most edges) has lowest
+weight.
+- Shortest paths on weighted graphs care
+about path weights.
+
+- Like many graph probs., there'll be a
+story you need to recognize.
+- E.g., each node is a city, each edge is a 
+highway that has a toll you need to pay to
+use, and you want to find path from one
+city to another with lowest price.
+
+- BFS is a great alg. for finding shortest
+path, but only works on unweighted graphs,
+which are weighted graphs where all
+weights are 1.
+- Weighted graphs are tricky becuase when a 
+path has fewer edges, it doesn't necessarily
+mean it has a lower weight.
+- Can't simply apply the BFS we're used to
+on weighted graphs.
+
+********************
+Dijkstra's algorithm
+********************
+
+- Dijkstra's alg. focuses on one source node,
+and will find shortest dist. to every other
+node in graph from source.
+
+- Idea behind Dijkstra's alg. is to use a
+min-heap to store nodes, like how we used
+stacks in DFS and queues in BFS.
+- With each node, we'll also keep track
+of weight of path used to reach node from 
+source.
+- Min-heap will judge each elem. according
+to this weight.
+- At each iter., we retrieve a node by
+popping from min-heap, which provides us
+node with minimum weight path.
+
+- We also keep min. dist. so far from source
+for every node.
+- If nodes are numbered 0 to n - 1, its
+convenient to use an arr. distances of length
+n to do this.
+- Initially, all vals. in this arr. are large
+val. (like infinity), except for source which
+has val. 0.
+
+- At each node, we iterate over neighbours.
+- Consider curr. dist. from source (which 
+we store with each node in the heap) as
+curr_dist.
+- For a given neighbour nei, consider
+weight of edge node -> nei as weight.
+- Traversing to this neighbour results
+in a path weight dist = curr_dist + weight.
+- There're 2 possibilities:
+  1. dist >= distances[nei]. In this case,
+  we already found path with shorter dist.
+  earlier, and thus traversing to nei on
+  curr path is pointless.
+  2. dist < distances[nei]. Traversing to
+  nei on curr. path is shortest path we've
+  seen so far to nei, we should update
+  distances[nei] = dist and push (dist, nei)
+  onto heap.
+
+- Pseudocode:
+  - // array of length n with large values
+    distances = [infinity] * n
+    distances[source] = 0
+
+    // min heap
+    heap = [(0, source)]
+
+    while (heap not empty) {
+        curr_dist, node = heap.pop()
+
+        if (curr_dist > distances[node]) {
+            // optimization step: ignore current path if we found a better one
+            continue;
+        }
+
+        for (nei, weight: [edges from node]) {
+            dist = currDist + weight
+
+            // add neighbor to heap if it creates a shorter path
+            if (dist < distances[nei]) {
+                distances[nei] = dist
+                heap.push((dist, nei))
+            }
+        }
+    }
+- Walkthrough of pseudocode with example graph:
+  - E.g. graph:
+    - 0 → 1 (2)
+      1 → 2 (1)
+      2 → 4 (3)
+      0 → 3 (4)
+      3 → 4 (15)
+      0 → 4 (10)
+  - Goal: shortest distances from source = 0.
+  1. Initialize distances:
+    - distances = [∞, ∞, ∞, ∞, ∞].
+    - distances[0] = 0.
+    - Meaning:
+      - We don't know shortest paths yet.
+      - Distance to source (0) is 0.
+  2. Initialize min-heap:
+    - heap = [(0, 0)].
+    - Meaning start from node 0 with cost 0.
+  3. Pop from heap (main loop):
+    - curr_dist = 0, node = 0
+      - Closest unprocessed node.
+      - Since curr_dist == distances[0], proceed.
+  4. Visit neighbours of node 0:
+    - Neighbours: 1 (weight 2), 3 (weight 4), 
+    4 (weight 10)
+      - We get neighbours of nodes from adjacency
+      list.
+    - For each neighbor:
+      - To 1: 0 + 2 = 2 < inf. -> update:
+        - distances[1] = 2.
+        - push (2, 1).
+      - To 3: 0 + 4 = 4 < inf. -> update:
+        - distances[3] = 4.
+        - push (4, 3).
+      - To 4: 0 + 10 = 10 < inf. -> update:
+        - distances[4] = 10.
+        - push (10, 4).
+    - Heap now: [(2,1), (4,3), (10,4)].
+      - This is a min-heap with 2 ints.,
+      (dist, node).
+      - Ordered by first value, and
+      only uses 2nd. val if there's a tie.
+      - When you push tuples like (10, 4),
+      heap compares them lexicographically:
+        1. Compare first elem. (dist).
+        2. If equal, compare second elem.
+        (node).
+      - Ordering is by dist. first.
+  5. Pop next node.
+    - curr_dist = 2, node = 1.
+      - Still valid (2 == distances[1]).
+    - Neighbours of 1:
+      - 2 (weight 1):
+        - To 2: 2 + 1 = 3 < inf. -> update:
+          - distances[2] = 3.
+          - push(3, 2).
+    - Heap: [(3, 2), (4, 3), (10, 4)].
+  6. Pop next node.
+    - curr_dist = 3, node = 2.
+    - Neighbours of 2:
+      - 4 (weight 3):
+        - To 4: 3 + 3 = 6 < 10 -> better
+        path found:
+          - distances[4] = 6.
+          - push (6, 4).
+    - Heap: [(4, 3), (6, 4), (10, 4)].
+  7. Pop node 3.
+    - curr_dist = 4, node = 3.
+    - Neighbour: 4 (weight 15).
+      - 4 + 15 = 19 >= 6 -> ignore.
+  8. Pope node 4.
+    - curr_dist = 6, node = 4.
+      - No outgoing edges -> done.
+    - Later, (10, 4) is popped but skipped
+    because 10 > distances[4] (which = 6).
+  - Final distances: [0, 2, 3, 4, 6].
+    - E.g., shortest path from 0 -> 4 has
+    weight 6, and path is 0 -> 1 -> 2 -> 4.
+    - Standard Dijkstra stores only shortest
+    path weights.
+
+**********
+Complexity
+**********
+
+- Time compl. of Dijkstra's alg. is dependent
+on how heap is implemented, however, it can
+be generally writen as:
+  - O((V + E) * log V), where E is num. edges
+  and V is num. vertices/nodes in given graph.
+- Heap opers. cost up to O(log V), there're
+O(V) pop opers. and O(E) push opers.
+- Space complexity is O(V) for heap and
+distances.
+- These compl. don't account for creating
+graph, only for running Dijkstra's.
+
+- Explanation of why time and space compl. is
+the case and how to derive:
+  1. Heap operation cost.
+    - Using binary min heap:
+      - push = O(log V)
+      - pop = O(log V)
+        - A binary heap is a complete binary
+        tree, and every level is full except
+        possibly last, and num. nodes grows
+        exponentially by level, for a heap
+        with V elems., height = log base 2 V.
+        - V = 2^height and therefore 
+        height = log base 2 V (num nodes
+        grows expontentially with height).
+        - Push (heappush) adds new elem. to
+        end which may need to bubble up to
+        restore heap order, each swap moves one
+        level up, max num. swaps = height = log V.
+        - Pop (heappop), root's removed and last
+        elem. moves to root, it may be need to
+        bubble down, each swap moves it one
+        level down and max num. swaps = height
+        = log V.
+      - Heap size is at most V.
+        - In Dijkstra's, heap stores entires in form 
+        (dist., node).
+        - You never need more than one active
+        best-distance candidate per node.
+        - Even though outdates entires may exist
+        temporarily, heap never grows beyond
+        O(V) meaningful entries.
+        - There're only V distinct nodes, heap order
+        is based on distances to those nodes, so
+        max heap size = O(V).
+  2. How many pops?
+    - Each node's shortest dist. is finalized once.
+    - So there's at most V pop opers.
+    - Cost: V * log V.
+  3. How many pushes?
+    - Each edge causes at most one successful
+    relaxation.
+    - That means at most E pushes into heap.
+    - Cost: E * log V.
+  - Space compl. O(V) because dist. arr. stores
+  one val. per node -> O(V), heap holds up to 
+  O(V) elems. at a time.
+  - One line takeaway:
+    - Dijkstra does one heap pop per node and one
+    heap push per edge, each costing log V,
+    giving O((V + E) * log V) time and O(V) space.
+
+- Dijkstra's should only be used on graphs without
+neg. weight cycles
