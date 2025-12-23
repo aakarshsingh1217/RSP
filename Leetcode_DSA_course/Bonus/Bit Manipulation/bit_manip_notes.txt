@@ -1,0 +1,101 @@
+- Bit manip. powerful tool that can
+improve complexity of algs. in clever
+ways.
+- Bit manip. involves looking at data in
+binary form, and manipulating "bits" in
+this form.
+- Most important opers:
+  - OR |
+    - If any bit is 1, then result will
+    be 1, otherwise result is 0.
+  - AND &
+    - If all bits are 1, then result is
+    1, otherwise result is 0.
+  - XOR ^
+    - If number of 1 bits is odd, then
+    result will be 1, otherwise result
+    is 0.
+  - Left and right shifts: <<, >>
+    - Shifts move all bits over one place in
+    respective dir.
+    - If first bit is flipped, a right shift
+    will "delete" it.
+    - Shifts correspond to multiplying and
+    dividing a number by 2 (left shift =
+    multip. by 2, right shift = floor div.
+    by 2).
+    - Bit shifts move binary repr. of num.
+    left or right, e.g.:
+      - Left shift << (multiply by 2)
+        - 5 = 00000101
+        - 5 << 1 = 00001010 = 10
+          - All bits shift left.
+          - A 0 added on right.
+          - Value doubles.
+          - So 5 << 1 == 10.
+      - Right shift >> (div. by 2 floor).
+        - 5  = 00000101
+        - 5 >> 1 = 00000010 = 2
+          - All bits shift right.
+          - Rightmost bit discarded.
+          - Value halves (rounded down).
+          - So 5 >> 1 == 2.
+  - Shifting left appends a 0 -> doubles num.
+  - Shifting right removes last bit -> halves.
+
+- Let's say we're doing bit manipulation on
+ints., and we have two ints.: x, y.
+- If we perform opers. on x and y, then oper.
+is applied on every bit.
+- E.g., given x = 15 and y = 12, then binary
+x = 1111 and y = 1100.
+  - x | y = 1111 = 15
+  - x & y = 1100 = 12
+  - x ^ y = 0011 = 3
+  - x << 1 = 11110 = 30
+  - x >> 1 = 111 = 7
+
+- Sometimes, we want to focus on specific bits
+rather than every bit in a num.
+- To do this, we use a bitmask.
+- A mask with one bit flipped can be used to
+check individual bits of other nums.
+- E.g., let's say that we're only concerned
+about 2nd bit (0 indexed from right, so bit
+represents decimal num. 4) of a num. x.
+
+- We can take integer mask = 1, left shift it
+twice so that it's in 2nd pos. (100) and now
+any opers between x and mask will only be
+"applied" on 2nd bit.
+  - Bitmask lets you isolate or manip.
+  specific bits in a number.
+  - E.g.: check 2nd bit (val. = 4).
+    - Create mask:
+      - mask = 1 << 2 # 00100 (decimal 4)
+    - Apply it to num.:
+      - Let x = 13 # 01101
+    - Use AND to check the bit:
+      - x & mask 
+      - 01101 & 00100 = 00100 (non-zero)
+    - Since res. is non-zero, 2nd bit set 
+    in x.
+
+- If we want to see if 2nd bit of x is flipped,
+we can do mask & x.
+- Because all bits in mask are 0 other than
+2nd bit, this res. will be 0 if and only if
+2nd bit in x is not flipped.
+- Implies that res. of masx & x will be non-
+zero if 2nd bit is flipped in x.
+
+- If we want to flip 2nd bit of x, we can do
+mask ^ x.
+- Because all bits in mask are 0 other than
+2nd bit, XOR oper. will not change any other
+bits.
+- If 2nd bit in x is 1, then 1 ^ 1 - 0, if
+it's 0, then 1 ^ 0 = 1.
+
+- If you do x XOR 0, then nothing changes
+with x, if you do x XOR 1, then x is flipped.
