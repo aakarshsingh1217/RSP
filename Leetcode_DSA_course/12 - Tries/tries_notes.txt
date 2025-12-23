@@ -1,0 +1,63 @@
+- A trie is a data structure, also known as 
+a prefix tree.
+- Usually, a trie stores chars. of a str.
+at each node.
+- All paths from root to a node repr. a
+string of chars. on the path, e.g. trie:
+                                   (root) ""
+                           ┌───────────┴───────────┐
+                           a                       n
+               ┌───────────┼───────────┐       ┌───┴───┐
+               x           g           s       t       s
+               │          ag           │       │      ns
+               h                       x       t
+             axh                      asx     ntt     
+
+- Tries can be used to efficiently implem.
+string searching/matching algs.
+- Let's say you have a huge list of words
+and a stream of chars. (like someone typing).
+- By building a trie, you can keep track of
+which words have the chars. as a a prefix.
+- E.g. code for building a trie from an arr.
+of strings words:
+  - Example input: words = ["ax", "as"]
+  - TrieNode defines a trie node, children
+  maps char. -> next TrieNode, data is
+  optional (e.g. end-of-word flag).
+  - build_trie(words) creates a root
+  TrieNode (empty node, no char.).
+  - for word in words, curr = root.
+    - Loop through each word.
+    - Start insertion from root every time.
+  - Insert "ax".
+    - for c in word.
+      - iterate char. by char.
+      - 'a' not in root -> create node for
+      'a'
+      - curr = curr.children[c]
+        - Move curr to node 'a'.
+      - Next char. 'x'.
+        - 'x' not in 'a's children -> create
+        node.
+        - Move curr to 'x'
+
+- Building a trie takes O(n * k) time, where
+n is len. of words and k is avg. len. of
+strings in words.
+  - To build a trie, you insert each word
+  char. by char.
+    - You have n words.
+    - Each words has k chars. on average.
+    - For each char., you do constant-time work.
+      - Hash map lookup (children[c]).
+      - Possibly creating a node.
+    - So total work is:
+      - n words * k chars per word = O(n * k)
+  - To derive, you have these nested loops:
+    - for word in words: # runs n times
+        for c in word: # runs k times on avg.
+    - Multiplying loop counts gives O(n * k).
+  - Building a trie touches every char. of
+  every word exactly once, so time is proportional
+  to num chars.: O(n * k).
