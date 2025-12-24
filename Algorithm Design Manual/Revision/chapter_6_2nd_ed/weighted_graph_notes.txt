@@ -1,0 +1,523 @@
+**********************
+Minimum Spanning Trees
+**********************
+
+- A spanning tree of a graph G = (V, E) is a subset of edges from E
+forming a tree connecting all vertices of V.
+- A minimum spanning tree is a spanning tree whose sum of edge
+weights is as small as possible.
+
+- A min. spanning tree minimizes total length over all possible
+spanning trees.
+- However, there can be more than one min. spanning tree in a graph,
+e.g. all spanning trees of an unweighted (or equally weighted)
+graph G are min. spanning trees, since each contains exactly
+n - 1 equal weight edges.
+- Such a spanning tree can be found using DFS or BFS.
+
+----------
+Prim's alg.
+----------
+
+- Idea:
+  - Grow MST one vert. at a time, always choosing cheapest edge
+  that connects curr. tree to new vertex.
+- Alg:
+  1. Start with arbitrary vertex s.
+  2. Repeatedly:
+    - Choose min.-weight edge that connects:
+      - Vertex inside the tree to a vertex outside the tree.
+    - Add that edge and vertex to the tree.
+  3. Stop when all vertices included.
+- Guarantees:
+  - No cycles (edges always go tree -> non tree).
+  - Final struct. is spanning tree.
+- Why Prim's alg. is correct:
+  - Proof by contradiction.
+  - Assume Prim's makes wrong choice and prods. a non-min. tree.
+  - At step where it chooses edge (x, y):
+    - Curr. partial tree matches some MST so far.
+  - In true MST, there must be a path between x and y.
+  - Path crosses from tree to outside at some edge (v1, v2).
+  - Edge must have weight >= (x, y), otherwise Prim would've chosen
+  earlier.
+  - Replacing (v1, v2) with (x, y) doesn't incr. total weight.
+  - Therefore, Prim's choice was safe.
+  - Contradiction -> Prim's alg always produces MST.
+- Key takeaways:
+  - MST connects all vertices with min. total weight.
+  - Prim's alg:
+    - Is greedy.
+    - Grows tree incrementally.
+    - Always picks cheapest edge crossing tree boundary.
+  - Its correctness relies on fact that:
+    - Choosing cheapest edge across a cut is always safe.
+
+---------------------
+Prim's implementation
+---------------------
+
+- Prim's alg. grows min. spanning tree in stages, starting
+from a given vertex.
+- At each iter., we add one new vertex into spanning tree.
+- Greedy alg. suffices for correctness: always add lowest-weight
+edge linking a vertex in tree to a vertex on outside.
+- Simplest implementation is to assign each vertex a Bool denoting
+whether it's in tree (arr. intree), and search all edges at
+each iter. to find min. weight edge with exactly one intree vert.
+
+- Better implem. is to keep track of cheapest edge linking
+every nontree vert. in tree.
+- Cheapest such edge over all remaining non-tree vertices gets added 
+in each iter.
+- Must update costs of getting to non-tree vertices after each
+insertion.
+- However, since most recently inserted vertex is only change in
+tree, all possible edge weight updates must come from its
+outgoing edges.
+
+- Example graph and prims walkthrough:
+  - E.g. graph:
+    - 1 -(2)- 2
+      |       |
+     (3)     (1)
+      |       |
+      3 -(4)- 4
+      - Bracketed nums are weights.
+  - Initialization:
+    - intree = [False] * (MAXV + 1)
+      distance = [MAXINT] * (MAXV + 1)
+      parent = [-1] * (MAXV + 1)
+      - intree[v]: whether v is already in MST.
+      - distance[v]: cheapest edge cost to connect v to tree.
+      - parent[v]: which vertex connects v to MST.
+    - distance[start] = 0
+      curr_vert = start 
+      - Start MST at vertex 1 (passed into func. call).
+      - Forces vertex 1 to be picked first.
+  - Main loop (grows MST):
+    - while not intree[curr_vert]
+      - Keep adding vertices until no reachable vert. remains.
+    - intree[curr_vert] = True
+      curr_edge = g.edges[curr_vert]
+      - Mark curr_vert as included.
+      - Start scanning its adj. list 
+  - Relax edges
+    - while curr_edge is not None:
+        w = curr_edge.y
+        weight = curr_edge.weight
+      - Look at each neighbour w of curr_vert.
+    - if not intree[w] and distance[w] > weight:
+        distance[w] = weight
+        parent[w] = curr_vert
+      - If w is not yet in MST.
+      - And this edge is cheaper than what we knew before.
+      - Update best way to connect w.
+      - From vertex 1:
+        - Update:
+          - distance[2] = 2, parent[2] = 1.
+          - distance[3] = 3, parent[3] = 1.
+  - Pick next closest vertex:
+    - curr_vert = -1
+      min_dist = MAXINT
+      - Prepare to find cheapest non-tree vert.
+    - for i in range(1, g.nvertices + 1):
+        if not intree[i] and distance[i] < min_dist:
+            min_dist = distance[i]
+            curr_vert = i
+      - Scan all vertices.
+      - Pick one not in tree with smallest distance.
+      - Here: vertex 2 (distance 2).
+  - Repeat:
+    - Add vertex 2.
+    - Relax edges from 2:
+      - distance[4] = 1, parent[4] = 2.
+    - Next pick vertex 4, then 3.
+  - Termination:
+    - if curr_vert == -1
+        break
+      - No reachable non-tree vert. left -> MST complete.
+  - Result
+    - return parent, distance
+      - parent[v] tells you which vertex connects v to MST.
+      - distance[v] tells you weight of that connecting edge.
+        - Together, they encode MST.
+      - For every vertex v ≠ start:
+        - Edge parent[v] - v is in MST.
+        - Edge weight is distance[v].
+      - E.g. result:
+        - parent = [-1, 1, 1, 2, 1]
+          distance = [∞, 0, 2, 1, 3]
+        - MST edges of above:
+          - 1 - 2 (2)
+            2 - 3 (1)
+            1 - 4 (3)
+
+- Time compl.
+  - O(V^2 + E) -> usually written O(V^2)
+    - Each iteration:
+      - Scan all vertices to find min. -> O(V)
+      - Done V times.
+- Space compl.
+  - Arrays: intree, distance, parent -> O(V)
+  - Graph adj. lists -> O(V + E)
+  - Therefore extra space used by Prim: O(V)
+
+-----------------
+Analysis of Prims
+-----------------
+
+1. Naive Prim's: O(mn)
+  - Why:
+    - For each n vertices added to tree, you scan all m edges
+    to find cheapest edge that connects tree -> non tree.
+    - n iterations * m edge checks.
+2. Improve array-based Prim's: O(n^2)
+  - Why:
+    - You don't scan all edges.
+    - You maintain:
+      - intree[] -> constant time check if vertex already in MST.
+      - distance[]/parent[] -> only best known edge per vertex.
+    - Each iteration:
+      - Scan n vertices to find smallest distance[].
+      - Update neighbours of chosen vertex (<= n).
+      - n iterations * n scans.
+
+-----------------------
+Union-Find data struct.
+-----------------------
+
+- Set partition is partioning elems. of some universal set (say
+integers 1 to n) in collection of disjointed subsets.
+- Thus, each elem. must be in exactly one subset.
+- Set partitions naturally arise in graph probs. such as
+connected components (each vert. is in exactly one connected
+component) and vert. coloring (a person may be male or
+female, but not both or neither).
+
+- Connected components in a graph can be represented as a set
+partition.
+
+- For Kruskal's to run efficiently, we need a DS that efficiently
+supports following opers.:
+  - Same component(v1, v2) - Do vertices v1 and v2 occur in same 
+  connected component of curr graph?
+  - Merge components(C1, C2) - Merge given pair of connected
+  components into one component in response to an edge
+  between them.
+
+- Two obvious data structs. for this task each support only
+one of these opers. efficiently.
+- Explicitly labeling each elem. with its component num.
+enables same component test to be performed in constant
+time, but updating component nums after merger would
+require linear time.
+- Alternately, we can treat merge components oper. as
+inserting edge in a graph, but then we must run full
+graph traversal to identify connected components on
+demand.
+
+- Union find data struct. repr. each subset as a "backwards"
+tree, with pointers from a node to its parent.
+- Each node of this tree contains a set elem., and name of
+set is taken from key at root.
+- Also maintain num. elems. in subtree rooted in each vert.
+v.
+
+- We implement desired component opers. in terms of two
+simpler opers., union and find:
+  - Find(i) - find root of tree containing elem. i, by
+  walking up parent pointers until there's nowhere to go.
+  - Union(i, j) - Link root of one of trees (say containing
+  i) to root of tree containing other (say j), so find(i)
+  now equals find(j).
+
+- Seek to minimize time it takes to execute any sequence of
+unions and finds. 
+
+-------------------------------------------
+Explanation of Union Find and example input
+-------------------------------------------
+
+- Union-Find maintains a collection of disjoint sets and
+supports two core operations:
+  - find(x) -> tells you which set x belongs to (returns
+  the set's root).
+  - union(x, y) -> merges sets containing x and y.
+  - same_component(x, y) -> checks if x and y are alr.
+  connected.
+
+- Example input (graph context):
+  - Say we have undir. graph with vertices 1, 2, ..., 5
+  and edges:
+    - 1 - 2
+      2 - 3
+      4 - 5
+  - We'll process edges one by one using Union-Find.
+  - Step by step execution:
+    - Initialization:
+      - s = SetUnion()
+        set_union_init(s, 5)
+        - After this:
+          - parent_elem: [_, 1, 2, 3, 4, 5]
+            size:        [_, 1, 1, 1, 1, 1]
+        - Each vertex is its own set.
+    - Process edge (1, 2).
+      - union_sets(s, 1, 2)
+        - Inside union_sets:
+          - find(s, 1) -> 1.
+          - find(s, 2) -> 2.
+          - Sizes equal -> attach 2 under 1.
+          - Result:
+            - parent_elem: [_, 1, 1, 3, 4, 5]
+              size:        [_, 2, 1, 1, 1, 1]
+    - Process edge (2, 3):
+      - union_sets(s, 2, 3)
+        - Inside union_sets:
+          - find(2) -> 1
+          - find(3) -> 3.
+          - size[1] > size[3] -> attach 3 under 1.
+            - 3's connected to 2, but in Union-Find we attach
+            to root of the set, not the immediate neighbour.
+            - 3's parent becomes 1, because 1 is root of 2's
+            set.
+            - After processing edge (1, 2) we have:
+              - 1 is root
+              - 2 -> 1.
+            - So set looks like:
+              - 1
+                └── 2
+            - Now process edge (2, 3):
+              1. find(2)
+                - parent[2] = 1
+                - parent[1] = 1
+                - Root is 1
+              2. find(3)
+                - parent[3] = 3
+                - Root is 3.
+            - So we're really unioning:
+              - root(2) = 1
+                root(3) = 3
+            - Since size[1] > size[3], attach root 3 under
+            root 1.
+            - Resulting structure:
+              - 1
+                ├── 2
+                └── 3
+          - Result:
+            - parent_elem: [_, 1, 1, 1, 4, 5]
+              size:        [_, 3, 1, 1, 1, 1]
+    - Process edge (4, 5)
+      - union_sets(s, 4, 5)
+        - find(4) -> 4
+        - find(5) -> 5
+        - Attach 5 under 4.
+      - Result:
+        - parent_elem: [_, 1, 1, 1, 4, 4]
+          size:        [_, 3, 1, 1, 2, 1]
+    - Connectivity checks:
+      - same_component(s, 1, 3) # true
+      - same_component(s, 1, 5) # false
+      - Why?
+        - 1 -> root 1, 3 -> root 1.
+        - 5 -> root 4.
+
+--------------
+Kruskal's alg.
+--------------
+
+- Like Prim's, Kruskals is another approach to finding MSTs
+that proves more efficient on sparse graphs, and is also
+greedy but doesn't need to start with particular vertex.
+
+- Kruskal's builds up connected components of vertices,
+culminating in minimum spanning tree.
+- Initially, each vertex forms its own seperate component
+in tree to be.
+- Alg. repeatedly considers lightest remaining edge and
+tests whether its two endpoints lie within same connected
+component.
+- If so, edge will be discarded, because adding it would
+create a cycle in tree to be.
+- If endpoints are in diff. components, we insert edge
+and merge two components into one.
+- Since each connected component is always a tree, we
+never need to explicitly test for cycles.
+
+- Time compl. of Kruskal's, sorting m edges takes
+O(m lg m) time.
+- For loop makes m iters., each testing Connectivity
+of two trees plus edge.
+- Simple minded approach to use BFS or DFS in a sparse
+graph yielding an O(mn) alg.
+
+-----------------------------------
+Full kruskal's example walk through
+-----------------------------------
+
+- E.g. graph (undirected):
+  - Vertices: 4
+  - Edges:
+    - 1 - 2 (1)
+      1 - 3 (4)
+      2 - 3 (2)
+      2 - 4 (3)
+      3 - 4 (5)
+  - Adj. lists:
+    - 1: 3(4) -> 2(1)
+      2: 4(3) -> 3(2) -> 1(1)
+      3: 4(5) -> 2(2) -> 1(4)
+      4: 3(5) -> 2(3)
+- Step 1: Union-Find init:
+  - set_union_init(s, 4)
+  - parent = [_, 1, 2, 3, 4]
+    size   = [_, 1, 1, 1, 1]
+    - Each vert. is its own component.
+- Step 2: Edge list + sort:
+  - Edge list (after removing duplicates):
+    - (1,2,1)
+      (2,3,2)
+      (2,4,3)
+      (1,3,4)
+      (3,4,5)
+      - Sorted by weight.
+- Step 3: Process edges:
+  - Edge (1, 2, 1):
+    - same_component(1, 2) -> false
+    - union_sets(s, 1, 2)
+    - parent[2] = 1
+    - size[1] = 2
+    - MST = {(1, 2)}
+  - Edge (2, 3, 2):
+    - same_component(1, 3)
+      - find(2) -> 1
+      - find(3) -> 3
+      - So it's false.
+    - union_sets(s, 2, 3)
+    - parent[3] = 1
+    - size[1] = 3
+    - MST = {(1, 2), (2, 3)}
+  - Edge (2, 4, 3)
+    - same_component(2, 4)
+      - find(2) -> 1
+      - find(4) -> 4
+      - False.
+    - union_sets(s, 2, 4)
+    - parent[4] = 1
+    - size[1] = 4.
+    - MST = {(1, 2), (2, 3), (2, 4)}
+- We now have n - 1 = 3 edges, stop.
+  - In Kruskal's, a MST for a connected graph with n vertices
+  must have exactly n - 1 edges.
+  - Why n - 1?
+    - A tree with n vertices has:
+      - Enough edges to connect everything (connectivity).
+      - But no extra edges that would form a cycle (acyclic).
+    - Fewer than n - 1 -> graph disconnecetd.
+    - More than n - 1 -> cycle exists.
+  - Stop at n - 1 because:
+    - All vertices are connected
+    - No cycles exist (guaranteed by union find checks)
+    - Adding any more edge would create cycle, not improve 
+    MST.
+- Crux of Kruskal's and why union-find needed:
+  - Kruskal's builds an MST by picking cheapest edge that
+  doesn't create a cycle.
+  - An MST must:
+    - Connect all vertices.
+    - Have no cycles.
+    - Use min. total edge weight.
+  - So when looking at edge (u, v):
+    - Keep it if it connects two diff. components.
+    - Discard it if it connects nodes already connected
+    (cycle).
+  - How do we quickly know whether u and v are connected,
+  through union find.
+  - Union find stores connected components of MST so far.
+    - Each component = partial tree.
+    - Initially: every vert. is its own component.
+    - When we accept an edge, we merge two components.
+  - How kruskal and union find work together:
+    - Step 1: sort edges by weight:
+      - (1,2,1), (2,3,2), (2,4,3), (1,3,4), ...
+      - Greedy choice: cheapest first.
+    - Step 2: process edges in order:
+      - For each edge (u, v) do union find check.
+        - if find(u) != find(v):
+            accept edge
+            union(u, v)
+          else:
+            discard edge # would form cycle.
+  - Concrete example:
+    - Graph:
+      - 1----(1)----2----(3)----4
+         \          |
+         (4)        |
+           \        |
+            \       |
+             3-----(2)
+      - Sorted edges:
+        - (1,2,1), (2,3,2), (2,4,3), (1,3,4)
+    - Edge (1, 2)
+      - find(1) != find(2) -> keep
+      - union(1, 2)
+      - Components: {1, 2} {3} {4}
+    - Edge (2, 3)
+      - find(2) != find(3) -> keep
+      - union(2, 3)
+      - Components: {1, 2, 3} {4}
+    - Edge (2, 4)
+      - find(2) != find(4) -> keep.
+      - union(2, 4).
+      - Components: {1, 2, 3, 4}
+    - We now have n - 1 edges, so we stop.
+    - MST: {(1, 2), (2, 3), (2, 4)}
+      - Total weight = 6.
+    - Edge (1, 3)?
+      - find(1) == find(3) -> same component.
+      - Discard (cycle).
+  - Without union-find:
+    - You need DFS/BFS for every edge to check connectivity.
+    - O(n) per edge -> too slow.
+  - With union-find:
+    - Connectivity check almost O(1)
+    - Total time stays O(m log m) (dominated by
+    sorting).
+    - Kruskal = sort edges + union-find cycle prevention
+    - Union-find answers exactly one question:
+      - “Are these two vertices already connected in the MST 
+      I’ve built so far?”
+
+-----------------------------------
+Time & space complexity of Kruskals
+-----------------------------------
+
+- Let:
+  - V = vertices.
+  - E = edges.
+
+ ______________________________
+| Step            | Cost       |
+|-----------------|------------|
+| Build edge list | O(E)       |
+| Sort edges      | O(E log E) |
+| Union-Find ops  | O(E log V) |
+--------------------------------
+- Union find ops are O(E log V) because:
+  - For each edge (u, v):
+    - find(u)
+    - find(v)
+    - Possibly union(u, v)
+  - Over all edges:
+    - 2E finds.
+    - <= V - 1 unions.
+  - Implementation uses union by size.
+  - This guarantees:
+    - Tree height <= log v
+    - Every time a tree grows in height, size
+    at least doubles.
+  - So:
+    - find = O(log v)
+    - union = O(log v) (2 finds + pointer change).
+  - Total over all edges:
+    - E * O(log V) = O(E log V)

@@ -16,23 +16,280 @@ each vertex unique idenitification number from 1 to
 nvertices.
 - Repr. edge using arr. of linked lists.
 
-- Time/space compl. of graph with adj. list.
-  - Let V = num vertices
-  - Let E = num edges
-  - Let deg(v) = outdegree of vert. v 
-  - Overall space compl. (adj. list):
-    - Total space: O(V + E)
-      - Edges arr.: O(V)
-      - Degree arr: O(V)
-      - One EdgeNode per edge -> O(E)
-  - Init graph:
-    - Time O(V) as it loops over all vertices to reset
-    arrs.
-  - Insert edge:
-    - O(1) time as it inserts at head of LL.
-  - Read graph:
-    - O(V + E) time as O(V) initialisation and reading
-    and inserting edges O(E).
-  - Print graph:
-    - O(V + E) time as outer loop visits all vertices
-    and inner loop traverses all adjacency list.
+- Dir. edge (x, y) by an edgenode y in x's adj. list.
+- Degree field of graph counts meaningful entires for given
+vertex.
+- Undir. edge (x, y) appears twice in any adjacency-based
+graph struct., once as y in x's list, and once as x in y's list.
+
+-----------
+Insert edge
+-----------
+
+- New edgenode inserted at beginning of appropriate adj. list,
+since order doesn't matter.
+- Paramterize insertion with dir. boolean flag, to identify
+whether we need to insert 2 copies of edge or one.
+
+-----------
+Print graph
+-----------
+
+- Uses two nested loops, one through vertices, other through adj.
+edges.
+
+------------------------------------------
+Time/space compl. of graph with adj. list.
+------------------------------------------
+
+- Let V = num vertices
+- Let E = num edges
+- Let deg(v) = outdegree of vert. v 
+- Overall space compl. (adj. list):
+  - Total space: O(V + E)
+    - Edges arr.: O(V)
+    - Degree arr: O(V)
+    - One EdgeNode per edge -> O(E)
+- Init graph:
+  - Time O(V) as it loops over all vertices to reset
+  arrs.
+- Insert edge:
+  - O(1) time as it inserts at head of LL.
+- Read graph:
+  - O(V + E) time as O(V) initialisation and reading
+  and inserting edges O(E).
+- Print graph:
+  - O(V + E) time as outer loop visits all vertices
+  and inner loop traverses all adjacency list.
+
+*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
+Leetcode DSA Course - Trees and graphs
+*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
+
+******
+Graphs
+******
+
+- Graph is any collection of nodes and connections between those
+nodes.
+
+- Another term for nodes is vertices, and connections between nodes
+are called edges.
+
+- Binary tree is a graph with restrictions, e.g. every node has at
+most one parent and at most two children.
+
+-----------------
+Graph terminology
+-----------------
+
+- Edges of a node can be directed or undirected.
+- Directed edges mean you can only traverse in one dir.
+- Undirected edges mean you can traverse in both dirs.
+
+- Binary trees are directed graphs because edges are directed,
+you can't access a node's parent, only its children, once you
+move to a child, you can't move back.
+
+- A connected component of a graph is a group of nodes connected
+by edges.
+
+- In binary trees, only one connected component (all nodes
+reachable from root).
+
+- Node can have any num. edges connected to it.
+- With directed graph, it can have any num. edges leaving and
+entering it.
+- Num edges that can be used to reach node is node's indegree.
+- Num edges used to leave node is node's outdegree.
+- Node's connected by an edge are called neighbours.
+  - If you have graph A <-> B <-> C, B is neighbours with A and C,
+  and C is neighbours with B.
+
+- In binary tree, all nodes except root have indegree of 1 (due
+to their parent).
+- All nodes have outdegree of 0, 1 or 2.
+- Outdegree of 0 means it's a leaf.
+- Specific to tree, we use parent/child terms instead of "neighbours".
+
+- Graph can be cyclic or acyclic.
+- Cyclic means graph has cycle, acyclic means it doesn't.
+- A cycle is when you have a path in edges that leads to visiting
+same nodes infinitely.
+
+-------------------------------------
+How're graphs given in alg. problems?
+-------------------------------------
+
+- In graph probs., only info. about a graph is given, which
+comes in multiple formats.
+
+- Graph's don't literally exist in memory.
+
+- Only idea of graph exists, input will give some info. about
+it, and it's up to you to figure out how to repr. and traverse
+graph with code.
+
+- Many times, nodes of graph labeled from 0 to n - 1.
+
+- With graphs, a node can have any num. neighbours, so
+before we start traversal, we usually need to do some work to
+make sure that for any given node, we can immediately access
+neighbours of said node.
+
+- Adjacency matrix is a graph format.
+- Nodes'll be numbered from 0 to n - 1.
+- You'll be given a 2d matrix of size n * n, e.g. called graph.
+- If graph[i][j] == 1, means there's an outgoing edge from node
+i to node j.
+- E.g.:
+  - Example graph:
+    -          2 
+            ↗ | \
+           /   |  \
+          /    |   \
+         /     |    \
+        /      |     \
+       /       ↓      ↘
+      0 ---> 1         3
+  - Adj. matrix of said graph:
+    -      [
+      [0, 1, 0, 0],
+      [0, 0, 1, 0],
+      [1, 0, 0, 1],
+      [0, 0, 0, 0]
+           ]
+
+- With this format, two options.
+- During traversal, at any given node you can iterate over
+graph[node], and if graph[node][i] == 1, then you know node
+i is a neighbour.
+- Alternatively, you can pre-process graph by building a hash
+map and iterating over entire graph.
+  - If graph[i][j] == 1, then put j in list associated with
+  graph[i].
+- This way, when performing traversal, you won't need to
+iterate n times at every node to find neighbours, especially
+useful when nodes have a few neighbours and n is large.
+
+- Both approaches have time compl. of O(n^2).
+
+- Pros for adjacency list:
+  - Uses O(V + E) space -> efficient for sparse graphs.
+  - Fast to iterate over neighbours (good for DFS/BFS).
+- Cons for adj. list:
+  - Checking if specified edge exists takes O(deg(v)).
+  - Slightly more complex to implement (lists/pointers)
+- Pros for adj. matrix:
+  - Edge existence check is O(1).
+  - Simple to implement and understand.
+- Cons for adj. matrix:
+  - Uses O(V^2) space even if graph is sparse.
+  - Traversals are slower: O(V^2) for DFS/BFS.
+
+- Use adj. lists for large or sparse graphs, and adj.
+matrix for dense graphs or need fast edge lookup.
+
+-----------------------------------------
+Code differences between graphs and trees
+-----------------------------------------
+
+- Graph doesn't always have obvious start point.
+
+- In graph, we might need to convert input into a hash map first.
+- When traversing graph, we need to use a for loop to iterate
+over neighbours, since a node could have any num. neighbours.
+
+- DFS for graphs is similar to trees.
+- Doing it recursively follows same format:
+  - Check for base case.
+  - Recursively call on all neighbours.
+  - Do some logic and calc. answer.
+  - Return answer.
+
+- In any undir. graph or dir. graph with cycles, DFS implement.
+same as binary trees would result in infinite cycles.
+- In graph questions, only need to visit each node once.
+- To prevent cycles and unnecessarily visiting node more 
+than once, we can use a set seeen.
+- Before we visit node, we first check if it's in seen, if
+it isn't, we add it to seen before visiting.
+- Allows us to only visit each node once in O(1) time
+because adding and checking for existence in set takes
+constant time.
+
+- With graphs, you could have rel. like A <-> B and move
+between A and B forever.
+
+***********
+Graph - DFS
+***********
+
+------------------------------
+Example 4: 841. Keys and rooms
+------------------------------
+
+- Question:
+  - There are n rooms labeled from 0 to n - 1 and all the 
+  rooms are locked except for room 0. Your goal is to visit 
+  all the rooms. When you visit a room, you may find a set of 
+  distinct keys in it. Each key has a number on it, denoting 
+  which room it unlocks, and you can take all of them with 
+  you to unlock the other rooms. Given an array rooms where 
+  rooms[i] is the set of keys that you can obtain if you 
+  visited room i, return true if you can visit all the rooms, 
+  or false otherwise.
+
+- Here, rooms[i] is arr. of other rooms we can visit from
+curr. room, which makes this graph given as adj. list.
+- We start at room 0 and need to visit every room.
+- At every node i, neighbours are rooms[i].
+- If we start a dfs at 0 and visit every node, then ans.
+is true.
+- How can we tell how many rooms we visited at end of DFS?
+  - All nodes visited are stored in seen.
+
+- DFS graph:
+  - Loop -> explores all neighbours
+  - Seen set -> prevents infinite cycles.
+  - Recursion -> dives deep before backtracking.
+  - Pattern:
+    - Visit -> Go as deep as possible -> Backtrack 
+      -> Try next neighbour.
+
+- Adj. lists most convenient input format when nodes are
+numbered from 0/1 to n - 1 OR n, because we don't need to convert
+to hash map, basically already in this format.
+- Only extra space is seen set and recursion call stack, both
+which're O(n).
+- Time compl. is O(n + e) as we visit each node once and for
+loops inside each visit iterate up to e times total across
+entire alg.
+
+***********
+Graph - BFS
+***********
+
+-------------
+How BFS works
+-------------
+
+- BFS explores graph level by level.
+- Queue ensures:
+  - Nodes closer to start processed first.
+- Seen prevents revisiting nodes (avoids infinite loops).
+
+--------------------
+Time and space compl.
+--------------------
+
+- Time compl.: O(V + E).
+- Why?
+  - Each vertex enqueued/dequeued once -> O(V).
+  - Each edge examined once (twice if undir.) -> O(E).
+
+- Space compl.: O(V)
+- Why?
+  - Seen set can hold all vertices -> O(V).
+  - Queue holds up to O(V) vertices in worst case.
+  - Adj list storage itself is O(V + E).

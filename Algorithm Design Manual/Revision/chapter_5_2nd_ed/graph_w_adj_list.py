@@ -1,3 +1,5 @@
+from collections import deque
+
 MAXV = 1000
 
 class EdgeNode:
@@ -55,3 +57,103 @@ def print_graph(g: Graph):
             p = p.next
 
         print()
+
+def dfs(g: Graph, start: int):
+    """
+    **************************    
+    Example graph (undirected)
+    **************************
+
+    Edges:
+    1 - 2
+    1 - 3
+    2 - 4
+    3 - 5
+
+    Adj. lists (linked lists):
+    1: 3 -> 2
+    2: 4 -> 1
+    3: 5 -> 1
+    4: 2
+    5: 3
+
+    Start DFS at node 1.
+    dfs(g, start = 1)
+
+    seen = { 1 }
+    dfs_visit(1)
+
+    print(1)
+    Neighbours of 1: 3 -> 2
+
+    Go to neighbour 3:
+    seen = { 1, 3 }
+    dfs_visit(3)
+
+    print(3)
+    Neighbours of 3: 5 -> 1
+    1 already seen -> skip.
+    5 not seen -> dfs_visit(5)
+    seen = { 1, 3, 5 }
+
+    print(5)
+    Neighbours of 5: 3
+    3 already seen -> stop.
+    return to node 3
+    
+    Backtrack to node 1
+    Next neighbour of 1 is 2.
+    seen = { 1, 2, 3, 5 }
+    dfs_visit(2)
+
+    print(2)
+    Neighbours of 2: 4 -> 1
+    1 seen -> skip
+    4 not seen -> dfs_visit(4)
+    seen = { 1, 2, 3, 4, 5 }
+
+    print(4)
+    Neigbhoours of 4: 2 already seen.
+
+    Return.
+    """
+    seen = set()
+
+    def dfs_visit(node):
+        print(node)
+        p = g.edges[node]
+
+        while p is not None:
+            neighbour = p.y
+
+            if neighbour not in seen:
+                seen.add(neighbour)
+                dfs_visit(neighbour)
+            
+            p = p.next
+
+    seen.add(start)
+    dfs_visit(start)
+
+def bfs(g: Graph, start: int):
+    seen = set()
+    queue = deque()
+
+    seen.add(start)
+    queue.append(start)
+
+    while queue:
+        node = queue.popleft()
+
+        print(node)
+
+        p = g.edges[node]
+
+        while p is not None:
+            neighbour = p.y
+
+            if neighbour not in seen:
+                seen.add(neighbour)
+                queue.append(neighbour)
+            
+            p = p.next
