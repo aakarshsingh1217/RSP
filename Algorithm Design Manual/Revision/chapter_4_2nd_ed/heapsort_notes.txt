@@ -1,0 +1,38 @@
+- If we replace underlying data struct. with a 
+priority queue (heap or balanced BST), finding/removing 
+min. elem. becomes fast.
+- Heapsort = selection sort + right data struct. (heap).
+- Heap is a complete bianry tree with a partial order.
+  - Min-heap: parent <= children.
+- Heaps stored implicitly in an array (no pointers):
+  - parent at i.
+  - children at 2i, 2i + 1.
+- Heap opers.
+  - insert -> bubble up.
+  - extract_min -> bubble down.
+- Heaps built:
+  - Incrementally in O(n log n).
+- Heapsort total time is O(n log n).
+
+*************
+Heapsort alg.
+*************
+
+- Build heap from input array.
+- Repeatedly:
+  - Extract min.
+  - Place it into output arr.
+- This is selection sort, but with heap instead of plain
+array.
+
+- Time compl.
+  1. Heap height is log n as heap is complete binary
+  tree.
+  2. Build heap:
+    - Incremental insertion:
+      - n inserts * O(log n) -> O(n log n).
+  3. Extract min (done n times):
+    - Swap root with last elem. -> O(1).
+    - Bubble down -> at most height of heap -> O(log n).
+    - n extractions * O(log n) = O(n log n).
+  - Final complexity: O(n log n).

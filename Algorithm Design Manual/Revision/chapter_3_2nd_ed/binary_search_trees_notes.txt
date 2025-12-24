@@ -1,0 +1,103 @@
+- Unsorted doubly LL support insertion and deletion
+in O(1) but search takes linear time in worst case.
+- Sorted arrays support binary search and log. query
+times, but at cost of linear-time update.
+
+- Binary search reqs. fast access to two elems., median
+elems. above and below given node.
+- We need a LL with 2 pointers per node.
+
+- Rooted binary tree is recursively defined as (1) empty
+or (2) consist of node called root, together with 2
+rooted binary trees called left and right subtrees.
+- Order among "brother" nodes matters in rooted trees,
+left is diff. to right.
+
+- BST labels each node in a binary tree with a single
+key such that for any node labeled x, all nodes in
+left subtree of x have keys < x and right subtree has
+keys > x.
+
+- Search tree oper.
+  - Best/average case: O(log n):
+    - If tree's balanced, each comparison cuts 
+    remaining search space roughly in half.
+    - Height of a balanced BST = log n.
+  - Worst case: O(n)
+    - If tree is skewed (like LL), could happen when inserting
+    sorted data into a BST.
+    - You may check every node.
+  - Space compl.
+    - Balanced tree: O(log n):
+      - Recursive call stack depth = height of tree.
+      - Height = log n.
+    - Worst case (skewed tree): O(n)
+      - Each recursive call goes one level deeper.
+      - Stack grows to n calls.
+- Find min
+  - Also related to height of tree, as each loop iter.
+  moves one level down and you never visit more than one
+  node per level, so runtime = num levels = tree height,
+  which could be N or log N.
+
+- Inserting node:
+  - O(h) time where h is height of tree (worst case skewed
+  tree O(n), best/avg. case balanced tree O(log n)).
+
+- Deletion from a tree:
+  - Worst case O(h) time of search operations twice,
+  plus constant time node manip.
+  - Leaf nodes have no children, so can be deleted in constant
+  time.
+  - Node to be deleted that has two children should be
+  relabelled with key of its immediate succesion in sorted
+  order, smallest val. in right subtree, specifically left
+  most descendant in right subtree.
+
+************************
+Exploiting balanced BSTs
+************************
+
+- You most sort n nums.
+- You have a balanced BST, each oper. costs O(log n).
+- In order traversal costs O(n).
+  - Visits each node once and does constant work per
+  node (no matter how tree's shaped), same for pre order
+  and post order.
+
+1. Sort using insert + in order traversal:
+  1. Insert all n nums. into BST.
+  2. Perform in-order traversal.
+    - In order traversal outputs keys in sorted order.
+  - Cost breakdown:
+    - n inserts * O(log n) = O(n log n).
+    - In-order traversal = O(n).
+  - Total:
+    - O(n log n) + O(n) = O(n log n).
+  - BST struct. maintains order, traversal extracts.
+
+2. Sorrting using min. + successor + insert.
+  1. Insert all n nums. into BST.
+  2. Find min.
+  3. Repeatedly call successor to get next elem. in
+  sorted order.
+    - BST keys are ordered so that left subtr. < node
+    < right subtree.
+    - Min. is leftmost node (first elem. in sorted order).
+    - Successor of a node is defined as next larger key,
+    successor(x) gives next elem. you'd see in in-order
+    traversal.
+  - Cost breakdown:
+    - n inserts * O(log n) = O(n log n).
+    - min = O(log n).
+    - n - 1 successor calls * O(log n) = O(n log n).
+      - n - 1 remaining elems. after finding m, each time
+      you want next elem., call successor once, each successor
+      call costs  O(log n) in balanced BST.
+        - Each successor call O(log n) because you either
+        go right then all the way left (walk down tree),
+        at most tree height steps. Or if no right subtree
+        go up tree until you find ancestor where x is in
+        left subtree, moving up takes tree height steps.
+  - Total: O(n log n).
+    - Successor walks sorted order without traversal.

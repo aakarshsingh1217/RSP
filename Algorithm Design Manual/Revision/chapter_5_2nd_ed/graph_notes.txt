@@ -1,0 +1,38 @@
+- More efficiently repr. sparse graphs by using linked lists
+to store neighbours adjacent to each vertex.
+- Adj lists require pointers.
+
+- Adj. lists make it harder to verify whether a given edge
+(i, j) is in G, since we must search through appropriate
+list to find edge.
+- However, suprisingly to design graph algs. that avoid
+need for such queries.
+- We sweep through all edges of graph in one pass via 
+BFS or DFS.
+
+- Use adj. lists as primary data struct to repr. graphs,
+for each graph we keep count of num vertices, and assign
+each vertex unique idenitification number from 1 to
+nvertices.
+- Repr. edge using arr. of linked lists.
+
+- Time/space compl. of graph with adj. list.
+  - Let V = num vertices
+  - Let E = num edges
+  - Let deg(v) = outdegree of vert. v 
+  - Overall space compl. (adj. list):
+    - Total space: O(V + E)
+      - Edges arr.: O(V)
+      - Degree arr: O(V)
+      - One EdgeNode per edge -> O(E)
+  - Init graph:
+    - Time O(V) as it loops over all vertices to reset
+    arrs.
+  - Insert edge:
+    - O(1) time as it inserts at head of LL.
+  - Read graph:
+    - O(V + E) time as O(V) initialisation and reading
+    and inserting edges O(E).
+  - Print graph:
+    - O(V + E) time as outer loop visits all vertices
+    and inner loop traverses all adjacency list.

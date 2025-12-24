@@ -1,0 +1,86 @@
+**************************************************
+Dictionary operations on sorted and unsorted arrs.
+**************************************************
+
+- Key ideas:
+  - Unsorted array: no order -> must often scan
+  - Sorted arr.: order exists -> binary search works,
+  but insert/delete req. shifting.
+
+- Dict. ds could be array of structs, array of tuples,
+array of objects, 2d array. etc.
+
+1. Search (L, k)
+  - L is dict. DS itself, and k is key searched for.
+  - Unsorted: O(n)
+    - No order -> must check elems. one by one.
+    - Worst case: elem. is last or not present.
+  - Sorted: O(log n)
+    - Can use binary search.
+    - Each comparison halves search space.
+      - If arr. has n elements:
+        - Step 0: n 
+          Step 1: n / 2
+          Step 2: n / 4
+          ...
+      - Stop when remaining elem. size is 1.
+      - After k steps, remaining size is n / 2^k 
+      - We stop when n / 2^k = 1
+        - 2^k = n 
+          k = log base 2 n 
+            = log n 
+          - k = number of iters. (comparisons)
+
+2. Insert(L, x):
+  - x is key val. pair.
+  - Unsorted: O(1)
+    - Just append to end, don't need to preserve order.
+  - Sorted: O(n)
+    - Must:
+      1. Find correct pos. (O(log n)).
+      2. Shift elems. right (O(n)).
+        - Shifting dominates -> O(n).
+
+3. Delete(L, x)
+  - Unsorted: O(1)*
+    - If you know index:
+      - Swap with last elem.
+      - Pop last elem.
+    - Search cost excluded (meaning of *).
+  - Sorted: O(n)
+    - Must:
+      1. Find elem. (O(log n))
+      2. Shift elems. left (O(n))
+        - Shifting dominates
+
+4. Successor(L, x) (next larger elem.)
+  - Unsorted: O(n)
+    - Must scan entire arr. to find smallest elem. > x 
+  - Sorted: O(1)
+    - Once x's index known:
+      - Successor is just next elem.
+
+5. Predecessor(L, x) (next smaller elem.)
+  - Unsorted: O(n)
+    - Must scan entire arr. to find largest elem. < x.
+  - Sorted: O(1)
+    - Just elem. before x.
+
+6. Min(L)
+  - Unsorted: O(n)
+    - Must scan to find smallest elem.
+  - Sorted: O(1)
+    - First elem is min.
+
+7. Max(L)
+  - Unsorted: O(n)
+    - Must scan to find largest elem.
+  - Sorted: O(1)
+    - Last elem. is max.
+
+- How to derive these quickly
+  1. Is data ordered?
+  2. Do we need to shift elems.?
+    - No order -> linear scans
+    - Order: binary search works.
+    - Order + insert/delete -> shifting = linear time.

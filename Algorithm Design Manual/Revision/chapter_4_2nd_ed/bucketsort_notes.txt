@@ -1,0 +1,63 @@
+- Distribution (bucket) sort groups items into buckets
+based on some key (e.g. first letter).
+- Items in earlier buckets must come before later buckets,
+so:
+  1. Distribute items into buckets.
+  2. Sort each bucket.
+  3. Concatenate bucket.
+- Works well when data's uniformly distributed.
+- Can perfor poorly when distribution skewed.
+- Many data structs. rely on same assumption: uniform
+distribution.
+- There's fundamental omega(n log n) lower bound for
+comparison based sorting - you can't beat it.
+
+************
+How it works
+************
+
+- E.g. (names):
+  - Bucket by first letter: A, B, ..., Z
+  - Sort each bucket seperately.
+  - Concatenate A -> B -> ... -> Z
+
+- Time compl. of bucket sort:
+  - Let:
+    - n = num. elems.
+    - k = num. buckets
+      - Assume uniform distr.
+  1. Distr. elems.
+    - Each elem. goes in one bucket.
+    - Cost: O(n).
+  2. Sort each bucket:
+    - Expected bucket size = n / k
+    - If using comparison sort inside each bucket:
+      - k * O(n / k log n / k) = O(n log (n / k))
+        - Sort each bucket independently.
+        - Sorting one bucket with n / k elems.:
+          - O(n / k log n / k).
+            - If a bucket has m elems., sorting costs 
+            m log m, each bucket has n / k elems, so 
+            m = n / k.
+            - Work per elem. is n / k * recursion depth
+            log n / k.
+          - Times by k buckets.
+  3. Concatenate buckets:
+    - Linear scan of all elems.
+    - Cost: O(n).
+  - Expected total time:
+    - if k = n (or proprtional to n):
+      - O(n) + O(n log 1) + O(n) = O(n).
+    - Expected time = O(n) under uniform distr.
+  - Worst case time compl.:
+    - If all elems. fall into one bucket, that bucket
+    must be fully sorted:
+      - O(n log n).
+
+- Space compl.:
+  - Buckets store all elems.
+  - O(n + k) -> usually O(n).
+
+- Bucket sort can run in linear time when data's uniformly distr.,
+but degrades badly on skewed input, and comparison based
+sorting cannot beat omega(n log n) in general case.

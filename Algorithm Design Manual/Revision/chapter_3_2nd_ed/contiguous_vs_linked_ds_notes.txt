@@ -1,0 +1,171 @@
+******
+Arrays
+******
+
+- Structures of fixed-size data records such that each
+elem. can be efficiently located by it's index.
+
+***********************************************
+Advantanges of contiguously - allocated arrays
+***********************************************
+
+- Constant time access given index:
+  - Because index of each elem. maps directly to particular
+  memory address, we can access arbitrary data items
+  instantly provided we know index.
+- Space efficiency:
+  - Arrays consist purely of data, so no space wasted
+  with links or other formatting info.
+  - Also, end of record info. not needed because
+  arrays built from fixed-size records.
+- Memory locality:
+  - Common progr. prob. involves iterating through all
+  elems. of a data struct.
+  - Arrays good for this because they exhibit good
+  memory locality, physical continuit between
+  successive data accesses helps explot high speed
+  cache memory on modern comp. architectures.
+
+******************
+Downside of arrays
+******************
+
+- Can't adjust size in middle of prog. execution.
+- Can compensate by alloc. extremely large arrs.,
+but this can waste space, again restricting what
+progs. can do.
+
+************************
+Dynamic arrays (vectors)
+************************
+
+- Can efficiently enlarge arrays as we need them,
+through dynamic arrays.
+- Suppose we start with arr. of size 1, and double its
+size from m to 2m each time we run out of space.
+  - Involves allocating a new contigous arr. of size
+  2m, copying contents of old arr. to lower half of
+  new one, and returning space used by old arr. to
+  storage alloc. system.
+
+- Waste involes recopying old contents on each
+expansion.
+- How many times might an elem. have to be recopied after
+a total n insertions?
+  - First inserted elem. will have been recopied when
+  array expands after 1st, 2nd, 4th, 8th, ... insertions.
+  - Will take log base 2 n doublings until array
+  gets to have n positions.
+  - Most elems. don't suffer much upheaval.
+  - The (n / 2 + 1)st through nth elems. will move at most
+  once and might never have to move at all.
+
+- Half elems. move once, quarter elems. twice, so on.
+
+- Each of n elems. move only two times on avg., and total
+work of managing dynamic arr. is same O(n) as it would've
+been if a single arr. of sufficient size had been
+allocated in advance!
+
+- Thing lost in dynamic arrays is guarantee that each
+arr. takes constant time in worst case.
+- Now all queries are fast, except for those few
+queries triggering array doubling.
+- What we get instead is promise that nth array access
+will be completed quickly enough that total effort
+expended so far will still be O(n) (amortized
+guarantee).
+
+******************************
+Pointers and linked structures
+******************************
+
+- All linked data structs. share certain properties,
+revealed by following LL type decl.:
+  - typedef struct list 
+    {
+        item_type item;
+        struct list *next;
+    } list;
+
+- Can also have doubly linked list, each node points to
+predecessor and successor element.
+- Simplifies certain opers. at cost of extra pointer field
+per node.
+
+----------------
+Searching a list
+----------------
+
+- Can search list recursively, if x is in list, it's either
+first elem. or located in smaller rest of list, eventually
+we reduce problem to searching in empty list, which
+clearly can't contain x.
+  - list *search_list(list *l, item_type x)
+    {
+        if (l == NULL) return NULL;
+
+        if (l->item == x)
+            return (l);
+        else 
+            return (search_list(l->next, x));
+    }
+  - O(n) in worst case, where n is num. nodes in list, happens
+  when target not in list or target is last node so func.
+  has to visit every node.
+
+---------------------
+Insertion into a list
+---------------------
+
+- Since no need to maintain list in any particular order,
+can insert each new item in simplest place.
+- Insertion at beginning avoids any need to traverse list,
+but does req. us to update pointer to head of data struct.
+- Insertion without reference to a node or in some
+arbitrary pos. is O(n) worst case.
+
+--------------------
+Deletion from a list
+--------------------
+
+- First we must find pointer to predecessor of item to
+be deleted, done recursively:
+  - list *predecessor_list(list *l, item_type x)
+    {
+        if ((l == NULL) || (l->next == NULL))
+        {
+            printf("Error: predecessor sought on null list.\n")
+            return NULL;
+        }
+
+        if ((l->next)->item == x)
+            return (l);
+        else
+            return (predecessor_list(l->next, x));
+    }
+
+- Pred. needed because it points to doomed node, so its next
+pointer must be changed.
+- Actual deletion oper. is simple, once ruling out deleted
+elem. doesn't exist.
+- Special care must be taken to reset pointer to head
+of list when first elem. deleted.
+
+**********
+Comparison
+**********
+
+- Advantages of linked lists over static arrays include:
+  - Overflow on linked structures cannot occur unless memory
+  is full.
+  - Insertions and deletions are simpler than for contiguous
+  (array) lists.
+  - With large records, moving pointers easier and faster
+  than moving items themselves.
+- Advantages of arrays include:
+  - Linked structs. require extra space for storing pointer
+  fields.
+  - LL don't allow efficient random access to items.
+  - Arrays allow better memory locality and cache perf.
+  than random pointer jumping.

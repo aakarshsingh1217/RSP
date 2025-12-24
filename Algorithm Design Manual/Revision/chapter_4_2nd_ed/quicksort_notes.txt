@@ -1,0 +1,40 @@
+- Quicksort divide-and-conquer alg.
+- Picks pivot, then partitions arr. into:
+  - Elems. less than pivot.
+  - Elems. greater than pivot.
+- Pivot ends up in final sorted pos.
+- Recursively sort left and right subarrays.
+- Partioning takes linear time.
+- Performance depends on how balanced partitions are.
+
+- Partition step is O(n) as it requires single pass through
+subarray.
+- Constant work per elem. (comparisons + swaps).
+- Each partition = O(n).
+
+- Time compl. quicksort:
+  - Best case:
+    - Pivot splits arr. in half each time.
+    - Recursion depth = log n.
+    - Work per level = O(n).
+    - O(n) * O(log n) = O(n log n).
+  - Worst case:
+    - Pivot always smallest/largest.
+    - Subproblem sizes: n, n - 1, n - 2, ...
+    - Total work: n + (n - 1) + ... + 1 = O(n^2).
+    - Happens when bad pivot choices (e.g. reverse sorted input
+    and picking largest elem.)
+  - Avg./expected case (O(n log n)):
+    - If pivot chosen randomly:
+      - Probability 1/2 that its middle, good enough.
+      - Good pivot reduces problem size by constant factor.
+    - Expected recursion height = Theta(log n).
+    - Each level does O(n) work
+    - Expected time = O(n log n).
+
+- Randomization eliminates input-dependent worst cases.
+- Worst case still possible, but unlikely.
+
+- Space compl.
+  - Avg. O(log n recursion stack).
+  - Worst: O(n) recursion stack.

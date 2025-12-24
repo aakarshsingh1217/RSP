@@ -1,0 +1,618 @@
+- Big O time is lang. and metric used to descr.
+efficiency of algs.
+- If you don't understand it, you will struggle
+to judge when your algs. getting faster or
+slower.
+
+**********
+An Analogy
+**********
+
+- Imagine this scenario: You've got a file on
+a hard drive and you need to send it to your
+friend who lives across country.
+- Need to get file to friend as fast as possible,
+how should you send it?
+
+- Most people would say email, which is reasonable
+but only half correct.
+
+- If it's a small file, email would be good as it'd
+take 5 - 10 hours to get to airport, hop on flight
+and deliver to friend.
+
+- If file is very large, it's possible to deliver
+it faster physically via plane.
+
+***************
+Time Complexity
+***************
+
+- Could descr. data transfer "alg." runtime as:
+  - Electronic Transfer: O(s), where s is size of
+  file.
+    - Means time to transfer file increases
+    linearly with size of file.
+  - Airplane Transfer: O(1) with respect to size
+  of file.
+    - As size of file increases, it won't take
+    any longer to get file to friend, time is
+    constant.
+
+- No matter how big constant is, and how slow
+linear increase is, linear will at some point 
+surpass constant.
+
+- Common runtimes include O(log n), O(N log N), 
+O(N), O(N^2).
+
+- You can have multiple vars. in runtime, e.g.
+time to paint a fence w meters wide and h meters
+high could be descr. as O(wh).
+- If you need p layers of paint, then you could
+say O(whp).
+
+*******************************
+Big O, Big Theta, and Big Omega
+*******************************
+
+- O (big O):
+  - Big O describes upper bound on time.
+  - Alg. that prints all vals. in an array could
+  be descr. as O(N), but could also be O(N^2).
+  - Alg. is at least as fast as each of these,
+  therefore they're upper bounds on runtime.
+  - Similar to less than or equal to relationship,
+  if Bob is X years old then you could say X <= 130.
+  - Also correct to say X <= 1,000 but not
+  useful.
+  - Likewise, a simple alg. to print vals. in an
+  array is O(N) as well as O(N^2) or any runtime
+  bigger than O(N).
+- Ω (big omega):
+  - Ω is equivalent concept but for lower bound.
+  - Printing values in arr. is omega(N) as well
+  as Ω(log N) and omega(1), we know it won't be
+  faster than those runtimes.
+- Θ (big theta):
+  - Theta means both O and omega.
+  - An alg. is Θ(N) if it's both O(N) and omega(N),
+  gives tight bound on runtime.
+
+- Industry's meaning of Big O is closer to what
+academics mean by big theta, in that it'd be
+incorrect to descr. printing an arr. as O(N^2),
+it's just O(N).
+- Use big O in the way industry tends to use it:
+by always offering tightest descr. of runtime.
+
+****************************************
+Best Case, Worst Case, and Expected Case
+****************************************
+
+- Quick sort picks a random elem. as "pivot"
+and then swaps vals. in array such that elems.
+less than pivot appear before elems. greater
+than pivot.
+- This gives partial sort, then it recursively
+sorts left and right sides using similar process.
+- Best case:
+  - If all elems. are equal, then quick sort will,
+  on avg., just traverse through array once.
+  - This is O(N).
+- Worst case:
+  - What if we get really unlucky and pivot is
+  repeatedly biggest elem. in arr.?
+    - Can easily happen if pivot chosen is first
+    elem. in subarray and array is sorted in
+    reverse order.
+  - Our recursion doesn't divide array in half
+  and recurse on each half, it just shrinks
+  subarray by one element, which is O(N^2).
+  - Reason why it's worst case O(n^2):
+    - E.g. input (sorted): [1, 2, 3, 4, 5].
+    - Pivot chosen as last elem. each time.
+    - At each step:
+      - One subarray has size n - 1.
+      - Other has size 0.
+    - Recursion becomes:
+      - n -> n - 1 -> n - 2 -> ... -> 1
+    - Work per level:
+      - Partitioning still scans arr.:
+        - Level 1: O(n)
+        - Level 2: O(n - 1)
+        - ...
+      - Total work:
+        - n + (n - 1) + ... + 1
+          = n(n + 1) / 2 = O(n^2).
+- Expected case:
+  - Sometimes pivot will be very low or high,
+  but it won't happen over and over again,
+  so we can expect runtime of O(N log N).
+    - Quicksort works by choosing pivot and
+    partitioning arr. into:
+      - Elems. less than pivot.
+      - Elems. greater than pivot.
+    - Expected case is O(n log n) because:
+      1. Expected balanced splits.
+        - On avg., pivot is somewhere near 
+        middle.
+        - So each partition roughly halves
+        arr.
+        - You don't always get perfect halves, but
+        extreme splits are rare.
+      2. Work per level is linear
+        - Partitioning scans array once -> O(n).
+        - At each recursion level, total work
+        across subarrays is still O(n).
+      3. Num. levels is logarithmic.
+        - Because array size roughly halves each
+        time: n -> n / 2 -> n / 4 -> ...
+        - Num. levels approx log n.
+          - In Quicksort (expected case), each
+          recursion level halves array:
+            - Level 0: n
+              Level 1: n/2
+              Level 2: n/4
+              ...
+          - We stop when subproblem size reaches 1.
+          - So we ask n/2^k = 1.
+          - Solve for k:
+            - 2^k = n, k = log base 2 n, drop 2
+            and num. levels = log n.
+      - Derivation:
+        - Split = log n times, scan = n work per
+        split, total = n * log n.
+
+- Rarely discuss best case time complexity as it's
+not useful.
+
+- For many algs., worst and expected case are the
+same, sometimes are different.
+
+- What's the rel. between best/worst/expected
+case and big O/theta/omega?
+  - Best, worst and expected case describe big O
+  (or big theta) time for particular inputs or 
+  scenarios.
+  - Big O, omega and theta describe upper, lower
+  and tight bounds for runtime.
+
+****************
+Space Complexity
+****************
+
+- We might also care about amount of memory - or
+space - required by alg.
+
+- Space compl. is parallel concept to time compl.
+- If we need to create an arr of size n, this'll
+require O(n) space.
+- If we need a 2D array of size n * n, this'll
+require O(n^2) space.
+
+- Stack space in recursive calls counts too, e.g.
+this code takes O(n) time and O(n) space:
+  - int sum(int n)
+    {
+        if (n <= 0)
+        {
+            return 0;
+        }
+
+        return n + sum(n - 1)
+    }
+    - Each call adds level to stack:
+      - sum(4)
+          -> sum(3)
+               -> sum(2)
+                    -> sum(1)
+                         -> sum(0)
+    - Each call added to call stack and takes
+    up memory.
+
+- Just becauswe we have n calls total doesn't
+mean it takes O(n) space, consider below
+func. which adds adjacent elems. between 0 and
+n:
+  - int pairSumSequence(int n)
+    {
+        int sum = 0;
+
+        for (int i = 0; i < n; i++)
+        {
+            sum += pairSum(i, i + 1);
+        }
+
+        return sum;
+    }
+
+    int pairSum(int a, int b)
+    {
+        return a + b;
+    }
+  - There's roughly O(n) calls to pairSum, but
+  they don't exist simultaneously on call stack
+  so you need O(1) space.
+
+**********************************
+Multi-Part Algs.: Add vs. Multiply
+**********************************
+
+- Suppose you have alg. that has two steps,
+when do you multiply runtimes and when do you
+add them?
+
+- Add runtimes O(A + B):
+  - for (int a: arrA)
+    {
+        print(a);
+    }
+
+    for (int b: arrB)
+    {
+        print(b);
+    }
+    - We do A chunks of work then B chunks of
+    work, therefore total work is O(A + B).
+- Multiply runtimes O(A * B)
+  - for (int a: arrA)
+    {
+        for (int b: arrB)
+        {
+            print(a + "," + b);
+        }
+    }
+    - We do B chunks of work for each elem.
+    in A, total work is O(A * B).
+
+- If alg is in form "do this, then, when
+you're done, do that" then add runtimes.
+- If alg. is in form "do this for each time you
+do that", multiply runtimes.
+
+**************
+Amortized Time
+**************
+
+- ArrayList (or dynamically resizing arr.) allows
+you to have benefits of an arr. while offering
+flexibility in size.
+- You won't run out of space in ArrayList since 
+capacity will grow as you insert elems.
+
+- ArrayList implemented with an arr, when arr.
+hits capacity, ArrayList will create new arr.
+with double capacity and copy all elems. over
+to new array.
+
+- Tricky to descr. runtime of insertion.
+
+- Array could be full.
+- If array contains N elems., then inserting
+new elem. will take O(N) time.
+- Have to create a new array of size 2N and
+copy N elems. over.
+- This insertion will take O(N) time.
+
+- However, we also know that this doesn't happen
+very often and vast majority of time insertion
+will be O(1) time.
+
+- Need a concept that takes both into account,
+which is what amortized time does.
+- Allows us to describe that worst case happens
+every once in a while, but once it happens, it
+won't happen again for so long that the cost is
+"amortized".
+
+- As we insert elems., we double the capacity
+when size of array is a power of 2.
+- So after X elems, we double capacity at arr.
+sizes 1, 2, 4, 8, 16, ..., X.
+- That doubling takes 1, 2, 4, ... X copies.
+
+- What's the sum of 1 + 2 + 4 + ... + X?
+- If you read sum left to right, starts with 1
+and doubles until you get to X, right to left,
+starts with X and halves until it gets to 1.
+
+- What then is sum of X + x/2 + ... 1?
+  - Roughly 2X.
+
+- Therefore, X insertions take O(2X) time,
+amortized time for each insertion is O(1).
+  - It's amortized O(1) push_back because
+  most insertions place elem. at end -> O(1),
+  but occasionally when vector is full, a 
+  larger array is allocated (double in size)
+  which copies all existing elems.
+  - Altough resizing is expensive, it happens
+  rarely and you spread total cost of all
+  resizes over many insertions, so avg. cost
+  per insertion stays constant.
+
+**************
+Log N Runtimes
+**************
+
+- In binary search, we're looking for an
+example x in an N-elem. sorted arr.
+- We first compare x to midpoint of arr,
+if x == middle, return, if x < middle,
+search left side of arr., if x > middle,
+search right side of arr.
+
+- search 9 within {1, 5, 8, 9, 11, 13, 15, 19, 21}
+  - compare 9 to 11 -> smaller.
+  - search 9 within {1, 5, 8, 9, 11}
+    - compare 9 to 8 -> bigger
+    - search 9 within {9, 11}
+      - compare 9 to 9
+      - return
+
+- We start off with N-elem. arr. to search.
+- Then after a single step, we're down to
+N/2 elems.
+- One more step, and we're down to N/4
+elems.
+- We stop when we find val. or we're
+down to one elem.
+
+- Total runtime is then a matter of how
+many steps (dividing N by 2 each time) we can
+take until N becomes 1.
+  - N = 16
+    N = 8 # divide by 2
+    N = 4 # divide by 2
+    N = 2 # divide by 2
+    N = 1 # divide by 2
+
+- Could look at this in reverse (going from
+1 to 16 instead of 16 to 1), how many times
+can we multiply by 2 until we get to N?
+  - N = 1
+    N = 2  # multiply by 2
+    N = 4  # multiply by 2
+    N = 8  # multiply by 2
+    N = 16 # multiply by 2
+
+- What's k in the expression 2^k = N?
+  - This is what log expresses.
+  - 2^4 = 16 -> log base 2 16 = 4
+  - log base 2 N = k -> 2^k = N
+
+- When you see a prob. where num. elems. in
+prob. space gets halved each time, likely
+O(log N) runtime.
+
+- Same reason why finding elem. in a balanced
+binary search tree is O(log N).
+- With each comparison, we either go left or
+right.
+- Half nodes are on each side, so we cut prob.
+space in half each time.
+
+******************
+Recursive Runtimes
+******************
+
+- What's runtime of this code?:
+  - int f(int n)
+    {
+        if (n <= 1)
+        {
+            return 1;
+        }
+
+        return f(n - 1) + f(n - 1);
+    }
+- Alot of people will see two calls to f and
+jump to O(N^2), which is wrong.
+
+- Let's derive runtime by walking through code.
+- If we call f(4), this calls f(3) twice, each
+of those f(3) calls f(2), each of those calls
+f(1).
+
+- How many calls in the tree? Depth N.
+
+- Each node (i.e. func. call) has two children.
+- Therefore, each level'll have twice as many
+calls as one above it.
+- Num nodes on each level is:
+  - Level # | Nodes | Also expressed as...           | Or...
+       0    |   1   |                                | 2^0
+       1    |   2   | 2 * prev. level = 2            | 2^1
+       2    |   4   | 2 * prev level = 2 * 2^1 = 2^2 | 2^2
+       3    |   8   | 2 * prev level = 2 * 2^2 = 2^3 | 2^3
+       4    |   16  | 2^4                            | 2^4
+- Therefore, there'll be 2^0 + 2^1 + ...
++ 2^N (which is 2^(n+1) - 1) nodes.
+
+- Whenever a recursive func. makes multiple
+calls, runtime will often look like O(branches^depth),
+where branches is num. times each recursive call
+branches.
+- In this case, gives us O(2^n).
+
+- Base of exponent matters.
+
+- Space compl. of this alg. will be O(N),
+although O(2^n) nodes in tree total, only
+O(N) exist at any given time.
+
+*********
+Example 3
+*********
+
+void printUnorderedPairs(int[] array) {
+    for (int i = 0; i < array.length; i++) {
+        for (int j = i + 1; j < array.length; j++) {
+            System.out.println(array[i] + "," + array[j]);
+        }
+    }
+}
+
+- Inner for loop starts at i + 1.
+
+-------------------
+Counting iterations
+-------------------
+
+- First time through j runs N - 1 steps, second
+time N - 2, N - 3 etc.
+- Num. steps total is (N - 1) + (N - 2)
+  + (N - 3) + ... + 2 + 1.
+  = 1 + 2 + 3 + ... + (N - 1)
+  = sum of 1 through N - 1
+- Sum of 1 through N - 1 is N(N - 1)/2 so
+runtime is O(N^2).
+
+-------------
+What it means
+-------------
+
+- The code iterates through each pair of values
+for (i, j) where j is bigger than i.
+- There're roughly N^2 total pairs, roughly half
+of those will have i < j and remaining will have
+i > j.
+- This code goes through roughly N^2 / 2 pairs so
+it does O(N^2) work.
+
+- Code generates half of a N * N matrix, which has
+size roughly N^2/2, therefore takes O(N^2)
+time.
+
+- We know outer loop runs N times, how
+much work does inner loop do?
+- Varies across iterations but can think about
+avg. iteration.
+
+- What's the avg. value of 1, 2, ..., 9, 10?
+- Avg. val is in middle, so it's roughly 5.
+
+- What about for 1, 2, 3, ..., N?
+- Avg. val is N / 2.
+- Therefore, since inner loop does N/2 work
+on avg. and runs N times, total work is
+N^2 / 2 which is O(N^2).
+
+*********
+Example 6
+*********
+
+void reverse(int[] array) {
+    for (int i = 0; i < array.length / 2; i++) {
+        int other = array.length - i - 1;
+        int temp = array[i];
+        array[i] = array[other];
+        array[other] = temp;
+    }
+}
+
+- Alg. runs in O(N) time, fact that it only goes
+through half arr. (in terms of iters.) doesn't
+impact big O time.
+  - Because Big-O ignores constant factors.
+  - Loop runs N/2 times, but in asymptotic
+  analysis O(N / 2) = O(N).
+  - Dividing by a constant (like 2) doesn't change
+  growth rate, each iter. does constant work, so
+  total work grows linearly with size of arr.
+  - Run time still scales proportionally with N,
+  so it's O(N).
+
+*********
+Example 7
+*********
+
+- Which of these equivalent to O(N), why?
+  - O(N + P) where P < N / 2
+    - N is dominant term so can drop O(P).
+  - O(2N)
+    - O(N) since we drop constants.
+  - O(N + log N)
+    - O(N) as it dominates log N
+  - O(N + M)
+    - No established rel. between N and M,
+    so must keep both vars. in there.
+
+*********
+Example 8
+*********
+
+- Suppose we had an algorithm that took in an array 
+of strings, sorted each string, and then sorted the 
+full array. What would the runtime be?
+
+- Some people say: sorting each string is O(N log N)
+and we have to do this for each string, so
+O(N * (N log N)), also have to sort array, so that's
+additional O(N log N), therefore total runtime is
+O(N^2 log N + N log N), which is just O(N^2 log N).
+  - Incorrect.
+  - Note: most common sorts are N log N, sorting
+  splits data repeatedly (divide and conquer),
+  each level does O(n) work (comparing/moving elems.),
+  num. levels approx. log N, therefore O(N * log N)
+
+- Problem is we used N two different ways.
+- One case, it's length of string (which string?)
+and in another case, its length of arr.
+
+- Prevent this error by not using var. N at all,
+or only using it when there's no ambiguity as to
+what N could represent.
+
+- Don't use a and b, or m and n either, too easy 
+to forget which is which and mix them up, an
+O(a^2) runtime is completely different from an
+O(a * b) runtime.
+
+- Let's define new terms - and use names that're
+logical:
+  - Let s be length of longest string.
+  - Let a be length of arr.
+- Now we can work through in parts:
+  - Sorting each string is O(s log s).
+  - We do this for every string (and there are a 
+  strings) so that's O(a*s log s).
+  - Now we sort all strings, there're a strings,
+  so you may say this takes O(a log a) time.
+    - This is what most people would say, you
+    should also take into account that you need
+    to compare strings.
+      - When you sort arr. of strings, sorting
+      alg. doesn't just move items around, it
+      must compare strings to decide order.
+      - String comparisons cost O(s) as alg.
+      needs to check chars. one by one.
+      - Worst case (very similar strings) it
+      may compare all s characters.
+    - Each string comparison takes O(s) time,
+    there're O(a log a) comparisons, therefore
+    this'll take O(a * s log a) time.
+- If you add these two parts, you get
+O(a * s(log a + log s)).
+
+*********
+Example 9
+*********
+
+- Just because it's binary search tree
+doesn't mean there's a log in it!
+
+-------------
+What it means
+-------------
+
+- Code touches each node in tree once and
+does a constant time amount of work with
+each touch (excluding recursive calls),
+therefore runtime will be linear in terms
+of num. of nodes, if there're N nodes,
+runtime's O(N).
+
+DO REASONING ABOUT EFFICIENCY

@@ -1,0 +1,44 @@
+- Merge short is divide and conquer alg.
+- Works by:
+  1. Dividing array into two halves.
+  2. Recursively sorting each half.
+  3. Merging two sorted halves into one sorted arr.
+- Base case is when subarray has one elem. (already sorted).
+- Key oper. is merge, which combines two sorted lists in
+linear time.
+- Merge sort good for LL.
+- For arrays, needs extra memory to merge safely.
+
+*****************
+How merging works
+*****************
+
+- Each half already sorted.
+- Smallest remaining elem. must be at front of one of
+two halves.
+- Repeatedly take smaller front elem.
+- Total comparisons <= n - 1 -> O(n).
+
+****************************
+Time complexity of mergesort
+****************************
+
+- Step 1: Num. recursion levels:
+  - Each recursive call halves problem size.
+  - Num. of times you can halve n until 1: log n 
+- Step 2: Work per level:
+  - At each level, all subarrays together contain n elems.
+  - Merging across that level takes O(n) total.
+- Step 3: Combine:
+  - Time = (work per level) * (num. levels)
+         = O(n) * O(log n) = O(n log n)
+    - Tight bound.
+
+- Space compl.:
+  - Arrays:
+    - Need auxiliary buffer to merge halves.
+    - Extra space = O(n).
+  - Recursion stack:
+    - Depth = O(log n).
+    - Stack space smaller than merge buffer.
+  - Space compl. is O(n) as it dominates.

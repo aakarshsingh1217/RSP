@@ -1,0 +1,44 @@
+******
+Stacks
+******
+
+- Support retrieval by last-in, first out (LIFO) order.
+- Simple to implement and very efficient.
+- Right DS to use when retrieval doesn't matter at all.
+- Put and get opers. for stacks called push and pop:
+  - Push(x, s): insert item x at top of stack X
+  - Pop(s): ret. (and remove) top item of stack s.
+- Big O time compl.
+  - Push: O(1) amortized
+    - Adds elem. to top, this is constant time because
+    it's an append.
+    - Occasionally underlying array resizes, but that cost
+    is spread over many pushes.
+  - Pop: O(1)
+    - Removes top elem. Direct oper. on end of array.
+  - Space: O(n)
+    - Stack stores n elems.
+
+******
+Queues
+******
+
+- Support retrieval in first in, first out (FIFO) order.
+- Even though FIFO minimizes max. time waiting, avg. time
+waiting will be same because every item processed
+exactly once, and total waiting time's same, just distributed
+differently:
+  - FIFO (queue): first item waits least, last item waits most.
+  - LIFO (stack): last item waits least, first item waits most.
+
+- Big O time compl.:
+  - Enqueue: O(1) (append to end of deque)
+  - Dequeue: O(1) (pop from front of deque).
+  - Space compl.: O(n) for n elems. in queue.
+  - Each oper. only touches one end of data struct.
+  no shifting or traversal of elems required, storing n elems.
+  requires linear space.
+    - Underlying implementation of deque in Python is O(1)
+    because it's implemented as a doubly linked list, so
+    items.popleft() updates pointer to next node and reqs.
+    no shifting or traversal.

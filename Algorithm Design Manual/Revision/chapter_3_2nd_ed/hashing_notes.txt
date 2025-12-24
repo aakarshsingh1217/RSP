@@ -1,0 +1,38 @@
+- First step: map each key to big int. through some
+alg., then use mod to reduce int to lower than num.
+slots in hash table (denoted by m) and insert.
+
+- Use chaining with LL to resolve collisions,
+search, insertion and deletion then become corresponding
+prob. in LL.
+- If n keys are distributed uniformly in table, each list 
+contains n / m (m being num slots in hash table) elems.,
+making them a constant size when m is approx. n.
+
+- Need to consider space implications, chaining requires
+considerable amount of memory for pointers.
+
+***************
+Open addressing
+***************
+
+- Hash table is single arr. size m 
+- Each slot holds at most one elem.
+- On insertion:
+  - Hash key -> get index.
+  - If slots occupied -> probe for another slot (linear/
+  sequential probing e.g. next open spot).
+  - If table's not too full, contigous run of items
+  should be fairly small, hence location only a few slots
+  from intended position.
+- On deletion:
+  - Cannot just clear slot.
+  - Removing elem. may break probe chain.
+  - So elems. after removed one must be reinserted.
+
+- Initialization is O(m) as you set all m slots to NULL,
+independent of how many elems. you'll insert.
+
+- Traversing all elems. in hash table can take O(n + m)
+for chaining, because we scan all m buckets looking for elems,
+reduces to O(m) time for open addr. as n is at most m.

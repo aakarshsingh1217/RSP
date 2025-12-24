@@ -1,0 +1,39 @@
+- Binary search efficiently finds a key in sorted arr.
+by repeatedly halving search space.
+- Each comparison elims. half of remaining elems.
+- Variants of BS solve more probs.
+  - Counting occurences by finding left/right boundaries.
+  - One-sided binary search when arr. size is unknown.
+  - Root finding (square roots) using internal halving.
+- BS a core div. and conquer technique
+
+***********************
+How binary search works
+***********************
+
+1. Compare target with middle elem.
+2. Discard half that can't contain ans.
+3. Repeat until found or interval empty.
+
+- Time compl. of binary search:
+  - Start with n elems.
+  - After 1 comparison -> n / 2.
+  - After 2 comparisons -> n / 4.
+  - After k comparisons -> n / 2^k
+  - Stop when n/2^k = 1,
+    k = log n.
+- Time compl.:
+  - Best case: O(1) (middle elem. matches)
+  - Worst case: O(log n).
+  - Avg. case: O(log n).
+
+- Space compl. of binary search:
+  - Recursive version:
+    - Each recursive call uses stack space
+    - Depth = num. halvings = O(log n)
+  - Iterative version:
+    - Uses constant vars. only.
+    - Space: O(1).
+
+- Binary search runs in O(log n) time because each comparison
+cuts prob. size in half.

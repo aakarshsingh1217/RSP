@@ -1,0 +1,128 @@
+*******************************
+Big O, Big Theta, and Big Omega
+*******************************
+
+- O (big O)
+  - Big O described upper bound on runtime 
+  - e.g. alg. that prints all vals. in an array could be 
+  descr. as O(N), but also as O(N^2).
+  - Alg. is at least as fast as each of these, therefore
+  they're upper bounds on runtime.
+  - Similar to less than or equal to rel., if Bob is
+  X years old you could say X <= 130.
+  - Also correct to say X <= 1000 but not useful.
+  - Likewise, simple alg. to print vals. in an array
+  is O(N) as well as O(N^2) (not useful) or any
+  runtime bigger than O(N).
+- Ω (big omega):
+  - Ω is equivalent concept for lower bound.
+  - Printing vals. in arr. is omega(N) as well as Ω(log N)
+  and omega(1), we know it won't be faster than those
+  runtimes.
+- Θ (big theta):
+  - Theta means both O and Omega.
+  - An alg. is Θ(N) if it's both O(N) and omega(N), gives
+  tight bound on runtime.
+
+- Industry's meaning of big O is closer to academic meaning
+of big theta, e.g. incorrect to descr. printing arr.
+as O(N^2), it's just O(N).
+- Always offer tightest descr. of runtime.
+
+****************************************
+Best Case, Worst Case, and Expected Case
+****************************************
+
+- Quick sort picks random elem. as "pivot" and swaps vals.
+in array such that elems. less than pivot appear before
+elems. greater than pivot.
+- This gives partial sort, then it recursively sorts left
+and right sides using similar process.
+
+- Best case:
+  - If all elems. equal, then quick sort'll on avg.
+  traverse through array once.
+    - This is O(N).
+- Worst case:
+  - What if we're unlucky and pivot is repeatedly
+  biggest elem. in arr.?
+    - Can easily happen if pivot chosen is first elem.
+    in subarray and array is sorted in reverse order.
+  - Our recursion doesn't divide array in half and
+  recurse on each half, it just shrinks subarr. by
+  one elem., which is O(N^2).
+  - Why it's O(N^2)
+    - E.g. input (sorted): [1, 2, 3, 4, 5]
+    - Pivot chosen as last elem. each time.
+    - At each step:
+      - One subarray has size n - 1.
+      - Other has size 0.
+    - Recursion becomes:
+      - n -> n - 1 -> n - 2 -> ... -> 1.
+    - Work per level:
+      - Partitioning still scans arr.:
+        - Level 1: O(n)
+          Level 2: O(n - 1)
+          ...
+        - Total work:
+          - n + (n - 1) + ... + 1
+            = n(n + 1) / 2 = O(n^2)
+- Expected case:
+  - Sometimes pivot will be very low or high, but it won't
+  happen over and over again, so we can expect runtime
+  of O(N log N).
+    - Quicksort works by choosing pivot and partioning
+    arr. into:
+      - Elems. less than pivot.
+      - Elems. greater than pivot.
+    - Expected case is O(n log n) because:
+      1. Expected balance splits.
+        - On avg., pivot somewhere near middle.
+        - So each partition roughly halves arr.
+        - Don't always get perfect halves, but
+        extreme splits are rare.
+      2. Work per level is linear.
+        - Partioning scans arr. once -> O(n).
+        - At each recursion level, total work
+        across subarrays is still O(N).
+      3. Num. levels is logarithmic.
+        - Because array size roughly halves each
+        time: n -> n / 2 -> n / 4 -> ...
+        - Num. levels approx. log n.
+          - In quicksort (expected case), each recursion
+          level halves array:
+            - Level 0: n.
+              Level 1: n / 2.
+              Level 2: n / 4.
+              ...
+          - We stop when subproblem size reaches 1.
+          - So we ask n/2^k = 1.
+          - Solve for k:
+            - 2^k = n, k = log base 2 n, drop 2
+            and num. levels = log n.
+          - Derivation:
+            - Split = log n times, scan = n work per
+            split, total = n * log n.
+*****
+Rules
+*****
+
+- Drop constants.
+- Drop non dominant terms.
+
+*********************
+Order of growth rates
+*********************
+
+- O(1)
+  O(log n)
+  O(n)
+  O(n log n)
+  O(n^2)
+  O(n^3)
+  O(c^n) for some constant c > 1.
+  O(n!)
+
+**************************
+Reasoning about efficiency
+**************************
