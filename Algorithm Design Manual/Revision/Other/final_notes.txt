@@ -1,0 +1,232 @@
+********
+Dijkstra
+********
+
+- Dijkstra does one heap pop per node and one
+heap push per edge, each costing log V,
+giving O((V + E) * log V) time and O(V) space.
+
+- Alg. where you use min heap initialized with
+some source node and visit neighbours of source node,
+then if curr dist from source + curr node (in this 
+case source) weight < distance recorded for current
+neighbour, update distances[nei] = dist and push
+(dist, nei) onto heap as this path is worth traversing.
+If dist >= distances[nei], we've already found a better path
+and this path isn't worth traversing.
+
+****
+Trie
+****
+
+- Trie is a data struct., also known as a prefix tree that
+stores chars of a str. at each node.
+- All paths from root to a node repr. a string of chars. on
+path, e.g. trie:
+                                   (root) ""
+                           ┌───────────┴───────────┐
+                           a                       n
+               ┌───────────┼───────────┐       ┌───┴───┐
+               x           g           s       t       s
+               │          ag           │       │      ns
+               h                       x       t
+             axh                      asx     ntt     
+
+- Building a trie takes O(n * k) time, where n is len.
+words and k is avg. len of strings in words.
+  - You have n words, each word has k chars. on avg.,
+  for each char., you do constant time work.
+    - Hash map lookup (children[c])
+    - Possibly creating node.
+  - So total work is:
+    - n words * k chars per word = O(n * k)
+  - To derive, you have these nested loops:
+    - for word in words: # runs n times
+        for c in word: # runs k times on avg.
+    - Multiplying loop counts gives O(n * k).
+  - Building a trie touches every char. of
+  every word exactly once, so time is proportional
+  to num chars.: O(n * k).
+
+***********
+Linked List
+***********
+
+What: Linear collection of nodes where each node points to the next.
+
+Time
+
+Search: O(n) (must traverse)
+
+Insert/Delete (given node): O(1)
+
+Space
+
+O(n) nodes (+ pointers)
+
+Why: No random access; operations walk pointers node by node.
+
+*********************
+Binary Tree (general)
+*********************
+
+What: Tree where each node has ≤ 2 children (no ordering guarantee).
+
+Time
+
+Traversal (DFS/BFS): O(n)
+
+Space
+
+DFS recursion stack: O(h) (height)
+
+BFS queue: O(w) (max width)
+
+Worst case both O(n)
+
+Why: Every node visited once; extra space depends on tree shape.
+
+********************
+Graph adjacency list
+********************
+
+What: Each vertex stores a list of its neighbors.
+
+Time
+
+Traverse (DFS/BFS): O(V + E)
+
+Space
+
+Graph storage: O(V + E)
+
+Traversal aux space: O(V)
+
+Why: Each vertex and each edge is processed once.
+
+*************
+DFS recursion
+*************
+
+DFS on a Graph
+
+What: Go as deep as possible before backtracking.
+
+Time: O(V + E)
+Space: O(V) (seen set + recursion stack)
+
+Why: Visit each vertex once; follow each edge once.
+
+DFS on a Binary Search Tree (BST)
+
+What: Traverse left/right subtrees recursively.
+
+Time: O(n)
+Space: O(h)
+
+Why: Visit all nodes; stack depth equals tree height.
+
+*****************
+BFS while + queue
+*****************
+
+DFS on a Binary Search Tree (BST)
+
+What: Traverse left/right subtrees recursively.
+
+Time: O(n)
+Space: O(h)
+
+Why: Visit all nodes; stack depth equals tree height.
+
+******************
+Binary Search Tree
+******************
+
+What: Ordered tree: left < root < right.
+
+Time
+
+Search/Insert/Delete (avg): O(log n)
+
+Worst case (skewed): O(n)
+
+Space
+
+O(n) nodes
+
+Recursion: O(h)
+
+Why: Height determines path length.
+
+**********
+Prim's alg
+**********
+
+What: Grow MST from a start vertex by repeatedly adding the cheapest edge to a new vertex.
+
+Time
+
+Simple array version: O(V²)
+
+With min-heap: O(E log V)
+
+Space
+
+O(V + E)
+
+Why: Each vertex added once; heap speeds up minimum-edge selection.
+
+*************
+Kruskal's alg
+*************
+
+What: Sort edges by weight; add smallest edge that doesn’t form a cycle.
+
+Time
+
+Sorting edges: O(E log E)
+
+Union-Find ops: ~O(E α(V)) ≈ O(E)
+
+Total: O(E log E)
+
+Space
+
+O(V + E)
+
+Why: Dominated by sorting; cycle checks are near-constant.
+
+*********************
+Union find (disj set)
+*********************
+
+What: Sort edges by weight; add smallest edge that doesn’t form a cycle.
+
+Time
+
+Sorting edges: O(E log E)
+
+Union-Find ops: ~O(E α(V)) ≈ O(E)
+
+Total: O(E log E)
+
+Space
+
+O(V + E)
+
+Why: Dominated by sorting; cycle checks are near-constant.
+
+- Has logarithmic time compl. due to trees, smaller trees
+always attached to roots of larger trees.
+- When two sets are unioned, max. heigh of resulting tree only
+increases if two original trees were of same height.
+
+************
+Quick select
+************
+
+- Best and average case compl., and therefore, for entire
+Quickselect alg. is O(n log n), assuming that each following
+partition is, on avg., cut in half (log n iters. total)
+and all elems. in partition have to be scanned (n scans).

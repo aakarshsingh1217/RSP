@@ -1,0 +1,43 @@
+*********
+Singleton
+*********
+
+- Singleton ensures:
+  - Only one instance of a class ever created.
+  - All users of class share same instance.
+- Used when you want global shared state, e.g.:
+  - Database connection pool.
+
+- Core idea (conceptually)
+  1. First request -> creates object.
+  2. Later requests -> return same object.
+
+- Big-O Time Complexity:
+  - Instant access: Config()
+    - Pointer check.
+    - O(1) time.
+  - First creation:
+    - One obj. alloc.
+    - O(1) time.
+  - Subsequent calls:
+    - Return stored referece.
+    - O(1) time.
+
+*******
+Factory
+*******
+
+- Factory encapsulates object creation so that:
+  - Client code doesn't need to know which concrete
+  class is being created.
+  - You can add new types without changing client code.
+  - Creation logic lives in one place:
+  - Think: Given some input, give me right object.
+
+- Factory design pattern is useful because (from e.g. implem.):
+  - Add a new shape -> just add a class + one factory case.
+  - Avoid if/else logic scattered everywhere.
+  - Centralizes obj. creation
+
+- O(1) time complexity for obj. creation, looking up which obj.
+to instantiate and O(1) const. memory per object.

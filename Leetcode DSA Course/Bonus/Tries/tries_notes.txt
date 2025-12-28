@@ -18,7 +18,7 @@ string searching/matching algs.
 - Let's say you have a huge list of words
 and a stream of chars. (like someone typing).
 - By building a trie, you can keep track of
-which words have the chars. as a a prefix.
+which words have the chars. as a prefix.
 - E.g. code for building a trie from an arr.
 of strings words:
   - Example input: words = ["ax", "as"]

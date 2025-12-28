@@ -1,0 +1,227 @@
+********************
+What is Quickselect?
+********************
+
+- Quickselect alg. finds the kth smallest or largest elem.
+in an unordered list.
+- Here, k stands for index of elem. that would otherwise
+be found in an ordered list by following a common 
+statistical operation, such as min./max./etc.
+
+**************************************
+Finding kth elem. brute force approach
+**************************************
+
+- Imagine you had unordered list [22, 35, 1, 4, 8, 12, 7, 55].
+- Using naive approach, we'd reorder i.e. sort list by placing
+smallest number on 0th place, next in 1st place etc. all the
+way to largest elem.
+- Finally, we'd read elem. on kth position.
+- This is a brute force approach and not best way to do it.
+  - Requires sort entire list, take into account kth elem.
+  pos and only then read desired elem. by accessing it via 
+  index k.
+
+*********************************
+Towards the Quickselect Algorithm
+*********************************
+
+- Step in right dir. is taking a look at which elems. of list
+are outside kth pos.
+  - We see elems. before pos. k are smaller than or equal to
+  elem. ordered_list[k].
+  - Likewise, elems. after pos. k are larger than or equal to
+  elem. ordered_list[k].
+
+- However, absolute pos. of kth elem. doesn't change even if
+left list slice list_ordered[:k] and right list slice
+list_ordered[k + 1:] are not internally ordered.
+- In other words, internal ordering of elems. before and after
+pos. k is irrelevant, as long as smaller elems. are placed
+somewhere before pos. k, and larger elems. placed somewhere
+after pos. k.
+
+- We only need a high-level arrangement that seperates smaller
+and larger number for the kth elem. in 2 groups.
+- We can now improve naive approach by recognizing central
+role kth elem. has.
+
+- Every list elem. revolves or pivots around kth elem. during
+rearrangement process, making kth elem. pivotal elem., or
+pivot.
+
+- We don't need entire list in completely ordered form, saving
+us from unnecessary and costly comparisons.
+- Question remains: how to create right pivot since our original
+list isn't ordered? Through Quickselect alg.
+
+*************************
+Quickselect – the Concept
+*************************
+
+- Main goal of Quickselect alg. is to yield correct pivot which
+corresponds to kth pos. in an ordered list.
+
+- Majority of cases, an attempt at creating correct pivot will
+take more than one iter. of pivot selection, but will gradually
+yield correct one.
+
+- In each iter., our list will be consecutively split into left
+and right sublists (i.e., partitions) which contain elems.
+partitioned accordingly to candidate pivot in iter.
+
+- We'll implement partitioning by introing. func. partition().
+- Each alg. iter will only on the partition that contains
+apply partition the kth postion.
+
+- partition()'ll form two partitions based on input args
+(list and partition limits, k is read from outer scope) and 
+ret. pivot index (also known as partition boundary) as each
+iter. ends.
+
+- If pivot index i_pivot returned from most recent iter.
+of partition() is larger than k, we are certain kth elem.
+somewhere in left partition.
+- In that case, alg. continues by reapplying partition() on
+left partition, further creating two smaller subpartitions with
+a new pivot candidate.
+- In last iter., pivot index'll match kth pos.
+- We retrieve the correct kth elem., and end func. partition().
+
+- Alg. implementation consists of outer func., usually called
+quickselect(), which iteratively calls inner func. partition()
+and returns kth elem. when found.
+
+- quickselect() can be implemented as a recursive func. or
+non-recursive func. with a loop.
+- Two popular approaches to implementing func. partition:
+  - Lomuto partition scheme.
+  - Hoare's original partition scheme.
+- Quickselect doesn't use auxiliary data struct. to support
+its execution, all steps alg. performs are done on original
+list, classifying alg as in-place alg.
+
+***********************
+Lomuto Partition Scheme
+***********************
+
+- Uses an arbitrary position as pivot (in e.g., rightmost
+pos. of examined partition).
+
+- Iter. begins by setting both scanners to same starting
+pos. (in e.g., leftmost pos.).
+- Scanners, finder, and replacer, move right one step
+at a time.
+
+- Finder examines its elem., and if elem. is larger than pivot
+elem., skips elem. and moves right.
+
+- Replacer holds its position, pointing to last encountered
+elem. larger than pivot elem.
+- Elem. pointeed to by replacer represents candidate for
+eventual elem. exchange.
+- When finder finds elem. smaller than pivot elem., it exchanges
+elem. with replacer.
+
+- This way, both partitions simultaneously maintained, and both
+scanners move by one step to right.
+
+- Finally, when finder reaches rightmost elem., the pivot,
+iterations final exchange takes place.
+- As replacer still points to first pos. in right partition
+(as always, exchange candidate), replacer's elem. is moved
+to rightmost place.
+
+- Pivot elem. now takes first place in right partition and
+becomes a partition boundary.
+
+-------------------------
+Quickselect example input
+-------------------------
+
+- Example input: li = [7, 2, 1, 6, 8, 5, 3, 4]
+- k = 2 (we want elem. at index 2 of sorted list)
+  - Ans. should be index 2, val. 3.
+
+- Step 1: Enter quickselect:
+  - left = 0
+    right = 7
+    return partition(li, 0, 7)
+- Step 2: First partition(li, 0, 7):
+  - pivot = rightLimit = 7
+    pivot value = li[7] = 4
+  - Initialize pointers:
+    - finder = replacer = 0
+- Step 3: partition loop (while finder < rightLimit)
+  - Scan left -> right, moving vals. < pivot (4) to left.
+    - finder 0:
+      - li[finder] = 7
+      - 7 is not less than 4, so no action
+      - list = [7, 2, 1, 6, 8, 5, 3, 4]
+    - finder 1:
+      - li[finder] = 2
+      - 2 is less than 4, swap with replacer (0)
+      - list = [2, 7, 1, 6, 8, 5, 3, 4]
+      - Increment replacer = 1
+    - finder 2:
+      - li[finder] = 1
+      - 1 is less than 4, swap with replacer (1)
+      - list = [2, 1, 7, 6, 8, 5, 3, 4]
+      - Increment replacer = 2
+    .
+    .
+    .
+    - finder 6:
+      - li[finder] = 3
+      - 3 is less than 4, swap with replacer (2)
+      - list = [2, 1, 3, 6, 8, 5, 7, 4]
+      - Increment replacer = 3
+  - Now: replacer = 3, finder = 7
+- Step 4: Final pivot swap
+  - li[finder], li[replacer] = li[replacer], li[finder]
+  - Swaps 4 (pivot) into correct place.
+  - [2,1,3,4,8,5,7,6]
+           ↑
+    pivot index = 3
+- Step 5: Compare pivot index to k
+  - pivot = 3
+    k = 2
+    - pivot > k -> kth elem. is in left partition.
+      - return partition(li, 0 (leftLimit), 2 (pivot - 1))
+- Step 6: Second partition (0, 2)
+  - Subarray: [2, 1, 3]
+  - Pivot: pivot = 2 (value = 3)
+  - Partition loop.
+    - All elems. < 3, so no real swaps needed.
+  - After final swap:
+    - [2,1,3]
+           ↑
+     pivot index = 2
+- Step 7: Found!
+  - pivot == k == 2
+  - return 2
+- Final result
+  - index = 2
+  - value = li[2] = 3
+
+*******************
+Efficiency analysis
+*******************
+
+- Hoare's partition scheme more efficient than Lomuto scheme
+due to fewer average num. elem. swaps (exchanges).
+- However, both partition schemes worst-case complexities
+degrade to O(n^2) for sorted inputs with outermost elems.
+as pivots.
+
+- This's because one of partitions contains only outermost
+elem. during each iter., and other partition contains all
+other elems.
+- In that case, partition func. discards only outermost
+position per iter. (n iters. total) and scans all remaining
+elems. (n scans) per iteration.
+
+- Best and average case compl., and therefore, for entire
+Quickselect alg. is O(n log n), assuming that each following
+partition is, on avg., cut in half (log n iters. total)
+and all elems. in partition have to be scanned (n scans).

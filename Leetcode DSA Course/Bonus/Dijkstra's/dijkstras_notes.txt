@@ -201,7 +201,7 @@ in a path weight dist = curr_dist + weight.
     - curr_dist = 4, node = 3.
     - Neighbour: 4 (weight 15).
       - 4 + 15 = 19 >= 6 -> ignore.
-  8. Pope node 4.
+  8. Pop node 4.
     - curr_dist = 6, node = 4.
       - No outgoing edges -> done.
     - Later, (10, 4) is popped but skipped

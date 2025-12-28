@@ -1,0 +1,69 @@
+- A binary search tree can become skewed (like a LL)
+causing operations to degrade to O(n).
+- AVL trees and Red-Black trees are self-balancing BSTs that
+guarantee:
+  - Tree height = O(log n).
+  - Search/insert/delete = O(log n)
+
+********
+AVL Tree
+********
+
+- An AVL tree is a BST where:
+  - For every node, |height(left) - height(right)| <= 1
+  - Called the balance factor.
+
+- How AVL maintains balance:
+  - After every insertion or deletion:
+    1. Update heights.
+    2. Compute balance factor.
+    3. If unbalanced, perform rotations.
+
+- Why rotations exist:
+  - Rotations restore balance while preserving BST order.
+  - When balance factor is +- 2, we rotate.
+- Right rotation (LL case)
+  - When does this happen?
+    - Left-Left (LL) imbalance.
+    - A node is left-heavy.
+    - Imbalance came from inserting into left subtree of child.
+  - Shape before:
+    - 
+          z
+         /   
+        y    
+       /
+      x
+      - balance(z) = +- 2
+      - balance(y) >= 0
+    - Right rotate at z.
+  - Shape after:
+    -   y
+       / \
+      x   z
+  - Why it works:
+    - y moves up 
+    - z moves down to right
+    - In-order traversal stays same.
+  - Intuition:
+    - Pull left child up.
+- Left rotation (RR case)
+  - RR imbalance.
+  - Node is right heavy.
+  - Insertion happened in right subtree of right child.
+  - Shape before:
+    -   z
+        \
+         y
+          \
+           x
+  - Left rotate at z
+  - Shape after:
+    -   y
+       / \
+      z   x
+    - y moves up.
+    - z moves down to left
+    - BST ordering preserved.
+  - Intution:
+    - Pull right child up.

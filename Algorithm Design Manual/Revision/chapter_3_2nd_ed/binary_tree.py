@@ -1,5 +1,5 @@
 class TreeNode:
-    def __init__(self, left, right, parent, item):
+    def __init__(self, item, left=None, right=None, parent=None):
         self.left = left
         self.right = right
         self.parent = parent
@@ -52,3 +52,22 @@ def post_order_traversal(tree):
         post_order_traversal(tree.left)
         post_order_traversal(tree.right)
         print(tree.item)
+
+def insert_node(root, data):
+    if root is None:
+        return TreeNode(data)
+    
+    if (data < root.item):
+        root.left = insert_node(root.left, data)
+    else:
+        root.right = insert_node(root.right, data)
+
+node_1 = TreeNode(5)
+node_2 = TreeNode(6)
+node_1.right = node_2
+root = node_1
+insert_node(root, 3)
+insert_node(root, 7)
+in_order_traversal(root)
+
+# Fix insertion into a BST.

@@ -1,5 +1,19 @@
 from collections import deque
 
+"""
+1 ---- 2 ---- 3
+|
+|
+|
+|
+4
+
+index 1: 4 -> 2 -> X
+index 2: 3 -> 1 -> X
+index 3: 2 -> X
+index 4: 1 -> X
+"""
+
 MAXV = 1000
 
 class EdgeNode:
@@ -38,7 +52,7 @@ def insert_edge(g: Graph, x: int, y: int, directed: bool):
 
 def read_graph(g: Graph, directed: bool):
     initialize_graph(g, directed)
-
+    
     nvertices, m = map(int, input().split())
     g.nvertices = nvertices
 
@@ -58,7 +72,53 @@ def print_graph(g: Graph):
 
         print()
 
-def dfs(g: Graph, start: int):
+def dfs(g: Graph, start: int, target: int):
+    seen = set()
+
+    def dfs_visit(node):
+        if node == target:
+            return True
+
+        print(node)
+        p = g.edges[node]
+
+        while p is not None:
+            neighbour = p.y
+
+            if neighbour not in seen:
+                seen.add(neighbour)
+                dfs_visit(neighbour)
+            
+            p = p.next
+
+    seen.add(start)
+    dfs_visit(start)
+
+    return False
+
+def bfs(g: Graph, start: int):
+    seen = set()
+    queue = deque()
+
+    seen.add(start)
+    queue.append(start)
+
+    while queue:
+        node = queue.popleft()
+
+        print(node)
+
+        p = g.edges[node]
+
+        while p is not None:
+            neighbour = p.y
+
+            if neighbour not in seen:
+                seen.add(neighbour)
+                queue.append(neighbour)
+            
+            p = p.next
+
     """
     **************************    
     Example graph (undirected)
@@ -117,43 +177,3 @@ def dfs(g: Graph, start: int):
 
     Return.
     """
-    seen = set()
-
-    def dfs_visit(node):
-        print(node)
-        p = g.edges[node]
-
-        while p is not None:
-            neighbour = p.y
-
-            if neighbour not in seen:
-                seen.add(neighbour)
-                dfs_visit(neighbour)
-            
-            p = p.next
-
-    seen.add(start)
-    dfs_visit(start)
-
-def bfs(g: Graph, start: int):
-    seen = set()
-    queue = deque()
-
-    seen.add(start)
-    queue.append(start)
-
-    while queue:
-        node = queue.popleft()
-
-        print(node)
-
-        p = g.edges[node]
-
-        while p is not None:
-            neighbour = p.y
-
-            if neighbour not in seen:
-                seen.add(neighbour)
-                queue.append(neighbour)
-            
-            p = p.next
