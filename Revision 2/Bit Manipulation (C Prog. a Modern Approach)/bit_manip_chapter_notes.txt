@@ -1,0 +1,87 @@
+***********************
+Bitwise Shift Operators
+***********************
+
+- Bitwise shift operators can transform binary
+repr. of an int. by shifting its bits to left
+or right.
+- Two shift opers.:
+  - << left shift.
+  - >> right shift.
+
+- Value of i << j is result when bits in i 
+shifted left by j places.
+- For each bit "shifted off" left end of i,
+a zero bit enters at right.
+- Val. of i >> j is when i is shifted right
+by j places.
+  - If i is nonneg., zeros added at left as
+  needed.
+  - If i is neg., result is implementation
+  defined, some add zeros at left end
+  while others preserve sign bit by adding
+  ones.
+
+******************************************
+Converting decimal to binary (e.g. no. 13)
+******************************************
+
+1. List powers of 2:
+  - Write down powers of 2 until you exceed
+  no. (e.g. 8 4 2 1).
+2. Find largest fit:
+  - What's biggest power of 2 that fits into 
+  13?
+    - 8.
+  - Place a 1 in 8s place.
+  - Subtract 13 - 8 = 5.
+3. Repeat for remainder (5):
+  1. Does a 4 fit into 5? Yes, place 1 in
+  4s place. Subtract 5 - 4 = 1.
+  2. Does 2 fit into 1? No. Place 0 in 2s
+  place.
+  3. Does 1 fit into 1? Yes. Place 1 in 1s
+  place. Subtract 1 - 1 = 0.
+4. Result:
+  - Reading 1s and 0s from left to right
+  (8s 4s 2s 1s) gives 1101.
+
+- Following e.gs illustrate ffect of applying
+shift opers. to num. 13 (e.g. uses short
+ints that have 16 bits).
+  - i = 13 (i is now 13, binary 1101).
+  - j = i << 2 (j is now 52, binary 110100).
+  - j = i >> 2 (j is now 3, binary 11).
+
+- Neither operator modifies its operands.
+- To modify a var by shifting its bits, uses
+compounds assignment opers:
+  - i = 13.
+  - i <<= 2.
+  - i >>= 2.
+
+******************************************************
+Bitwise Complement, And, Exclusive Or and Inclusive Or
+******************************************************
+
+- ~ = bitwise complement
+  - Zeros replaced by ones and ones replaced by zeros.
+- & = bitwise and
+  - Performs Boolean and on all corresp. bits in 2
+  operands.
+- ^ = bitwise exclusive or 
+  - Exactly 1 bit is 1 (XOR).
+- | = bitwise inclusive or
+  - | = Atleast 1 is 1 (inclusive OR).
+    - Both perform similar opers. (Boolean or), however
+    ^ prods. 0 when both operands have 1 bit, whereas
+    | prods. 1.
+
+- Truth table AND/OR/XOR
+
+A  B | AND (&) | OR (|) | XOR (^)
+--------------------------------
+0  0 |    0    |   0    |    0
+0  1 |    0    |   1    |    1
+1  0 |    0    |   1    |    1
+1  1 |    1    |   1    |    0

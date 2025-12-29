@@ -1,0 +1,51 @@
+- In BFS, we traverse all nodes at a given
+depth before moving onto next depth.
+
+***********************
+When to use BFS vs DFS?
+***********************
+
+- With DFS, you could waste a lot of time
+looking for a val.
+- Let's say you had huge tree, and you were 
+looking for a val. stored in root's right
+child.
+- If you do DFS prioritizing left before
+right, you'll search entire left subtree,
+which could be hundreds of thousands of
+opers.
+- Main disadvantage of BSF is that if 
+node you're searching for is near bottom,
+then you'll waste alot of time searching
+through all levels to reach bottom.
+
+----------------
+Space complexity
+----------------
+
+- DFS uses space linear with height of tree
+(max depth), whereas BFS uses space linear 
+with level that has most nodes.
+- E.g., in perfect binary tree, DFS uses
+O(log n) space whereas BFS uses O(n).
+  - Final level in perf. binary tree has
+  n / 2 nodes, but tree only has depth of
+  log n.
+
+- However if you have lopsided tree (like 
+straight line), BFS will have O(1) space
+compl. while DFS has O(n) (lopsided tree
+is edge case whereas more full tree is
+expectation).
+
+-------------------
+Time complexity BFS
+-------------------
+
+- With an efficient queue, dequeue and enqueue
+opers. are O(1), which means time complexity of
+BFS is same as DFS.
+- Main idea is we visit each node only once,
+so time complexity is O(n * k), where n is total
+num. nodes and k is amount of work at each node,
+usually O(1).

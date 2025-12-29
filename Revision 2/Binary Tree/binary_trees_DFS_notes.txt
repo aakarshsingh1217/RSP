@@ -1,0 +1,84 @@
+- Start at root, and traverse by using child
+pointers .left and .right.
+- Binary trees can do DFS in 3 ways: preorder,
+inorder and postorder.
+
+***
+DFS
+***
+
+- Depth of a node is dist. from root.
+
+- In DFS, we prioritize by traversing as far
+down tree as possible in one dir. (until
+reaching leaf node) before considering
+another dir.
+- E.g., let's say we choose left as our
+prio. dir.
+- We move exclusively node.left until left
+subtree fully explored, then explore right
+subtree.
+
+- Think of paths of a binary tree as
+branches growing from root.
+- DFS chooses a branch and goes as far down
+as possible.
+- Once it fully explores branch, backtracks
+until it finds another unexplored branch.
+
+- Because we need to backtrack up tree
+after reaching end of a branch, DFS
+typically implemented using recursion.
+
+- DFS structure:
+  1. Handle base cases, usually empty tree
+  (node == null) is base case.
+  2. Do some logic for curr. node.
+  3. Recursively call on curr. node's children.
+  4. Return answer.
+
+- Name of each traversal described when curr.
+node's logic is performed:
+  - Pre -> before children.
+  - In -> in middle of children.
+  - Post -> after children.
+
+*******************************************
+Time and space complexity of tree questions
+*******************************************
+
+- Time complexity is almost always n, where n
+is total num. nodes, because each node only
+visited once, and at each node, O(1) work done.
+  - If more than O(1) work done at each node,
+  say O(k), then time compl. is O(n * k).
+
+- For space compl., even if you're using
+recursion, calls are still placed on call stack
+which counts as extra space.
+- Largest the stack will be at any time will
+depend on tree.
+  - For recursion, worst case is O(n) if tree's
+  a straight line, if tree is complete (all
+  nodes have 0 or 2 children and each level
+  except last level is full), then space
+  complexity is O(log n).
+    - Complete tree no. nodes = 2^(h + 1) - 1.
+    - n = 2^(h + 1) - 1
+      h = log base 2 n.
+    - DFS doesn't store all nodes, only stores:
+      - Path from root.
+      - Down to curr. node.
+    - At any moment, deepest recursiong goes is
+    tree's height, so max stack frames =
+    height of tree.
+
+******************************************************
+One sentence summary of DFS contains (ret. true/false)
+******************************************************
+
+- When a recursive call finds the target and returns
+True, that value propogates upward through call stack,
+first becoming found_right or found_left in its
+parent, and eventually causing all ancestor calls
+to return True.

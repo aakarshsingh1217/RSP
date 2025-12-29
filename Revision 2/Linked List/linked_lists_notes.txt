@@ -1,0 +1,53 @@
+**********************
+Linked List complexity
+**********************
+
+- Data struct. - Node:
+  - O(n) for total list of n nodes.
+  - Each node stores:
+    - One piece of data.
+    - One reference (next).
+
+- insert_list(list, data):
+  - Inserts at head every time, so:
+    - O(1), no traversal, just pointer
+    reassignment.
+  - O(1) additional space (one new 
+  node).
+
+- search_list(list, target_data):
+  - Worst case O(n), target at tail or not
+  present.
+  - Best case O(1), target at head.
+  - O(n) space (recursion stack), one stack frame
+  per node, iterative O(1) space.
+
+- predecessor_list(list, target_data):
+  - Worst case time O(n) where target's at tail,
+  best case O(1) target is second node.
+  - O(n) space recursion stack.
+
+- delete_from_list(list, target_data):
+  - Worst case: O(n) time, two O(n) traversals.
+  - O(n) space from recursion stack through using
+  helpers.
+
+*************************************************
+Comparison between linked lists and static arrays
+*************************************************
+
+- LL positives:
+  - Overflow on LL structs. never occurs unless
+  memory is actually full.
+  - Insertions and deletions simpler than for
+  contiguous (array) lists.
+    - Because if you insert/delete data anywhere not at
+    end for array, all elems. must be shifted.
+  - With large records, moving pointers easier than
+  moving items themselves.
+
+- Array positives:
+  - LL require extra space for storing pointers.
+  - LL don't allow efficient random access to items.
+  - Array allow better memory locality and cache
+  perf. than random pointer jumping.

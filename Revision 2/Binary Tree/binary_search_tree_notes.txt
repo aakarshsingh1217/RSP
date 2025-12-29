@@ -1,0 +1,65 @@
+- A BST has following property:
+  - For each node, all vals. in left subtree
+  are less than val. in node, and all vals.
+  in right subtree are greater than val.
+  in node.
+
+- With a BST, opers. like searching, adding
+and removing can be done in O(log n) time
+on avg., where n is num. nodes in tree,
+using binary search.
+  - All BST opers. follow one root -> leaf
+  path.
+  - Cost is proportional to height of tree,
+  h.
+    - Time = Θ(h).
+    - Space = Theta(h) (recursive).
+  - Height of a balanced BST is log n,
+  of a skewed BST is n.
+    - This alone explains all complexities.
+  - Search:
+    - Best case target at root, time and space
+    O(1).
+    - Average case tree is roughly balanced and
+    each comparison halves remaining search space,
+    time and space O(log n).
+      - n → n/2 → n/4 → ... → 1
+      ⇒ number of steps ≈ log₂ n
+    - Worst case tree's completely skewed, time
+    and space O(n).
+  - Insert:
+    - What happens:
+      - First, search for insertion position.
+      - Then attach new node (constant work).
+    - Best:
+      - Insert as child of root, time and space
+      O(1).
+    - Average:
+      - Balanced tree, time and space O(log n).
+    - Worst:
+      - Skewed tree, time and space O(n).
+  - Delete:
+    - What happens:
+      - Search for node, possibly find successor/
+      pred., rewire pointers.
+    - Best:
+      - Delete root with 0 or 1 child, time and
+      space O(1)
+    - Avg.:
+      - Balanced tree, time and space O(log n).
+    - Worst:
+      - Skewed tree, time and space O(n).
+  - One sentence:
+    - BST operations take time propotional to
+    tree height because each step discards half
+    remaining search space in balanced tree,
+    giving O(log n) time on avg, degrades to 
+    O(n) when tree's skewed.
+
+- When implementing BST delete, you need to
+follow rule that all values in left subtree < N.val
+and all vals. in right subtree > n.val.
+- Smallest value in right subtree is greater than
+deleted node and it's min. of right subtree,
+therefore it's:
+  - left subtree < successor < rest of right subtree.
