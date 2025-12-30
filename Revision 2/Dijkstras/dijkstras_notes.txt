@@ -1,0 +1,84 @@
+- Dijkstras alg. focuses on one source
+node, and will find the shortest distance
+to every other node in graph from source.
+
+- Idea behind Dijkstras is to use a min-heap
+to store nodes.
+- With each node, we'll keep track of weight
+of path used to reach node from source.
+- Min-heap will judge each elem. according to
+this weight.
+- At each iter., we retrieve a node by popping
+from min-heap, which provides us node With
+min.-weight path.
+
+- We also keep min. dist. so far from source
+for every node.
+- If nodes are numbered from 0 to n - 1,
+best to use array distances of length n to do
+this.
+- Initially, all vals. in this arr. are
+large vals (like inf.) except for source
+which is val. 0.
+
+- At each node, we'll iterate over neighbours.
+- Consider current dist. from source (which we
+store with each node in the heap) as curr_dist.
+- For a given neighbour nei, consider weight
+of edge node -> nei as weight.
+- Traversing to this neighbour would result in
+a path weight of dist = curr_dist + weight.
+- There're two possibilities:
+  1. dist >= distances[nei]: In this case, we've 
+  already found a path with a shorter distance
+  earlier, and thus traversing to nei on curr.
+  path is pointless.
+  2. dist < distances[nei]: Traversing to nei
+  on curr. path is shortest path we've seen so
+  far to nei. We should update distances[nei] = dist
+  and push (dist, nei) onto heap.
+
+Pseudocode:
+
+// array of length n with large values
+distances = [infinity] * n
+distances[source] = 0
+
+// min heap
+heap = [(0, source)]
+
+while (heap not empty) {
+    curr_dist, node = heap.pop()
+    if (curr_dist > distances[node]) {
+        // optimization step: ignore current path if we found a better one
+        continue;
+    }
+
+    for (nei, weight: [edges from node]) {
+        dist = currDist + weight
+
+        // add neighbor to heap if it creates a shorter path
+        if (dist < distances[nei]) {
+            distances[nei] = dist
+            heap.push((dist, nei))
+        }
+    }
+}
+
+**********
+Complexity
+**********
+
+- Time compl. of Dijkstras is generally written as O((V + E) * log V)
+where E is no. edges and V is no. vertices/nodes in graph.
+  - O(V) pop opers. and O(E) push opers. onto heap.
+- Space complexity is O(V) for heap and distances array.
+
+******************
+Dijkstras 50 words
+******************
+
+Dijkstra’s algorithm finds shortest paths from a source to all other 
+vertices in a weighted graph with non-negative edge weights by repeatedly 
+selecting the unvisited vertex with the smallest tentative distance and
+relaxing its outgoing edges, typically using a priority queue for efficiency.

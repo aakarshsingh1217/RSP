@@ -1,0 +1,148 @@
+- Two sets are called disjoint sets if
+they don't have any element in common.
+- Union find (disjoint set) data struct.
+is used to store such sets.
+- Supports following opers:
+  - Merging two disjoint sets to a single set
+  using Union oper.
+  - Finding representative of a disjoin set
+  using Find oper.
+  - Check if two elems. belong to same set
+  or not (mainly find repr. of both and check
+  if same).
+
+- Consider situation with num. persons and
+following tasks to be perf. on them:
+  - Add a new friendship rel. i.e. person x
+  becomes friend of another person y i.e.
+  adding new elem. to set.
+  - Find whether individual x is a friend of
+  individual y (direct or undir. friend).
+
+********
+Examples
+********
+
+We are given 10 individuals say, 
+a, b, c, d, e, f, g, h, i, j
+
+Following are relationships to be added:
+a <-> b  
+b <-> d
+c <-> f
+c <-> i
+j <-> e
+g <-> j
+
+Given queries like whether a is a friend of d or not. 
+We basically need to create following 4 groups and 
+maintain a quickly accessible connection among group 
+items:
+G1 = {a, b, d}
+G2 = {c, f, i}
+G3 = {e, g, j}
+G4 = {h}
+
+************************************************
+Find whether x and y belong to same group or not
+i.e. find if x and y are direct/indirect friends.
+************************************************
+
+- Partitioning individuals into diff. sets according to groups
+in which they fall.
+- This method is known as disjoint set union which maintains
+collections of disjoin sets and each set is representted by
+one of its members.
+
+- To answer above question two key points considered are:
+  - How to resolve sets? Initially, all elems. belong
+  to diff. sets. After working on given relations, we
+  select member as a representative.
+  - Check if 2 persons are in same group? If representatives 
+  of two individuals are same, they're friends.
+
+*******************
+Data structs. used:
+*******************
+
+  - Array: array of ints. called Parent[]. If we're dealing with
+  N items, i'th elem. of array represents i'th item. More
+  precisely, i'th elem. of Parent[] arr. is parent of i'th
+  item. These rels. create one or more virtual trees.
+  - Tree: it's a disjoint set. If two elems. are in same tree,
+  then they're in the same disjoint set. Root node (or topmost
+  node) of each tree is called representative of set. There's
+  always single unique repr. of each set. A simple rule to 
+  identify is if 'i' is the repr. of a set, then
+  Parent[i] = i. If i is not repr. of this set, then it can
+  be found by traveling up tree until we find representative.
+
+****************************************
+Operations on Disjoint Set Data Structs.
+****************************************
+
+1. Find:
+  - Task is to find repr. of the set of a given elem.
+  The repr. is always root of tree. So we implement find()
+  by recursively traversing parent array until we hit a
+  node that's root (parent of itself).
+2. Union:
+  - Task is to combine two sets and make one. It takes two
+  elems. as input and finds the representatives of their sets
+  using the Find oper., and finally puts either one of the trees
+  (representing the set) under the root node of the other tree.
+
+*************************
+Time and space complexity
+*************************
+
+- Space complexity O(n):
+  - parent[] array stores one entry per elem.
+  - No extra structs. required.
+
+- Time complexity:
+  - find(i):
+    - Worst case O(n).
+      - Parent pointers can form skewed tree like a
+      LL.
+      - find may traverse all parents up to root.
+  - union(i, j):
+    - Worst case O(n).
+      - Performs two find operations which in worst
+      case are both O(n).
+  - find(x) == find(y):
+    - Worst case o(n), two find operations.
+
+****************************************
+Union by Rank (modifications to union())
+****************************************
+
+- Rank is like height of trees representing different sets.
+- We use an extra array of ints. called rank[].
+- Size of this array is same as parent array parent[].
+- If i is a repr. of a set, rank[i] is the rank of element
+i.
+- Rank is same as height if path compression's not used.
+- With path compression, rank can be more than the actual
+height.
+
+- With union oper., it doesn't matter which of two trees
+is moved under other.
+- Now what we want to do is minimize height of resulting
+tree.
+- If we're uniting two trees (or sets), lets call them left
+and right, then it all dfepends on rank of left and Rank
+of right:
+  - If rank of left is less than rank of right, move left
+  under right, because that won't change rank of right
+  (while moving right under left would increase height),
+  same vice versa.
+  - If ranks are equal, doesn't matter which tree goes
+  under the other, but rank of result will always be
+  one greater than rank of trees.
+
+One sentence summary:
+
+This Union–Find implementation combines union by rank and path 
+compression to achieve near-constant time operations by 
+aggressively limiting tree height.

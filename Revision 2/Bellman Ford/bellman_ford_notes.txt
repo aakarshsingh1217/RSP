@@ -1,0 +1,17 @@
+- Given a weighted graph V vertices and E edges,
+and a source vertex src, find shortest path from
+source vertex to all vertices in given graph.
+- If a vertex cannot be reached from source vertex,
+mark its distance as 10^8.
+
+- If graph contains negative weight cycle, return
+-1.
+
+- Bellman ford is a single source shortest path
+alg. Effectively works in cases of negative edges
+and is able to detect negative cycles as well. It 
+works on the principle of relaxation of edges.
+
+- Time compl.: O(V * E * E), where V is num. vertices
+and E is num. edges.
+- Auxillary space: O(V).

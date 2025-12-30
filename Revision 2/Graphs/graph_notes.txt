@@ -1,0 +1,46 @@
+************************************
+Time and space complexities of graph
+w/ adj. list and BFS and DFS on said
+graph
+************************************
+
+- Adj lists
+  - Space compl.: O(V + E):
+    - edges array: O(V).
+    - Each edge stored once (directed) or
+    twice (undirected): O(E).
+    - degree array: O(V).
+
+- DFS on graph (adjacency list):
+  - Time compl.: O(V + E):
+    - Each vertex is added to seen once
+    and visited once.
+    - Each edge (EdgeNode) is traversed
+    exactly once when scanning adjacency
+    lists.
+      - while p is not None:
+            neighbour = p.y
+            ...
+            p = p.next
+        - touches every adjacency list node
+        once -> O(E) total.
+  - Space complexity: O(V):
+    - seen set: up to v vertices.
+    - Recursion stack:
+      - Worst case (deep DFS): O(V).
+      - Balanced-ish graph, smaller but worst 
+      case still O(V).
+
+- BFS on graph:
+  - Time compl.: O(V + E).
+    - Each vertex enqueued once and dequeued
+    once.
+    - Each adj. list scanned once.
+    - Each edge considered once.
+    - Queue opers. O(1) amortized.
+  - Space compl.: O(V):
+    - seen set: O(V).
+    - queue:
+      - Worst case may hold all vertices in
+      a layer.
+      - In dense / wide graphs -> O(V).
