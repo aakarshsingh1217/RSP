@@ -1,0 +1,222 @@
+- Prefix sum can be used on arrs. (of nums., usually).
+- Idea is to create an arr. prefix where prefix[i] is sum of all elems. 
+up to index i (inclusive).
+- E.g., given nums = [5, 2, 1, 6, 3, 8], we would have
+prefix = [5, 7, 8, 14, 17, 25].
+
+- When a subarr. starts at index 0, it's considered a "prefix" 
+of the arr.
+- A prefix sum repr. the sum of all prefixes.
+
+- Prefix sums allow us to find sum of any subarr. in O(1).
+- If we want sum of subarr. from i to j (inclusive), then answer is 
+prefix[j] - prefix[i - 1], or alternatively
+prefix[j] - prefix[i] + nums[i].
+  - Example with arr. nums = [2, 4, 6, 3, 5].
+    - Build prefix sum arr, so prefix[i] = sum of nums[0..i].
+    - So prefix = [2, 6, 12, 15, 20].
+    - Suppose we want sum from index 1 to 3:
+      - Subarray: [4, 6, 3].
+      - Actual sum: 4 + 6 + 3 = 13.
+      - Using prefix sums:
+        - Standard formula:
+          - sum(i to j) = prefix[j] - prefix[i - 1]
+          - prefix[3] - prefix[0] = 15 - 2 = 13,
+          correct.
+          - prefix[j] = sum of everything from index
+          0 to j.
+          - prefix[i - 1] = sum of everything before
+          index i.
+          - Subtracting removes unwanted part.
+        - if i = 0 then:
+          - prefix[i - 1] = prefix[-1] (invalid).
+        - So instead use:
+          - sum(i to j) = prefix[j] - prefix[i] + nums[i].
+
+- This works because prefix[i - 1] is sum of all elems.
+before index i.
+- When you subtr. this from sum of all elems. up to j,
+left with sum of all elems. starting at index i and ending
+at index j.
+
+- Building prefix sum simple, pseudocode:
+  - Given an array nums,
+    
+    prefix = [nums[0]]
+
+    for (int i = 1; i < nums.length; i++)
+        prefix.append(nums[i] + prefix[prefix.length - 1])
+
+- Initially, we start with first elem.
+- Then we iter. with i starting from index 1.
+- At any given point, last elem. of prefix repr. sum of all 
+elems. in input up to but not including i, so we can add
+that val. plus curr. val to the end of prefix and continue
+to next elem.
+
+- Prefix sum great tool whenever prob. involves sums of
+subarr.
+- Only costs O(n) to build but allows all future subarr.
+queries to be O(1), so it improves alg. time compl.
+by a factor of O(n), where n is len. of subarr.
+
+- Building a prefix sum is a form of pre-processing.
+
+******
+E.g. 1
+******
+
+- Without prefix sum, answering each query would be O(n)
+worst case, where n is len. nums.
+- If m = queries.len , that would give a time compl.
+of O(n * m).
+- With prefix sum, costs O(n) to build, then answering
+each query is O(1), which gives much better time compl.
+of O(n + m).
+- Use O(n) space to build prefix sum.
+
+- Compl. analysis:
+  - W/o. prefix sum, computing sum for a query (x, y)
+  reqs. looping through nums[x : y + 1] which takes
+  O(n) time worst case, if there're m queries, this
+  results in O(n * m).
+
+**********************************************
+Example 2: 2270. Number of Ways to Split Array
+**********************************************
+
+- Brute force approach would be to iterate over each index
+i from 0 until nums.length - 1.
+- For each index, iterate from 0 to i to find sum of left
+section, and then iterate from i + 1 until end of arr.
+to find sum of right section.
+- This alg. would have compl. of O(n^2).
+
+- If we build a prefix sum first, then iterate over each
+index, we can calc. sums of left and right sections in
+O(1), which improves time compl. to O(n).
+
+- Let's say we're splitting at index i.
+- Left section has all elems. in arr. up to i, so sum
+is prefix[i].
+- Right section begins at index i + 1 and ends at final
+index n - 1, meaning it has sum
+prefix[n - 1] - prefix[i].
+
+*********************
+Do we need the array?
+*********************
+
+- Order in which we need to access prefix is incremental:
+to find leftSect., we do prefix[i] as i increments by 1
+each iter.
+
+- As such, to calc. leftSect. we don't actually need
+the array.
+- We can just initialize leftSect = 0 and then calc. it on
+the fly by adding curr. elem. to it at each iter.
+
+- What about rightSect?
+- By def., right section contains all nums. in arr. that
+aren't in leftSect.
+- Therefore, we can pre-compute the sum of the entire
+input as total, then calc. rightSect. as total - leftSect.
+
+- Still using concept of a prefix sum as each val. of leftSect.
+repr. sum of a prefix, but we've simply replicated functionality
+using an int. instead of an arr.
+
+- Code:
+  - def waysToSplitArr(nums: list[int]) -> int:
+      ans = leftSection = 0
+      total = sum(nums)
+
+      for i in range(len(nums) - 1):
+        leftSection += nums[i]
+        rightSection = total - leftSection
+
+        if leftSection >= rightSection:
+          ans += 1
+
+      return ans
+
+- Above code improves space compl. to O(1).
+
+****************************************************
+1413. Minimum Value to Get Positive Step by Step Sum
+****************************************************
+
+---------
+Intuition
+---------
+
+- Suppose array nums is: [a, b, c, d].
+- If we iterate with startVal. = 0 (there are other
+vals. we can use, but 0 is most convenient), first
+step-by-step total will be 0, and we can have a
+list of all step-by-step sums (call it list).
+
+- List = [0, a, a + b, a + b + c, a + b + c + d].
+
+- This's very similar to prefix total of nums.
+- Notice 0 will be invalid, because first elem.
+in List is less than 1, plus there might also be other
+elems. that're less than 1.
+- Therefore, we should choose a larger start val.
+instead of 0, e.g. startVal., then all elems. in
+list will be incr. by startValue.
+
+- Minimum startVal. is the val. that makes the min.
+elem. in the step-by-step sum equal to exactly 1.
+
+- Why exactly 1?
+  - If min. elem. is smaller than 1, this means
+  curr. startVal. is invalid since a valid startVal.
+  is supposed to make every step-by-step total
+  greater than or equal to 1.
+  - If min. elem/ is strictly larger than 1, this
+  means startVal. is too large since startVal. - 1
+  is valid as well.
+
+- Therefore, we need to iterate over arr. using
+startVal. = 0, find min. step-by-step total
+in this iter. (say minVal), and we should have
+minVal + startVal = 1, which is exactly
+startVal = 1 - minVal.
+
+- First, lets iter. over arr. using 0 as init.
+val. and we'll have a list that consists of all
+step-by-step sums, where min. total is -4.
+- Therefore, we'll choose startVal. that changes
+this min. total from -4 to exactly 1, that
+is -4 + startValue = 1, hence
+startVal. = 1 + 4 = 5 is the min. valid.
+startVal. for this arr.
+
+-------------------
+Complexity analysis
+-------------------
+
+- Time compl.: O(n)
+  - Need to traverse array once.
+- Space compl.: O(1)
+  - Need to calc. step-by-step total of arr.
+  and record min. step-by-step total, both
+  req. constant space.
+
+********************************
+2090. K Radius Subarray Averages
+********************************
+
+- Time compl. - O(n):
+  - Generate prefix arr. by iterating on nums arr. once,
+  taking O(n) time.
+  - Then we fill averages array by again iterating on
+  nums array, where finding average of each index is
+  constant time oper., takes O(n) time.
+  - Overall, O(n) time.
+- Space compl.: O(n)
+  - Output array average not considered as additional
+  space usage.
+  - But, we have used another additional array prefix
+  of size n + 1, thus we use O(n) additional space.
