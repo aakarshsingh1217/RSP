@@ -1,0 +1,217 @@
+- Two pointers pseudocode:
+  - function fn(arr):
+        left = 0
+        right = arr.length - 1
+
+        while left < right:
+            Do some logic here depending on problem
+            Do more logic here to decide on one of
+            following:
+                1. left++
+                2. right--
+                3. Both left++ and right--
+
+- Strength of this technique is that we'll never
+have more than O(n) iters. for while loop because
+pointers start n away from each other and move
+at least one step closer in every iter.
+- Therefore, if we can keep work inside each iter.
+at O(1), this technique'll result in linear
+runtime, which is usually best possible runtime.
+
+*******************
+Check if palindrome
+*******************
+
+- Algs. very efficient as not only does it run in
+O(n), but it also uses O(1) space.
+- No matter how big input is, we always only use 2
+int. vars.
+- Time compl. is O(n) because while loop iters.
+cost O(1) each, and there can never be more than
+O(n) iters. of while loop - pointers start at 
+dist. of n from each other and move closer by one
+step each iter.
+
+*********
+Example 2
+*********
+
+- Prob. statement:
+  - Given a sorted array of unique integers and a 
+  target integer, return true if there exists a pair 
+  of numbers that sum to target, false otherwise.
+
+  For example, given nums = [1, 2, 4, 6, 8, 9, 14, 15] 
+  and target = 13, return true because 4 + 9 = 13.
+
+- Brute force sol. would be to iterate over all pairs
+of ints., each num. in arr paired with another num.,
+resulting in time compl. O(n^2) where n is len. arr.
+- Because arr. sorted, we can use two pointers to
+improve to O(n) time compl.
+
+- Using example input, w/ two pointers, we start by
+looking at first and last nums (1 + 15 = 16).
+- Because 16 > target, need to make curr. sum smaller.
+  - Therefore, we move right pointer.
+- Now we have 1 + 14 = 15, again move right pointer
+because sum too large.
+- Now 1 + 9 = 10, sum too small and need to make bigger,
+done by moving left pointer.
+- 2 + 9 = 11 < target so move again.
+- Finally, 4 + 9 = 13 = target.
+
+- Alg. works because nums. sorted, moving left pointer
+permanently incr. value left pointer points to
+(nums[left] = x).
+- Similarly, moving right pointer permanently decr.
+val right pointer points to (nums[right] = y).
+- If we have x + y > target, can never have a sol.
+with y because x can only increase.
+- So, if sol. exists, only found by decr. y.
+- Same logic applied to x is x + y < target.
+
+- Alg. uses O(1) space and has time compl. O(n).
+
+*******************************
+Another way to use two pointers
+*******************************
+
+- Another method applicable when prob. has two
+iterables input, e.g. two arrays.
+
+- Move along both input simultaneously until
+all elems. checked.
+  - Converting this idea into instructions:
+    1. Create two pointers, one for each iterable.
+    Each pointer should start at first index.
+    2. Use a while loop until one of pointers
+    reaches end of its iterable.
+    3. At each iter. of loop, move pointers
+    forward. This means incrementing either one
+    of the pointers or both, deciding which to
+    move will depend on prob. we're trying to
+    solve.
+    4. Because our while loop will stop when
+    one of pointers reaches end, other pointer
+    won't be at end of its respective iterable
+    when loop finishes. Sometimes, we need to
+    iter. through all elems. - if this is case,
+    need to write extra code to make sure both
+    iterables exhausted.
+
+- Pseudocode illustrating concept:
+  - function fn(arr1, arr2):
+        i = j = 0
+        while i < arr1.length AND j < arr2.length:
+            Do some logic depending on prob.
+            Do some more logic to decide whether:
+                1. i++
+                2. j++
+                3. Both i++ and j++
+        
+        // Step 4: make sure both iterables
+        // exhausted. Note only one of these loops
+        // would run.
+
+        while i < arr1.length:
+            Do some logic here depending on prob.
+            i++
+        
+        while j < arr2.length:
+            Do some logic here depending on prob.
+            j++
+
+- Method will have linear time compl. of O(n + m)
+if work inside while loop is O(1), where n = arr1.len
+and m = arr2.len.
+- At every iter., we move at least one pointer forward,
+and pointers cannot be moved forward more than n + m
+times without arrs. being exhausted.
+
+*********
+Example 3
+*********
+
+- Prob. statement:
+  - Given two sorted integer arrays arr1 and arr2, return 
+  a new array that combines both of them and is also 
+  sorted.
+
+- Trivial appproach would be to first combine both input
+arrs. then perf. a sort.
+- If we have n = arr1.len + arr2.len, then this gives
+time compl. of O(n * log n) (cost of sorting).
+- This would be good approach if input arrs. were not
+sorted, but because they are sorted, we can take advantage
+of two pointers technique to improve to O(n).
+
+- In prev. e.g. we declared n = arr1.len and m = arr2.len,
+now we're saying n = arr1.len + arr2.len, why change def?
+- Remember with big O, we're allowed to define vars. as
+we see fit.
+- Could certainly stick to using n & m, and time compl.
+of sorting approach would be O((n + m) * log(m + n))
+and time compl. of better approach would be O(n + m).
+- Makes no difference either way, but one justification
+could give is that since we're combining arrays, total
+len. is a significant num., so it makes sense to repr.
+as n.
+  - Keeping def. as n = arr1.len & m = arr2.len is fine 
+  as well.
+
+- Sorting arr of length n costs O(n * log n), can improve
+time complexity by factor of log n by taking advantage
+of input arrs. being sorted.
+- If we start with smallest num. from each arr.,
+whichever is smaller must be before other one, so we add
+to answer and move to next num. in that array.
+- If vals. equal, doesn't matter which one we choose.
+- Repeat process until one of arrays runs out of nums.
+
+- This alg. has time compl. of O(n) and uses O(1) space
+(if we don't count output as extra space, which we
+usually don't).
+  - Every elem. processed once, i moves through arr1
+  and j moves through arr2.
+  - In first while, each iter. increments i or j,
+  never both, never backwards.
+  - So first loop runs at most len(arr1) + len(arr2)
+  times.
+  - Two cleanup loops together also process only
+  remaining elems. once.
+  - So total work = len(arr1) + len(arr2) = n.
+  - Append is O(1) amortized (dynamic array).
+
+*******************************
+Example 4: 392. Is Subsequence.
+*******************************
+
+- Prob. statement:
+  - Given two strings s and t, return true if s is a 
+  subsequence of t, or false otherwise.
+
+  A subsequence of a string is a sequence of characters 
+  that can be obtained by deleting some (or none) of 
+  the characters from the original string, while 
+  maintaining the relative order of the remaining 
+  characters. For example, "ace" is a subsequence of 
+  "abcde" while "aec" is not.
+
+- In this prob., need to check if chars. of s appear
+in same order in t, w/ gaps allowed.
+- E.g. "ace" subseq. of "abcde" because it contains
+"ace" in same order - fact that they're not consecutive
+doesn't matter.
+
+- Can use two pointers to solve in linear time.
+- If we find that s[i] == t[j], means we've found
+letter at pos. i for s, and can move onto next one
+by incr. i.
+- Incr. j at each iter. no matter what.
+- s is a subseq. of t if we can "find" all letters
+of s, meaning i == s.length at end of alg.
+
+- Solution uses O(1) space.
+- Time complexity is linear with lengths s and t.

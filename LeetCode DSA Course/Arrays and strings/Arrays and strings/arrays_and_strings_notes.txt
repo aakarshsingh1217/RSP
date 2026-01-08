@@ -1,0 +1,29 @@
+- An array can't be resized, a dynamic array
+can be.
+- In context of alg. probs., usually when ppl.
+talk about arrays, they're referring to
+dynamic arrays.
+
+- In Python, strings are immutable (data can't
+be changed, if you want to change it you need
+to recreate entire thing).
+  - If you had immutable str. "abc", can't do
+  s[2] = "d" to change c to d, but can for
+  arr = ["a", "b", "c"].
+    - For immutable str., need to create it
+    entirely from scratch if you want to
+    change.
+    - If string has 100,000 chars., creating
+    new version to modify one char. is very
+    expensive O(n), where n is size of str.
+ ______________________________________________________________
+|Operation                |   Array/List   | String (Immutable)|
+--------------------------|----------------|--------------------
+|Append to end            | Amortized O(1) |         O(n)      |
+|Popping from end         |      O(1)      |         O(n)      |
+|Insertion, not from end  |      O(n)      |         O(n)      |
+|Deletion, not from end   |      O(n)      |         O(n)      |
+|Modifying an elem.       |      O(1)      |         O(n)      |
+|Random access            |      O(1)      |         O(1)      |
+|Checking if elem. exists |      O(n)      |         O(n)      |
+--------------------------|-------------------------------------
