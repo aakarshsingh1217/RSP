@@ -1,0 +1,374 @@
+- Sliding windows work same with arrays and strings,
+important thing is they're iterables with ordered
+elems.
+- Logic with arrays is identical for strings.
+
+*********
+Subarrays
+*********
+
+- Given an arr, a subarr. is a contiguous section of the arr.
+- All elems. must be adjacent to each other in original arr.
+and in their original order.
+
+- E.g., with array [1, 2, 3, 4] has subarrays:
+  - [1], [1, 2], [1, 2, 3], [1, 2, 3, 4].
+
+- Subarray can be defined by two indices, start and end.
+- E.g. for [1, 2, 3, 4], subarray [2, 3] has starting index
+1 and ending index 2.
+- Starting index = left bound, ending index = right bound.
+- Subarray can also be called "window".
+
+*****************
+"Valid" subarrays
+*****************
+
+- Problem descr. will explicitly or implicitly define
+what makes a subarray "valid".
+- Can split into two parts:
+  1. A constraint metric. This is an attrib. of subarray,
+  e.g. sum of subarray, num. unique elems. in subarray etc.
+  2. Numeric restriction on constraint metric.
+
+- E.g. let's say a problem declares a subarr. is valid if
+it has sum less than or equal to 10.
+  - Constraint metric is sum of subarray, numeric restriction
+  is <= 10.
+  - Subarray considered valid if its constraint metric conforms
+  to numeric restriction i.e. sum <= 10.
+
+********
+The idea
+********
+
+- Sliding window used to analyze and find valid subarrs. of an
+arr.
+- Idea behind sliding window is to maintain two vars., left &
+right.
+- At any given time, left repr. left bound of window and right
+repr. right bound.
+  - Window another word for subarray.
+
+- Initially, set left = right = 0, meaning first window we
+consider is just first elem. of array on its own.
+- We expand size of our window by incrementing right,
+when we increment right this is like adding a new elem.
+to our window.
+
+- If after adding new elem. and the subarr. becomes invalid?
+- E.g. let's say adding new elem. on right makes sum of
+subarr. too large.
+- Need to remove some elems. from our window until it's valid
+again, to remove elems. we increment left which shrinks our
+window.
+
+- Left and right repr. bounds of our window at any given 
+time, so incrementing left is equivalent to removing left
+most elem.
+
+- As we add and remove elems., we are sliding our window along
+input.
+- Windows size if constantly changing, grows as large as it
+can until its invalid, then shrinks until its valid once more.
+- However, it always slides along to right until it reaches
+end of input.
+
+- Let's say we're given positive int. arr. nums and int. k.
+- Need to find length of longest subarray that has sum
+less than or equal to k.
+- E.g., nums = [3, 2, 1, 3, 1, 1] and k = 5.
+
+- Initially, left = right = 0, so window is first elem.: [3].
+- Now lefts expand to right until constraint is broken, occurs
+when left = 0, right = 2, and our window is [3, 2, 1].
+- Sum is 6 which is greater than k, so we must shrink window
+from left until constraint no longer broken.
+  - After removing one elem., window's valid again: [2, 1].
+
+- Why's it correct to remove this 3 and forget about it
+for rest of alg.?
+- Because input has only positive ints., a longer subarr.
+directly equals a larger sum.
+- We know that [3, 2, 1] already results in a sum that's too
+large.
+- There's no way for us to ever have a valid window again
+if we keep this 3 because if we add more elems. to right,
+sum only gets larger, and it's not like we can incl. the 3
+without also incl. the 2 or 1, since this would violate def.
+of a subarr.
+- That's why we can forget about 3.
+
+************************************
+Solving problems with sliding window
+************************************
+
+- Whenever you see a prob. that not only descr. subarrs.
+being "valid", but also asks you to find these subarrs.,
+you should immediately think about sliding window.
+
+- Often problem will ask you to find best valid subarr,
+prob. will define what makes one subarr. better than another.
+- E.g. prob. might ask you to find longest valid subarr.
+- Another common type is when you're asked to find num. of
+valid subarrs.
+
+**************
+Implementation
+**************
+
+- For implem., using this prob.: find longest subarr. with
+sum less than or equal to k.
+
+- First identify constraint metric.
+- In e.g., constraint metric is sum of window and we Need
+to keep track of this sum as elems. are added and removed.
+- One way is to keep window as separate arr., when we add
+elems. from right, we add them to our arr., when we remove elems.
+from left, we remove corresp. elems. from arr.
+- This way, we can always find sum of curr. widnow by summing
+elems. in separate arr.
+
+- This's very ineff. as removing elems. and finding sum
+of window will be O(n) opers.
+
+- All we need is a var., e.g. curr, that keeps track of curr.
+sum.
+- When we add elem. from right, do curr += nums[right], when
+we remove elem. from left, do curr -= nums[left].
+- All opers. are O(1).
+
+- Window exists as idea, not literally maintaining it with an arr.,
+only need left and right to remember bounds, and curr to track
+constr. metric.
+
+- How to move pointers left and right?
+- Want to always expand window therefore window always slides to
+right.
+- Bc. right always moving forward, can use a for loop to iter.
+right over input, in each iter. of for loop, we'll be adding
+elem. nums[right]  to window.
+
+- When we move left, we're shrinking window.
+- Only shrink window when it's invalid.
+- By maintaining curr, can easily tell if curr. window is invalid
+by checking curr.
+- If curr > k, window's invalid.
+
+- Let's say nums = [1, 1, 1, 3] and k = 3.
+- When we arrive at 3, add it to window, window becomes invalid
+(curr = 6), therefore, we need to remove 3 elems. from left
+before window becomes valid again.
+
+- This suggests we use while loop to perf. removals.
+- Condition will be "while curr > k" (while window is valid).
+- To perf. removals, we'll do curr -= nums[left] and then
+incr. left in each iter. of while loop.
+
+- To update answer, in each for loop iter, after while loop,
+we know curr. window is valid.
+- Can write code here to update answer.
+- Formula for length of window is right - left + 1.
+
+- Pseudocode:
+  - function fn(nums, k):
+        left = 0
+        curr = 0
+        answer = 0
+
+        for (int right = 0; right < nums.length; right++):
+            curr += nums[right]
+
+            while (curr > k):
+                curr -= nums[left]
+                left++
+
+            answer = max(answer, right - left + 1)
+
+        return answer
+
+- Pseudocode for general template:
+  - function fn(arr):
+        left = 0
+
+        for (int right = 0; right < arr.length; right++):
+            Do some logic to "add" elem. at arr[right] to
+            window.
+
+            while WINDOW_IS_INVALID:
+                Do some logic to "remove" elem. at arr[left]
+                from window.
+
+                left++
+
+            Do some logic to update answer.
+
+********************************
+Why is sliding window efficient?
+********************************
+
+- For any arr., how many subarrs. are there?
+- If arr. has length n, there are n subarrs. of len. 1.
+- Then n - 1 subarrs. of len.2 (every index except last
+one can be starting index), n - 2 subarrs. length 3
+and so on until there's only 1 subarr. of length n.
+
+- This means there're:
+  - Sigma n, k = 1, k = n * (n + 1) / 2 subarrs.
+
+- In terms of time compl., any alg that looks at every
+subarr. will be atleast O(n^2) which is too slow.
+- Sliding window guarantees max. 2n window iterations -
+right pointer can move n times and left pointer can move end
+times.
+- This means if logic done for each window is O(1), sliding window
+alg. runs in O(n) which is much faster.
+
+- Why isn't it O(n^2) if while loop inside for loop.
+- While loop can only iterate n times in total (left starts at
+0, only incr. and never exceeds n).
+- If while loop were to run n times on one iter. of for loop,
+that would mean it wouldn't run for all other iters.
+of for loop.
+- This is called amortized analysis - even though worst case
+for iter. inside for loop is O(n), it averages out to O(1)
+when you consider entire runtime of alg.
+
+*********
+Example 1
+*********
+
+- Prob. statement:
+  - Given an array of positive integers nums and an integer k, 
+  find the length of the longest subarray whose sum is less than 
+  or equal to k. This is the problem we have been talking about 
+  above. We will now formally solve it.
+
+- Alg. has time compl. O(n) since all work done inside for loop
+is amortized O(1), where n is length nums.
+- Space compl. is constant because we're only using 3
+int. variables.
+
+*********
+Example 2
+*********
+
+- Prob. statement:
+  - You are given a binary string s (a string containing only "0" and "1"). 
+  You may choose up to one "0" and flip it to a "1". What is the length 
+  of the longest substring achievable that contains only "1"?
+  
+  For example, given s = "1101100111", the answer is 5. If you perform 
+  the flip at index 2, the string becomes 1111100111.
+
+- Like prev. example, prob. runs in O(n) time, where n is len. of
+s, as work done in each loop iter. is amortized constant.
+  - Left only moves forward and never resets, so not O(n^2)/
+  - Right moves forward exactly n times, left also moves forward
+  at most n times.
+    - Left starts at 0.
+    - Left only incr.
+    - Left never decr.
+    - Max val. of left is n.
+  - Therefore left += 1 executes at most n times total.
+  - Even tho. while loop may run multip. times in a single iter.,
+  across all iters.: total left incr. <= n, total right incr. = n.
+  - So total work is O(n) + O(n) = O(n).
+- Only a few ints. are used as well, meaning alg. uses O(1)
+space.
+
+*******************
+Number of subarrays
+*******************
+
+- If a prob. asks for num. subarrays that fit some constr.,
+we can still use sliding window but use math trick to calc.
+num. subarrays.
+
+- Let's say currently have window (left, right), how many valid
+windows end at index right?
+
+- There's curr. window (left, right), then (left + 1, right),
+(left + 2, right) and so on until (right, right) (only
+elem. at right).
+
+- Can fix right bound and choose any val. between left and right
+inclsuive for left bound.
+- Therefore, num. of valid windows ending at index right is equal
+to size of window, which we know is right - left + 1.
+
+*********************************************
+Example 3: 713. Subarray Product Less Than K.
+*********************************************
+
+- Problem descr.:
+  - Given an array of positive integers nums and an integer k, return 
+  the number of subarrays where the product of all the elements in the 
+  subarray is strictly less than k.
+
+  For example, given the input nums = [10, 5, 2, 6], k = 100, the 
+  answer is 8. The subarrays with products less than k are:
+
+  [10], [5], [2], [6], [10, 5], [5, 2], [2, 6], [5, 2, 6]
+
+- Using descr. e.g., when we reach index 2, prod. becomes too
+large, so we need to remove leftmost elem. 10.
+- Now window is valid and has len. 2, meaning there're 2 valid
+subarrs. ([2] and [5, 2]).
+
+- Can add curr. size of window instead.
+
+- After while loop, we know window is valid.
+- Add window size right - left + 1 to ans.
+
+- Need condition k <= 1 return 0 as no subarrs. will fit
+that constr.
+
+*****************
+Fixed window size
+*****************
+
+- Prev. examples window size was dynamic, e.g. tried to
+expand to right as much as we could while keeping window
+within some constraint and removed elems. from left
+when constr. was violated.
+- Sometimes, prob. will specify fixed length k.
+
+- These probs. are easy because diff. b/w. any two adj.
+windows is only two elems. (add one elem. on right and
+remove one elem. on left to maintain length).
+
+- Start by building first window (from index 0 to k - 1).
+- Once we have window of size k, if we add elem. at index
+i, we need to remove elem. at index i - k.
+- E.g. k = 2 and you curr. have elems. at indices [0, 1],
+now we add 2: [0, 1, 2] and to keep window size at k = 2,
+we need to remove 2 - k = 0: [1, 2].
+
+- Pseudocode:
+  - function fn(arr, k):
+      curr = some data to track window
+
+      // build first window
+      for (int i = 0; i < k; i++)
+        Do something with curr or other vars. to build first
+        window.
+
+      ans = answer var., prob. equal to curr here depending on
+            prob.
+
+      for (int i = k, i < arr.length)
+        Add arr[i] to widnow.
+        Remove arr[i - k] from window
+        Update ans
+
+      return ans
+
+*****************************************************************
+Example 4: Given an integer array nums and an integer k, find the 
+sum of the subarray with the largest sum whose length is k.
+*****************************************************************
+
+- Total for loop iters. is equal to n, where n is length
+of nums, and work done in each iter. is constant, giving
+alg. time compl. O(n) using O(1) space.
