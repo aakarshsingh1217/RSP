@@ -1,0 +1,105 @@
+*************************************
+What is the point of a hash function?
+*************************************
+
+- Hash map is an unordered data struct. that stores
+key-val. pairs.
+- A hash map can add and remove elems. in O(1), as well as
+update vals. associated with a key and check if a key
+exists, also in O(1).
+- Explanation:
+  - Hash map uses a hash func. to convert each key into
+  an arr. index.
+  - This allows map to jump directly to where a key
+  should be stored instead of searching through all elems.
+  - Insert/update:
+    - Hash the key -> compute index -> place or update val.
+    at that index -> O(1).
+  - Lookup/existence check:
+    - Hash key -> go straight to its index -> compare keys
+    if needed -> O(1).
+  - Remove:
+    - Hash key -> find its index -> delete entry -> O(1).
+  - These opers. are constant time on avg. because hash
+  func. distributes keys evenly, keeping collisions rare.
+  - In rare worst case (many collisions), operations can
+  degrade to O(n), but good hashing and resizing keeps
+  avg. at O(1).
+
+- Can iterate over both keys and vals. of a hash map, but
+iter. won't necessarily follow any order.
+
+**********************
+Comparison with arrays
+**********************
+
+- Even though hash map opers. are O(1), each oper. is a non
+trivial constant cost.
+- Explanation:
+  - To insert or look up a key, hash map must:
+    1. Compute hash of key.
+    2. Map it to index.
+    3. Handle possible collisions.
+    4. Compare keys for equality.
+  - E.g., checking if 5 is in a small list:
+    - 5 in [1, 3, 5], may only take 1-3 comparisons.
+  - But checking in a hash map:
+    - 5 in {1: "a", 3: "b", 5: "c"}, requires running hash func.
+    and index logic even though table is tiny.
+  - For small inputs, constant overhead (hashing, memory access,
+  collision checks) can make "O(1)" hash map oper. slower than
+  a simple loop, even though it scales much better for large
+  inputs.
+- Because big O ignores constants, O(1) time compl. can sometimes
+be deceiving - it's usually something more like O(10) because
+every key needs to go through hash func.
+
+- Hash maps can also take up more space.
+- Dynamic arrs.'re fixed size arrs. that resize themselves
+when they go beyond capacity.
+- Hash tables also implemented using fixed size arr. (size
+is lim. set by programmer).
+- Problem is, resizing hash table much more expensive because
+every existing key needs to be rehashed, and also a hash
+table may use an array that's significantly larger than
+num. elems. stored, resulting in huge waste of space.
+- Let's say you chose lim. as 10,000 items, but only ended
+up storing 10.
+- Could say 10k too large, what if next test case reqs.
+100k elems?
+- Point is, when you don't know how many elems. you need
+to store, arrs. more flexible with resizing and not wasting
+space.
+
+- Time compl. only involves vars. you define.
+- When we say that hash map opers. are O(1), var. we're
+concerned with is usually n (size of hash map).
+- This may be misleading, e.g. hashing a string requires
+O(m) time, where m is len. of string.
+- Constant time opers. are only constant relative to size
+of map.
+- Explanation:
+  - When we say hash map opers. are O(1), var. we're
+  measuring against is num. entries in map (n), not size
+  of key.
+  - E.g.:
+    - mp["abcdefghij"] = 1
+  - If hash map has 1 elem. or 1 mill. elems., lookups
+  still O(1) with respect to n.
+  - However, Python must compute the hash of the str.
+  "abcdefghij", which takes time proportional to len.
+    - Hashing "a" -> O(1).
+    - Hashing "abcdefghij" -> O(10).
+    - Hashing a str. of len. m -> O(m).
+  - So full cost is really: O(m) + O(1).
+  - Big O notation hides this because m is not var.
+  we're measuring, oper. is constant time relative to map
+  size, but not necessarily const.-time overall.
+
+****
+Sets
+****
+
+- Can add, remove and check if elem. exists all in
+O(1).
+- Set: key → (nothing)

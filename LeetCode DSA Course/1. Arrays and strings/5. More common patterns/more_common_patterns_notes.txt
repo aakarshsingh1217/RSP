@@ -1,0 +1,128 @@
+********************
+O(n) string building
+********************
+
+- In most langs., strings are immutable.
+- Means concatenating a single char. to a str. is an O(n) oper.
+- If you have a str. thats 1 mil. chars. long and you want to add
+one char., all 1 mil. chars. need to be copied over to another
+str.
+
+- Many probs. will ask you to return a string which'll usually
+be built during the alg.
+- Let's say final str. is of len. n and we build it one char.
+at a time with concatenation.
+- Time complexity?
+  - Operatations needed at each step would be 1 + 2 + 3 + ...
+  + n, partial sum of n(n + 1) / 2 series, which leads to
+  O(n^2) opers. 
+  - Explanation:
+    - Strings immutable in python, so concatenations such ask
+    s = s + c require:
+      1. Alloc. of a new str.
+      2. Copy all chars. from s.
+      3. Append c.
+    - So if final str. has len. n:
+      - First append copies 1 char (the empty str "").
+      - Second append copies 2 chars.
+      - ...
+      - nth append copies n chars.
+      - Total work: 1 + 2 + 3 + ... + n = n(n + 1) / 2 = O(n²)
+      - Correct approach:
+        - chars = []
+          for c in data:
+              chars.append(c)
+          return "".join(chars)
+          - List append amortized O(1).
+          - "".join() copies once -> O(n).
+          - Therefore total time O(n).
+
+------
+Python
+------
+
+1. Declare a list.
+2. When building string, add chars. to list. This is O(1) oper.,
+across n opers., costs O(n) total.
+3. Once finished, convert list to a str. using "".join(list),
+this is O(n).
+4. Total is O(n + n) = O(2n) = O(n) (drop constants).
+
+- Implementation:
+  - def build_string(s):
+        arr = []
+        for c in s:
+            arr.append(c)
+
+        return "".join(arr)
+
+***********************************************
+Subarrays/substrings, subsequences, and subsets
+***********************************************
+
+--------------------
+Subarrays/substrings
+--------------------
+
+- Subarr./substr. is a contiguous sect. of an arr. or str.
+
+- If a prob. has explicit constr. such as:
+  - Sum greater than or less than k.
+  - Limits on what's contained, such as max. of k unique
+  elems. or no duplicates allowed.
+- And/or asks for:
+  - Min. or max. len.
+  - Num. subarrs./substrs.
+  - Max/min. sum.
+- Think about sliding window.
+- Note not all probs. with these characteristics should be solved
+with sliding window, and not all sliding window probs. have these
+characteristics, use them as guideline.
+
+- If probs. input is an int. arr. and you find yourself needing
+to calc. multiple subarr. sums, consider building a prefix
+sum.
+
+- Size of a subarray between i and j (inclusive) is j - i + 1,
+this's also num of subarrays that end at j, starting from i or
+later.
+
+------------
+Subsequences
+------------
+
+- Subseq. is a set of elems. of an arr./str. that keeps same
+relative order but doesn't need to be contiguous.
+- E.g., subsequences of [1, 2, 3, 4] include: [1, 3], [4],
+[], but not [3, 2], [5], [4, 1]..
+
+- Most common patterns assoc. with subseq. probs. is two pointers
+when two input arrs./strs. are given.
+
+-------
+Subsets
+-------
+
+- A subset is any set of elems. from the original arr. or str.
+- Order doesn't matter and elems. don't need to be beside
+each other.
+- E.g., given [1, 2, 3, 4], these're subsets: [3, 2], [],
+[4, 1, 2].
+- Subsets containing same elems. considered same, so [1, 2, 4]
+= [4, 1, 2].
+
+- Diff. b/w. subseq. and subsets:
+  - In subseq., order matters.
+  - Let's say you had arr and needed to find subseq. w/ 3
+  conseq. ints. (like 1, 2, 3).
+  - Harder than finding a subset with 3 conseq. nums. because
+  with a subet, 3 elems. simply need to exist.
+  - In a subseq., elems. need to exist in correct relative
+  order.
+    - E.g. [3, 2, 1] has no subseq. that fits this criteria,
+    but it has a subset that does.
+- If a prob. involves subseq., but order of subseq. doesn't
+matter (e.g. sum of subseq.), then you can treat it same
+as a subset.
+- When dealing with subsets, one thing you can do that you can't
+with subseq. is sort the input because order doesn't matter.
