@@ -1,0 +1,145 @@
+- Common appl. of hash map/set is determining if elem.
+exists in O(1).
+- Arr. needs O(n) to do this, using hash map/set improves
+time compl. of alg. greatly, usually from O(n^2) to O(n).
+
+*********************
+Example 1: 1. Two Sum
+*********************
+
+- Brute force approach:
+  - Simply check every pair of numbers and see if they add up
+  to target.
+  - Use one for loop to iter. over arr. and at each iter., lock
+  in a number num.
+  - Then use inner for loop which looks for target - num in arr.
+  (because num + target - num = target).
+
+- This alg. is slow because inner for loop (whose purpose is
+to find target - num) costs O(n).
+- Thus time compl. is O(n^2).
+- With hash map, can look for target - num in O(1), improving
+time compl. to O(n).
+
+- Build hash map as we iter. along arr., mapping each value
+to its index.
+- At each index i, where num = nums[i], can check our hash
+map for target - num.
+- Adding key-val. pairs and checking for target - num are
+all O(1), so time compl. improve to O(n).
+
+- Looking for 2 nums. that sum to target.
+- Iterate over input and for each elem. num, we see if this elem.
+can be paired with another num. to form target.
+
+- If another elem. target - num exists, then their sum
+num + target - num = target is what we're looking for.
+
+- As we iter. over input, put elems. in hash map.
+- Then in future, can check if we've seen target - num
+for each num in O(1).
+- Prob. wants us to return indices instead of nums.
+themselves, so assoc. each num. with its index.
+
+- If quest. wanted us to ret. a boolean indicating if pair
+exists or to ret. nums. themselves, we could use a set.
+- However, since it wants indices of nums, need to use
+hash map to "remember" what indices nums. are at.
+
+- Time compl. is O(n) as hash map opers. are O(1).
+- Sol uses O(n) space as num. of keys hash map will
+store scales linearly w/ input size.
+
+*********************************************
+Example 2: 2531. First Letter to Appear Twice
+*********************************************
+
+- Brute force sol. would be to iter. along str., and for each
+char c, iterate again up to c to see if there's any match.
+
+- This is O(n^2) due to nested loop.
+- Second loop is checking for existence of c, which can be
+done in O(1) using a set.
+
+- Improves time compl. to O(n) as each for loop iter.
+now runs in constant time.
+
+- Many will argue space compl. is O(1) because input can only
+have chars. from english alphabet, which is bounded by
+constant (26).
+  - Common answer with string problems and technically
+  correct.
+- Also note that space compl. is O(m), where m is number of
+allowable characters in input.
+
+**************************************************************
+Example 3: Given an integer array nums, find all the numbers x 
+in nums that satisfy the following: x + 1 is not in nums, 
+and x - 1 is not in nums.
+
+If a valid number x appears multiple times, you only need to 
+include it in the answer once.
+**************************************************************
+
+- Because checks are O(1), time compl. is O(n) since each
+for loop iter. runs in constant time.
+- Set occupies O(n) space.
+
+-------------
+Closing notes
+-------------
+
+- Anytime you find your alg. running if ... in ..., consider
+using a hash map or set to store elems. to have these opers.
+run in O(1).
+
+***************************************
+1832. Check if the Sentence is Panagram
+***************************************
+
+- Let n be len. of input str. sentence.
+- Time compl.: O(n).
+  - Only need one iter. over sentence.
+  - In each step, we add curr letter to set, which takes
+  const. time.
+- Space compl.: O(1).
+  - Use a hash set seen to store all unique letters we
+  encounter.
+  - At most 26 unique lowercase letters, so space compl.
+  is O(1).
+
+*******************
+268. Missing Number
+*******************
+
+- Time compl.: O(n).
+  - Set allows for O(1) containment queries (checking
+  whether elem. exists in a set/hashmap), resulting
+  in main loop running in O(n) time.
+  - Creating set costs O(n) time as each set insertion
+  is amortized O(1) time, so overall runtime is
+  O(n + n) = O(n).
+- Space compl.: O(n).
+  - nums contains n - 1 distinct elems., so it costs
+  O(n) space to store a set containing all of them.
+
+***********************
+1426. Counting Elements
+***********************
+
+- Let N be length of input arr.
+- Time compl.: O(N).
+  - Creating a hashset from N ints. takes O(N)
+  time.
+  - Then need to loop over each of N ints. and check
+  for x + 1 by seeing if it's in hashset; an O(1)
+  oper.
+  - This gives O(N) + N * O(1) = O(N) + O(N) = O(N).
+- Space compl.: O(N).
+  - Hashset needs to store each unique int. from arr.
+  - Worst case, all ints. in arr will be unique, meaning
+  hashset has space compl. O(N).
+  - Interesting to note O(N) is an upper bound on space 
+  compl.
+  - If U is num. unique ints. in arr., then space compl.
+  more accurately repr. as O(U).
