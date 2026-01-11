@@ -1,0 +1,405 @@
+*****************************
+Example 1: 49. Group Anagrams
+*****************************
+
+- How to check if two strs. anagrams of each other?
+- Could use two hash maps, count all chars. in each str., and
+then compare if hash maps are same.
+- This's very cumbersome to implem. and doesn't help us with
+grouping strs. togeth. if a group has more than 2 strs.
+- For each group, need way to uniquely identify the group.
+
+- Cleanest way to know if two strings anagrams of each other
+is by checking if they're equal after both being sorted.
+- Also, all strs. in a group will be same when sorted, sorted
+we can use sorted version as key.
+- Can map these keys to groups themselves in a hash map,
+and then our ans. is just vals. of the hash map.
+
+- Every group has its own identifier (sorted str.) and we can
+use this identifier to group them in hash map easily.
+
+--------------------
+Detailed explanation
+--------------------
+
+- A group could have many strs. in it.
+- Need a way to easily identify what strs. belong to what
+group.
+
+- Two strs. anagrams of each other if and only if they're
+the same when sorted.
+- This makes sense because when you sort str., chars. forced
+to appear in well def. order.
+- By def., anagrams have same letters, so when these letters
+appear in same order, they must be equal.
+
+- String "bcab" sorted is "abbc" = identifier, because every 
+anagram of "bcab" will res. in "abbc".
+- Can use this identifier of each str. as hash map key
+to easily group anagrams togeth.
+
+- dictionary.values() doesn't ret. a list but a view obj., need
+to convert to a list first.
+
+-------------------
+Complexity analysis
+-------------------
+
+- Given n as len. strs and m as avg. len. of the strings inside
+strs, we iterate over each string and sort it, which costs
+O(n * m * log m).
+- Then we iterate over the keys.
+- Worst case scenario, no matching anagrams, n groups,
+which'll cost O(n), but still O(n * m * log m) Complexity
+as final +n dominated.
+- Space compl. is O(n * m) as each str. placed in an arr.
+within hashmap.
+
+*****************************************************
+Example 2: 2260. Minimum Consecutive Cards to Pick Up
+*****************************************************
+
+- Can solve this using sliding window, but can use hashmap
+approach.
+- Question equiv. to: what's the shortest dist. b/w. any two
+of the same elem.?
+- If we go through arr. and use hashmap to record indices
+for every given elem., we can iter. over those indices to
+find shortest dist.
+- E.g., given cards = [1, 2, 6, 2, 1], would map 1: [0, 4],
+2: [1, 3] and 6: [2].
+- Then we iter. over vals. and see min. diff can be achieved
+from picking up the 2s.
+
+--------------
+Detailed expl.
+--------------
+
+- Shortest subarr. that contains duplicate will have first and
+last elem. be the duplicate - otherwise elems. could be trimmed
+off edges at no cost.
+- Therefore we need to find shortest dist. between any two of
+same elem.
+
+- Because we iter. on indices in ascending order, each arr.
+within hashmap will be sorted ascending.
+
+---------------
+Compl. analysis
+---------------
+
+- Time compl. still O(n) even when we have nested loop in alg.
+- This's because inner loop in nested loop can only iter. n
+times in total, since it's iterating over indices of elems.
+from arr., where n is length of input arr.
+  - Outer loop processes each n elems. once -> O(n).
+  - All inner loops together iterate over all stored indices,
+  and total num of stored indices across all lists exactly .
+  - Since no index processed more than once in inner loops,
+  combined cost of nested loops is O(n).
+
+- Can improve alg. bc. we don't need to store all indices, but
+only most recent one we saw for each num.
+- Improves avg. space compl.
+- Curr alg. has O(n) space compl. always, but w/ improve.
+it's only O(n) worst case when there're no duplicates.
+
+- This alg. also runs faster because we save on an iter.,
+although time compl. of both algs. is O(n), where n len. of input
+arr.
+
+***********************************************************
+Example 3: 2342. Max Sum of a Pair With Equal Sum of Digits
+***********************************************************
+
+- In this prob. identify a group by its digit sum.
+- Iterate through arr. and group all nums. with same digit sum
+togeth. in hashmap.
+- Then iter. over hashmap and for each group with at least
+2 elems., find 2 max elems. by sorting.
+
+- Algs. ineff. due to sorting, which is potentially O(n * log n),
+if every num. in this input has same digit sum, where n's the
+length of input arr.
+  - Final compl. is O(n * log n).
+    - Computing digit sums for all nums. takes O(n) (each num
+    has constant bounded num digits).
+    - Grouping nums. in dict. takes O(n).
+    - Sorting is expensive part, worst case all nums. have same
+    digit sum, so one group has size n:
+      - curr.sort(reverse=True) # costs O(n log n).
+    - , which dominates everything else.
+- Can improve time compl. and avg. space compl. by only 
+saving largest num. seen so far for each digit sum.
+
+- First alg. uses O(n) space because we store all elems. in
+hash map vals., but with improvement avg. case uses much less
+space since each key only stores one int.
+- Also save on extra iter. and a sort in each iter., giving
+time compl. O(n), where n is len. input arr.
+
+*******************************************
+Example 4: 2352. Equal Row and Column Pairs
+*******************************************
+
+- How can we calc. num. equal pairs?
+- Let's say there're three rows that look like [1, 2, 3]
+and 2 cols. that look like [1, 2, 3].
+- Each of these three rows, there're two cols. to pair w/,
+so there're 3 * 2 = 6 pairs.
+- Can use hash map to count how many items each row occurs.
+- Can use second hashmap to do same thing with cols.
+- Then, we iter. over rows hashmap and for each row., check
+if same arr. appeared as col.
+- If it then, then prod. of num. appearances added to ans.
+
+- Arrs. can't be put into hash map as key because they're
+mutable.
+- Need to convert rows and cols. into hashable form such as
+string/tuple.
+
+---------------
+Compl. analysis
+---------------
+
+- If grid has size n * n, alg. has time compl. O(n^2) -
+there're n^2 elems. and each elem. iter. over twice initially
+(once for row it occupies and once for col. it occupies).
+- Populating and then iter. over the hashmaps will be
+dominated by this.
+- Space compl. is O(n^2) - if all rows and cols. unique,
+then each of two hash maps will grow to size n, with 
+each key having len. n.
+
+****************
+383. Ransom Note
+****************
+
+--------------------------------
+Two hashmaps complexity analysis
+--------------------------------
+
+- We say m is len. of magazine and n is len. of ransom note.
+
+- Let k be num. unique chars. across both ransom note and
+magazine.
+- While never more than 26, treat it as var. for more
+accurate compl. analysis.
+
+- Basic hashmap opers. get() and put() are O(1).
+
+- Time compl. is O(m).
+  - When m < n, we immediately return false.
+  - Therefore, worst case occurs when m >= n.
+  - Creating a hashmap of counts for magazine is O(m),
+  as each insertion/count update is O(1), and is done for
+  each of m chars.
+    - Likewise same for ransom notes counts hashmap O(n).
+  - We then iter. over ransom note hashmap, which contains
+  at most n unique vals., looking up their counterparts in
+  magazine hashmap.
+    - This is therefore at worst O(n).
+  - This gives us O(n) + O(n) + O(m), but m >= n, so O(m).
+- Space compl.: O(k) . O(1).
+  - Build 2 hashmaps of counts; each with up to k chars. 
+  in them.
+  - This takes up to O(k) space, but since k is never more
+  than 26 which is constant, reasonable to say O(1) space.
+
+*************************************************
+3. Longest Substring Without Repeating Characters
+*************************************************
+
+- E.g. 1 s = "abcabcbb"
+  - outputs 33 as "abc' has len. 3, "bca" and
+  "cab" also correct.
+
+-----------------------
+Approach 1: Brute Force
+-----------------------
+
+- Using e.g. 1:
+  - n = 8
+    res = 0
+
+    0:a  1:b  2:c  3:a  4:b  5:c  6:b  7:b
+
+    Outer loop: i = 0
+    Inner loop: j = 0
+
+    check(0, 0) -> "a"
+    chars = {}
+    add 'a'
+    return True
+
+    res = max(0, 1) = 1
+
+    Inner loop: j = 1
+
+    check(0, 1) -> "ab"
+    chars = {a, b}
+    return True
+
+    res = max(1, 2) = 2
+
+    .
+    .
+    .
+
+    Inner loop: j = 3
+
+    check(0, 3) -> "abca"
+    chars = {a, b, c}
+    'a' already in chars -> ret. false
+
+    res unchanged (= 3 due to prev. iter.)
+
+    All further j for i = 0 fails, since 'a'
+    repeats.
+
+    Outer loop: i = 1
+    Inner loop: j = 1
+
+    .
+    .
+    .
+
+    Then res returns with max len.
+
+------------------------------
+Time and space compl. analysis
+------------------------------
+
+- Time compl.:
+  - Code does 3 layers of work:
+    1. Outer loop picks starting index i.
+    2. Inner loop picks ending index j.
+    3. The check(i, j) func.:
+      - Walks through substring one char.
+      at a time.
+      - Uses a set to see if a char. repeats 
+  - So alg. tries every possible substr. and
+  for each one, scans through all its chars.
+  again to check for duplicates.
+  - Because of that:
+    - Short substr. cheap.
+    - Long substr. expensive.
+    - Doing for all substr. adds up fast.
+
+--------------------------
+Approach 2: Sliding Window
+--------------------------
+
+- Intuition:
+  - Given a susbtr. with a fixed end index in str.,
+  maintain a hashmap to record freq. of each char. in curr.
+  substr.
+  - If any char. occurs more than once, drop leftmost
+  chars. until there're no duplicate chars.
+
+- Alg.:
+  - If a substr. s (i, j) from index i to j - 1 is alr.
+  checked to have no duplicate chars., we only need to
+  check if s[j] alr. in substr. s(i, j).
+
+  - By using a hashset as a sliding window, checking for
+  char. can be done in O(1).
+
+  - Sliding window abstr. concept.
+  - Window is a range of elems. in the arr./str. which
+  usually defined by start and end indices i.e. [i, j)
+  (left closed, right open).
+  - A sliding window is a window that slides its two
+  boundaries to the certain dir.
+  - E.g., if we slide [i, j) to the right by 1 elem.
+  then it becomes [i + 1, j + 1).
+
+  - In prob., we use hashset to store chars. in curr.
+  window [i, j) (j = i initially).
+  - Then we slide index j to right.
+  - If it's not in hashset, we slide j further.
+  - Doing so until s[j] alr. in hashset.
+  - At this point, we've found max. size of substr.
+  without duplicate chars. starting at index i.
+  - If we do this for all i, we get out answer.
+
+- Complexity analysis:
+  - Alg. uses sliding window with two pointers (left and
+  right).
+  - Each char. enters window once when right moves forward
+  and leaves window once when left moves forward.
+  - Because neither pointer ever moves backward, total num.
+  opers. is proportional to len. of str.
+  - Derivation:
+    - right moves from 0 to n - 1 -> at most n steps.
+    - left also moves from 0 to n - 1 -> at most n steps.
+    - Total pointer movements <= 2n -> O(n) time.
+  - Space compl.:
+    - Dict. stores counts of chars. currently in window.
+    - At most one entry per distinct char.
+    - So space bounded by min(n, m), where m's char. set
+    size.
+
+------------------------------------
+Approach 3: Sliding Window Optimized
+------------------------------------
+
+- Intuition:
+  - Above sol. requires at most 2n steps.
+  - Could be optimized to req. only n steps.
+  - Instead of using a set to tell if char. exists or not,
+  could def. a mapping of chars. to its index.
+  - Then we can skip chars. immediately when we found a 
+  repeated char.
+
+- Alg.:
+  - Reason is that if s[j] has a duplicate in range [i, j)
+  with index j', we don't need to increase i little by little.
+  - We can skip all elems. in range [i, j'] and let i be
+  j' + 1 directly.
+- Extra explanation alg.:
+  - Sol. uses sliding window, but instead of shrinking
+  window one step at a time, jumps left pointer forward
+  when repeated char found.
+
+  - Keeps dict. that remembers next pos. to move to after
+  each chars. last occurence.
+  - When right pointer sees a char. that's already in
+  window, left pointer skips directly past its prev.
+  occurence.
+    - Avoids unecessary checks and makes alg. faster.
+
+  - How it works:
+    - Move right pointer (j) across str.
+    - If curr. char was seen before, move left pointer
+    (i) directly to pos. after its last occurence.
+    - Update max. window length.
+    - Record when this char. was last seen.
+    - Left pointer i must never move backward.
+    - So when we see a repeated char s[j], its last seen pos.
+    might be outside curr. window.
+    - If you blindly set i = charToNextIndex[s[j]], you could
+    move i backwards, which would incorrectly enlarge window.
+    - So we do i = max(i, charToNextIndex[s[j]]), which ensures:
+      - If repeated char. inside curr. window -> move i forward.
+      - If outside curr. window -> keep i where it is.
+      - i always moves forward, never backwards.
+    - E.g. str - "abba":
+      - At index 0 ('a'): i = 0
+      - At index 1 ('b'): i = 0
+      - At index 2 ('b'): last seen 'b' was at index 1.
+        - Move i to 1 + 1 = 2.
+      - At index 3 ('a') last seen 'a' was at index 0.
+        - If we did:
+          - i = charToNextIndex['a'] # = 1
+        - i would move backward from 2 to 1.
+        - Using i = max(i, charToNextIndex['a']) keeps i = 2,
+        preserving valid window.
+
+-------------------
+Complexity analysis
+-------------------
+
+- Time compl.: O(n), index j iterates n times.
+- Space compl.: O(min(m, n))

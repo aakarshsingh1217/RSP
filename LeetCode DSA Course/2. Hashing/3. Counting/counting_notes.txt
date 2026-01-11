@@ -1,0 +1,697 @@
+- Counting (tracking freq. of things) is common pattern w/ 
+hashmaps.
+- Means our hashmap will be mapping keys to ints.
+- Anytime you need to count anything, think about using
+hashmap to do it.
+
+- When we were looking at sliding windows, some probs.
+had their constraint as limiting amt. of a certain elem.
+in window.
+- E.g., longest substring with at most k 0s.
+- In those probs., could simply use an int. var curr
+because we're only focused on one elem. (only cared
+about 0).
+- Hashmap opens door to solving probs. where constraint
+involves multiple. elems.
+
+*********
+Example 1
+*********
+
+- Prob. deals with substrings and has a constraint on the
+substr. (at most k distinct chars.).
+- These characteristics let us know we should consider
+sliding window.
+- Idea of sliding window is to add elems. to right
+until window violates constraint.
+- In this prob., we're concerned with num. distinct
+chars. in window.
+- Brute force way to check for this constraint would be
+to check window every time, which could take O(n) time.
+- Using hashmap, can check constraint in O(1).
+
+- Use hash map counts to keep count of chars. in window.
+- Means we'll map letters to their frequency.
+- Length (num. keys) in counts at any time is num.
+distinct chars.
+- When we remove from left, we can decrement freq. of
+elems. being removed.
+- When freq. becomes 0, we know this char is no longer
+part of window, and we can delete the key.
+
+- Python collections module provides very useful data
+structs.
+- We'll use a defaultdict, functionally same as hash
+map just more pleasant to work with.
+
+- Using a hash map to store freq. of any key we want
+allows us to solve sliding window probs. that put
+constr. on multiple elems.
+- Time compl. of sliding window problems is O(n) if
+work done inside each for loop iter. is amortized
+constant, which is case here due to hash map
+having O(1) opers.
+- Hash map occupies O(k) space, as alg. will delete
+elems. from hashmap once it grows beyond k.
+- Explanation:
+  - Outer for loop moves right across string once,
+  O(n).
+  - Inner while loop moves left forward, but each char.
+  added to and removed from window at most once,
+  so total work over whole run is O(n) (amortized).
+  - All hash map opers. are O(1).
+  - E.g. - s = "eceba", k = 2:
+    - Each char. inserted into counts once and
+    removed once.
+    - Even when while loop runs multiple times for
+    one right, those steps are "paid for" by
+    earlier steps.
+  - Total time is O(n) + O(n) -> O(n).
+
+************************************************
+Example 2: 2248. Intersection of Multiple Arrays
+************************************************
+
+- Problem states each individual arr. contains
+distinct ints.
+- This means that a number appears n times if
+and only if it appears in all arrays.
+- Use hashmap counts to count freq. of elems.
+- We iterate over each of inner arrs. and update
+counts with every elem, after going through all
+elems., we can iterate over our hashmap to see
+which num. appears n times.
+
+- Since our keys are ints., why can't we use an
+arr. instead of a hashmap?
+- Problem is that arr. needs to be as large as
+max. elem.
+- What if we have test case like [1, 2, 3, 1000]?
+- Need to initialize array of size 1001 (to use
+arr[1000] to track how many times 1000 appears)
+and nearly all indices will be unused.
+- Therefore, using na arr. could end up being a
+huge waste of space.
+- Array may sometimes be more efficient because
+of overhead of hash map, but overall hashmap
+much safer.
+  - Even if 999999 input, doesn't matter, hash
+  map handles it like any other elem.
+
+- Let's say there're n lists and each list has
+m avg. elems.
+- To populate hash map, costs O(n * m) to iter.
+over all elems.
+- Next loop iters. over all unique elems. we
+encountered.
+- If all elems. are unique, this can cost up
+to O(n * m), although this won't affect time
+compl. since prev. loop costs O(n * m).
+- Finally, there can be at most m elems. inside
+ans when we perf. sort, which means in worst
+case, sort will cost O(m * log m).
+- This gives us a time compl. of 
+O(n * m + m * log m) = O(m * (n + log m)).
+- If every elem. in input is unique, hash
+map will grow to a size of n * m, which means
+alg. has space compl. of O(n * m).
+
+***************************************************
+Example 3: 1941. Check if All Characters Have Equal 
+Number of Occurrences
+***************************************************
+
+- Given n as length of s, costs O(n) to populate hash
+map, then O(n) to convert hash map's vals. to a set.
+- This gives time compl. O(n).
+- Space hash map and set occupy equal to num. unique
+chars.
+- Some would argue that this's O(1) since chars.
+come from english alphabet, which is bounded by const.
+- More general answer would be to say space compl. is
+O(k), where k is num. chars. that could be in input,
+which happens to be 26 in this prob.
+
+*********************************************
+Count the number of subarrays with an "exact" 
+constraint
+*********************************************
+
+- In sliding window, talked about pattern "find num.
+subarrs./substrs. that fit a constraint".
+- In those probs., if you had a window b/w. left and
+right that fit the constr., all windows from i to
+right also fit the constraint, where left < i <= right.
+
+- For this pattern, we'll be looking at probs. with
+stricter constraints so that property above is not
+necessarily true.
+
+- E.g., "Find num. subarrs. that have sum less than
+k" w/ an input that only has pos. nums. would be solved
+w/ sliding window.
+- Other type is "find num. subarrs. that have sum exactly
+equal to k".
+
+- The sum of a subarr. can be found as diff. b/w. two
+prefix sums.
+- Let's say you wanted to find subarrs. that had a sum
+exactly equal to k, and you also had prefix sum arr.
+of input.
+- You know any diff. in prefix sum arr. equal to k 
+repr. a subarr. w/ a sum equal to k.
+
+- To find these differences, first decl. hash map
+counts that maps prefix sums to how often they occur
+(a num could appear multip. times in a prefix sum
+if input has negative numbers/zeroes, e.g., given 
+nums = [1, -1, 1], prefix sum is [1, 0, 1] and 1
+appears twice).
+- Init. counts[0] = 1, because empty prefix [] has
+sum 0.
+
+- Now, iter. over input and maintain sum of curr.
+prefix in a var. curr.
+- At any given time, curr repr. sum of all elems.
+iterated over so far.
+- Also maintain counts by increm. freq. of curr.
+at each iter.
+- Counts is counting how many times a sum appeared
+in prefix.
+
+- To calc. answer, recall in sliding window, when
+we were looking for num subarrs., we focused on
+each index and figured out how many valid subarrs.
+ended at curr. index.
+- We locked in right bound and calced. how many
+left bounds could match it.
+- Do same thing here.
+
+- Let's say we're at index i, we know a few things:
+  1. Up until this point, curr stores prefix of
+  all elems. up to i.
+  2. We've stored all other prefixes before i
+  inside of counts.
+  3. Diff. b/w. any two prefix sums repr. a 
+  subarr. E.g., if you wanted subarr.
+  starting at index 3 and ending at index 8,
+  you'd take prefix up to 8 and subtract
+  prefix up to 2 from it.
+
+- Now imagine there exists a subarr. beginning
+at index j and ending at index i w/ sum k.
+- Consider sum of prefix ending at j - 1 (elems.
+up to, but not incl. start of subarr.).
+- According to assumps.:
+  - Sum of prefix up to i is curr.
+  - Sum of subarr. from j to i is k.
+
+- Thus, sum of prefix ending at j - 1 must be
+curr - k.
+
+- E.g.:
+  -            j          i
+   [6,      5, -3, 2, -4, 8, 10]
+   --sum=11--  --sum = 3---
+   --------sum = 14--------
+   k = 3
+   curr = 14
+   prefix sum up to j - 1 = 11
+   curr - k = prefix sum up to j - 1
+
+- Subarr. b/w j and i has sum k.
+- Sum of prefix ending at i is 14, (which we
+keep track of in curr).
+- At some point earlier, curr was equal to
+11 (prefix ending beore j), this's equal to
+curr - k.
+
+- Key idea: if we saw prefix sum curr - k 
+before, implies that there's a subarr.
+ending at i w/ sum of k.
+- We don't know where beginning of this
+subarr. is; we just know it existsm but
+that's enough to solve the problem.
+
+- Therefore, we can increment our ans.
+by counts[curr - k].
+- If prefix curr - k occured multip.
+times before (due to neg. nums or
+zeroes), then each of those prefixes
+could be used as starting point to form 
+a subarr. ending at current index with
+sum of k.
+- That's why we track freq.
+
+- Imagine we had nums = [0, 1, 2, 3, 4]
+and k = 5.
+- Let's jump to i = 3.
+
+- Currently, curr = 6 (curr is tracking
+prefix sum up to i).
+- We also have 0, 1 and 3 in counts (all
+prefix sums encountered so far).
+
+- Atp., we can see there's a subarr.
+ending at i with a sum of k - it's 
+[2, 3].
+- How does our alg. see it?
+
+- Curr. prefix sum is 6, we want a subarr.
+with sum 5.
+- Thus, if there's a prefix sum of 1
+earlier, you could just subtract prefix
+from curr. one and you'll get a subarr.
+sum of 5.
+- In this case, we had prefix [0, 1]
+which has prefix sum of 1.
+- We can subtract that from curr. prefix
+[0, 1, 2, 3] and we're left with [2, 3],
+which has our target sum.
+
+- In Two Sum, we wanted target.
+- We locked in a number num and searched
+for target - num.
+- Here, we lock in curr and search for
+curr - k, bc. curr - (curr - k) = k.
+- Here, we deal with prefix sums of arr.
+
+*************************************
+Example 4: 560. Subarray Sum Equals K
+*************************************
+
+- Let's say we have nums = [1, 2, 1, 2, 1], k = 3.
+- 4 subarrs. w/ sum 3 - [1, 2] twice and [2, 1]
+twice.
+
+- Prefix sum for this inpt., which is what curr.
+repr. during iteration, is [1, 3, 4, 6, 7].
+- Three differences in this array of 3: (4 - 1),
+(6 - 3), (7 - 4).
+
+- But we said there're four valid subarrs.?
+- Recall we need to init. hash map with 0: 1,
+considering empty prefix.
+- This is because if there's a prefix w/ sum
+equal to k, then without initializing 0: 1,
+curr - k = 0 wouldn't show up in hash map
+and we'd lose this valid subarr.
+
+- So at indices 1, 2, 3, and 4, we find curr - k 
+has been seen prior.
+- Elems. are all pos. so each val. of curr - k 
+only showed up once, hence ans. is 4.
+
+- If curr only incr., then no val. in hashmap
+greater than 1, couldn't we use set?
+- True if arr. only had pos. nums., however -
+however -1000 <= nums[i] <= 1000.
+- If nums = [1, -1, 1, -1], k = 0, 4 valid
+subarrs.: [1, -1] twice, [-1, 1] once, and 
+entire arr [1, -1, 1, -1].
+
+- Prefix sum is [1, 0, 1, 0].
+- 2 subarrs. ending on final index - [1, -1]
+and entire arr.
+- Remember we initialize counts[0] = 1, so
+after second index, we have counts[0] = 2.
+- So when we reach final index and do
+ans += counts[curr - k] = ans += counts[0],
+we're adding both subarrs. to our ans.
+- When there are non-pos. nums. in input,
+same prefix can occur multiple times and
+hashmap needed to count freq.
+
+- To summarize:
+  - We use curr to track prefix sum.
+  - At any index i, sum up to i is 
+  curr. If there's an index j whose 
+  prefix is curr - k, then sum of 
+  subarr. w/ elems. from j + 1 to i 
+  is curr - (curr - k) = k.
+  - Bc. array can can have neg.
+  nums., same prefix can occur multiple times. We use
+  a hashmap counts to track how many times prefix occured.
+  - At every index i, freq. of curr - k equal to no.
+  subarrays whose sum is equal to k that end at i, add 
+  to answer.
+
+- Time and space compl. of alg. are both O(n), where n's 
+length of nums.
+- Each for loop iter. runs in const. time and hash map can
+grow to size n elems.
+
+***********************************************
+Example 5: 1248. Count Number of Nice Subarrays
+***********************************************
+
+- In this prob., constraint metric is odd num. count.
+- Therefore, let's have curr track count of odd nums.
+- At every elem., we can query curr - k again.
+- Using this example: nums = [1, 1, 2, 1, 1], k = 3:
+  - At final index, curr = 4 because there're 4 odd
+  nums. in arr.
+  - At first index, curr = 1.
+  - This means subarr. starting at first index until
+  last index has 4 - 1 = 3 = k odd nums., and you
+  can see that subarr. from index 1 to 4 is one
+  of answers ([1, 1, 2, 1, 1])
+                  ^--------^
+
+- Can check if num is odd by taking it mod 2.
+- If x is odd, then x % 2 = 1.
+
+--------------------
+Detailed explanation
+--------------------
+
+- Although we're not using sliding window, we can still
+use same idea when it comes to valid subarrs.
+
+- Prev. example, constraint metric was "sum of subarr."
+and numeric restriction was == k.
+
+- In this prob., constraint metric is "count of odd
+nums. in a subarr." and numeric restriction is also
+== k.
+
+- We have to get a little creative with prefix sums,
+instead of curr to track prefix sum, we have it track
+odd nums. we've seen in curr. prefix.
+- Could call it prefix odd count.
+- If curr - k exists, means that there was a prefix
+earlier with curr - k odd nums.
+- Curr prefix has curr odd nums.
+- Diff. between them repr. num. odd nums. in subarr.
+between the prefixes, which is curr - (curr - k) = k
+odd nums.
+
+- If a no. is odd, then when you take it mod 2, res.
+is 1.
+- Otherwise it'll be 0.
+- Can easily perform curr += num % 2 for each num.
+
+- Time and space compl. of this prob. is O(n).
+
+******************************************
+2225. Find Players With Zero or One Losses
+******************************************
+
+----------------
+Hashmap approach
+----------------
+
+- Can store polayers with atleast 1 loss and
+0 losses in same hashmap.
+
+- For a given match [winner, loser]:
+  - Increment loser's number of losses by 1.
+  - If winner has 1 or more losses already,
+  we don't need to make any change, Otherwise
+  set his val to 0, which means winner has
+  played atleast 1 game and hasn't received
+  loss yet.
+
+---------------------------
+Complexity analysis hashmap
+---------------------------
+
+- Time compl.: O(n * log n).
+  - For each match in matches, need to update val. of both players 
+  in losses_count.
+  - Opers. on hash map require O(1) time, thus iter. over
+  matches takes O(n) time.
+  - Need to store two kinds of players in two arrs. and sort 
+  them.
+    - In worst case, may be O(n) players in these arrays,
+    so reqs. O(n * log n) time.
+  - Therefore time compl. O(n * log n).
+- Space compl.: O(n).
+  - Use a hash map to store all players and their num. losses,
+  which reqs. O(n) space in worst case.
+
+---------------------------
+Counting with arr. approach
+---------------------------
+
+- Can we store players in order so that we don't need
+additional sorting process after we collect?
+- Valid range of players is of same order of magnitude
+as size match.
+- Reminds us of counting sort, a sorting alg. with
+linear time compl.
+
+-------------
+Counting sort
+-------------
+
+- Non comparison based sorting alg.
+- Efficient when range of input vals. small compared to
+num. elems. to be sorted.
+- Idea:
+  - Count freq. of each distinct elem. in input arr. and use
+  that info. to place elems. in correct sorted pos.
+  - Works well when range of input elems. small and comparable
+  to size of arr.
+    - E.g., for input [1, 4, 0, 2, 1, 1], size of arr. is 6 and
+    range of elems. is from 0 to 4.
+  - If range of input arr. is order more than n log n where
+  n's size of arr., we can better sort arr. using a standard
+  comparison based sorting alg. like Merge Sort.
+
+- Counting sort alg.:
+  - Declare count arr. cntArr[] of size max(arr[]) + 1 and init.
+  w/ 0.
+  - Traverse input arr. arr[] and map each elem. of arr[] as
+  index of cntArr[] arr. e.g. exec. cntArr[arr[i]]++ for 
+  0 <= i < N.
+  - Calc. prefix sum at every index of cntArr[].
+  - Create arr. ans[] of size N.
+  - Traverse arr. arr[] from end and update 
+  ans[ cntArr[ arr[i] ] - 1 ] = arr[i].
+    - Also update cntArr[ arr[i] ] = cntArr[ arr[i] ]--.
+
+- Why compute prefix sums?
+  - Could simply count occurences of all elems. and 1 by 
+  1 put them in output arr., but we compute prefix sums
+  to achieve stability in alg.
+  - After building prefix sum cntArr[], we Traverse
+  array from right end to ensure last occurence moves to 
+  last correct pos. in sorted arr.
+
+- Complexity analysis of counting sort:
+  - Time compl.: O(N + M) in all cases, where N and M
+  are size of inputArray[] and countArray[] respectively.
+  - Auxiliary Space: O(N + M), where N and M are space
+  taken by outputArray[] and countArray[] respectively.
+
+- Advantage of counting sort:
+  - Generally performs faster than all comparison-based
+  sorting algs., such as mergesort and quicksort, if range 
+  of input is of order of num. of input.
+- Disadvantage:
+  - Doesn't work on decimal vals.
+  - Inefficient if range of vals. to be sorted very large.
+  - Not an in-place sorting alg., uses extra space for
+  sorting arr. elems.
+
+-------------------------
+Continuing array approach
+-------------------------
+
+- Counting sort not a comparison sort; thus O(n * log (n))
+time compl. doesn't apply.
+- Approach used to solve this prob. not exactly counting 
+sort but has same idea: mapping each player to a unique
+index within a specific range.
+
+- Create auxiliary arr. (losses_count) and fill it with
+specific val (let's say -1) indicating that none of
+those players played match yet.
+- For each match [winner, loser], modify
+losses_count[winner] and losses_count[loser] to 
+other nums. than -1 to reflect both players played
+atleast one match.
+
+- How do we use diff. vals. to repr. diff. kinds of players?
+  - losses_count[i] = -1, player i has not played yet.
+  - losses_count[i] = 0, player i has played atleast one game
+  and has 0 loss.
+  - losses_count[i] = 1, player i has exact 1 loss.
+  - losses_count[i] > 1, player i has more than 1 loss.
+
+- Therefore, we init. vals. in losses_count as -1, iter.
+through matches and update vals. at index winner and loser
+for each match.
+- Each val. losses_count[i] != -1 stands for player i whose 
+played atleast one match.
+- Just need to iter. over losses_count from low to high and 
+add two kinds of players to corresp. arrs., so we don't 
+need to sort them anymore.
+
+- Alg.:
+  1. Use an array losses_count to store num. losses for
+  each player.
+    - Initially, losses_count[i] = -1 for every index i.
+  2. For each match [winner, loser]:
+    - If losses_count[loser] = -1, set it to 1, otherwise
+    increment by 1.
+    - If losses_count[winner] = -1, set it to 0.
+  3. Iterate over losses_count and use two arrs. to store
+  these 2 kinds of players, for each index i:
+    - If losses_count[i] == 0, add player to first arr.
+    - If losses_count[i] == 1, add player to second arr.
+
+- Complexity analysis:
+  - Let n be size of input arr. matches, and k range of
+  vals. in winner/loser.
+  - Time compl.: O(n + k):
+    - For each match, update two vals. in arr. losses_count
+    which takes constant time, thus iteration reqs.
+    O(n) time.
+    - Need to iter. over losses_count to collect two kinds
+    of players, which takes O(k) time.
+    - Since we iter. over players from low to high, don't 
+    need to sort them anymore.
+    - Therefore overall time compl. O(n + k).
+  - Space compl.: O(k):
+    - Need to create arr. of size O(k) to cover all players.
+
+********************************
+1189. Maximum Number of Balloons
+********************************
+
+- Assume there's an industry that prods. a prod. X.
+- Prod. X can be produced by assembling one instance of each
+of five diff. parts.
+- We have some fixed quantity of each of these parts, then
+max. num. of product X that can be prod.'ll be equal to
+quantity of that part which is available in least quantity.
+- This least avail. part is known as bottleneck resource.
+
+- In prob., prod. X is str. balloon and five parts are 
+chars b, a, l, o and n.
+
+-------------------------------
+Approach 1: Counting Characters
+-------------------------------
+
+---------
+Intuition
+---------
+
+- Potential of a char. is num. times that balloon
+can be prod., assuming infinite supply of other chars.
+
+- To find potential of char. b, which has limited quantity
+= x, ans. is x.
+  - Cannot form more than x instances as we need one b to 
+  prod "balloon".
+  - For char l or o, with lim. quant. x, potential will be
+  x / 2 as two instances of l/o needed to prod. balloon.
+
+---------
+Algorithm
+---------
+
+- Find potential of all find chars. and find bottleneck
+(smallest freq.) char.
+
+-----------------------------------------
+Approach 2: Generalized sol. with an Arr.
+-----------------------------------------
+
+- If we're given arbitrary str. pattern, potential
+of each char. is equal to num. of instances in text (the
+input str.) divided by the number of instances in pattern
+(e.g. for balloon, if you had 2 instances of o, potential
+= 2 / 2 = 1).
+  - Then min. potential of char. is answer.
+
+- Sol.:
+  - from collections import defaultdict
+  
+    def findMaxNumberOfPattern(self, text: str, pattern: str) -> int:
+        freqInText = defaultdict(int)
+        freqInPattern = defaultdict(int)
+
+        for c in text:
+            freqInText[c] += 1
+
+        for c in pattern:
+            freqInPattern[c] += 1
+
+        answer = float("inf")
+
+        for c in freqInPattern:
+            answer = min(answer, freqInText[c] // freqInPattern[c])
+
+        return answer
+
+*********************
+525. Contiguous Array
+*********************
+
+--------------
+Using Hash Map
+--------------
+
+----
+Alg.
+----
+
+- Imagine a count var., which's used to store relative num. of ones 
+and zeroes encountered so far while traversing arr.
+- Count var. incremented by 1 every 1 encountered and same is 
+decr. by one for every 0 encountered.
+
+- Start traversing arr. from beginning.
+- If at any moment, count becomes 0, implies that we've encountered
+equal num. zeros and ones from beginning till curr. index of 
+arr(i).
+- Not only this, another point to be noted is that if we encounter
+same count twice (for any val., not just 0) while traversing arr.,
+means that num. zeros and ones are equal b/w. indices corresp. to
+equal count vals.
+- E.g. for [0, 0, 1, 0, 0, 0, 1, 1]:
+  - 
+  count
+    1
+
+    0     X
+             \
+    -1           X           X
+                    \     /    \
+    -2 ----------------X----------X----------------------x
+                       A          B \                   /  C
+    -3                                  X           X
+                                          \      /
+    -4                                        X
+
+    -5
+           0     1     2     3     4     5     6     7     8
+                                  index
+  - In above figure, subarrs. b/w. (A,B), (B, C) and (A, C) (lying
+  b/w. indices corresp. to count = -2) have equal no. zeros and ones.
+
+  - Largest subarr. is one between points (A, C).
+  - Thus, if we keep track of indices corresp. to same count vals.
+  that lie farthest apart, can determ. size of largest subarr. w/
+  equal no. zeros and ones easily.
+
+- Use hashmap that maps vals of count to first index where count was
+seen.
+- Maintain val. of count and at each index, if we've seen same val.
+of count before, means subarr. starting from where we saw that 
+val of count and ending at curr. index has equal num. 0s and 1s.
+- Otherwise, put count in map for future iters.
+
+-------------------
+Complexity analysis
+-------------------
+
+- Time compl. - O(n):
+  - Entire arr. traversed once.
+- Space compl. - O(n):
+  - Max. size of HashMap map will be n, if all elems.
+  1 or 0.
