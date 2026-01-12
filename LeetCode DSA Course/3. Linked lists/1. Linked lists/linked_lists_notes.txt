@@ -1,0 +1,70 @@
+***********************************************
+Advantages and disadvantages compared to arrays
+***********************************************
+
+- Main advantage of a LL is that you can add/remove elems. at
+any pos. in O(1).
+- Caveat is you need to have a ref. to a node at pos. in which
+you want to perf. addition/removal, otherwise oper. is O(n)
+because you need to iterate starting from head until you
+get to desired pos.
+- Still much better than normal (dynamic) arr. which reqs.
+O(n) for adding and removing from arbitrary pos.
+  - Why arrays worse compared to LL with node ref.:
+    - For dynamic arrs. like Python lists:
+      - Elems. stored contiguously in memory.
+      - To insert/remove at arbitrary index:
+        - All elems. after than index must be shifted.
+        - In worst case, O(n) shifts.
+      - Resizing may also occur, but that's amortized and
+      not main reason.
+        - Resizing happens when a dynamic arr. runs out of
+        space:
+          - Arr allocs. bigger block and copies everything
+          over.
+          - Copy is expensive when it happens but happens
+          rarely.
+          - Spread over many insertions, avg. cost is constant,
+          therefore amortized O(1).
+    - So dominant cost is shifting elems., which is O(n)
+    worst case.
+
+- Main disadvantage of a LL is no random access, if you have
+large LL and want to access 150,000th elem., have to start 
+at head and iter. 150,000 times.
+- So while arr. has O(1) indexing, LL could req. O(n)
+to access elem. at given pos.
+
+------------------
+Singly linked list
+------------------
+
+- When you have refr. to node at i - 1, insertion and deletion
+O(1).
+- W/o. refrence, you need to obtain reference by iterating
+from head, which for an arbitrary pos. is O(n).
+
+--------------------------------
+Linked lists with sentinel nodes
+--------------------------------
+
+- Sentinel nodes sit at start and end of LL and're used to make
+opers. and the code needed to execute those opers. cleaner.
+- Idea is that, even when there're no nodes in a LL, you still 
+keep pointers to a head and tail.
+- The real head of the LL is head.next and the real tail is 
+tail.prev.
+- Sentinel nodes themselves not part of LL.
+
+- LL code can be prone to errors.
+- E.g., if we're trying to del. last node in list, nextNode'll 
+be null, and trying to access nextNode.next results in error.
+- With sentinel nodes, don't need to worry about this
+scenario because last node's next points to sentinel tail.
+
+- Sentinel nodes allow us to easily add/remove from front or 
+back of LL.
+- Recall that addition and removal is only O(1) if we have refr.
+to node at the pos. we're performing the operation on.
+- With the sentinel tail node, we can perform operations at
+the end of the list in O(1).
