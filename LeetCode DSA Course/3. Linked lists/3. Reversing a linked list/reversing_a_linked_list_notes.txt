@@ -1,0 +1,74 @@
+- Imagine we have a LL 1 -> 2 -> 3 -> 4 and we want to
+return 4 -> 3 -> 2 -> 1.
+- Let's say we keep a pointer curr that repr. the curr.
+node we're at.
+- Starting with curr at the 1, we need to get the 2 to
+point to curr.
+- Problem is, once we iterate (curr = curr.next) to get
+to 2, we no longer have pointer to the 1 because it's a 
+singly LL.
+- To get around this, we can use another pointer prev
+which tracks the prev. node.
+
+- Time compl. of this alg. is O(n) where n is num. nodes
+in the LL.
+- The while loop runs n times, and work done at each iter.
+is O(1).
+- Space compl. is O(1) as we're only using a few pointers.
+
+- Had following thought process:
+  1. When we're at node curr, we need to set its next
+  pointer to node we're at previously.
+    - Use a prev pointer to track prev. node.
+  2. The prev. pointer needs to also update every
+  situation.
+    - After updating curr.next, set prev = curr in prep.
+    for next node.
+  3. If we set curr.next = prev, then we lose original
+  refr. to curr.next.
+    - Use nextNode to keep a refr. to the original
+    curr.next.
+
+********************************
+Example: 24. Swap Nodes in Pairs
+********************************
+
+- Summary:
+  1. Perform an edge swap from A -> B -> C -> ... to 
+  A <-> B C -> ...
+  2. Make sure we can still access rest of list
+  beyond curr. pair saves (saves C).
+  3. Now that A <-> B isolated from rest of list,
+  save pointer to A to connect it with rest of list
+  later. Move onto next pair.
+  4. Connect prev. pair to rest of list. In this case
+  connecting A -> D.
+  5. Use dummy pointer to keep refr. to what we want
+  to return.
+  6. Handle case where there's an odd num. nodes.
+
+- Time compl. is O(n) where n is num. nodes.
+- While loop runs n times, and work done at each iter. is
+O(1).
+- Space compl. O(1) as we're only using a few pointers.
+
+*************************************
+Reversal as only part of an algorithm
+*************************************
+
+- 2130. Maximum Twin Sum of a Linked List asks for a max.
+pair sum.
+- Pairs are first and last node, second and second last
+node etc.
+
+- O(1) space sol.:
+  1. Find middle of LL using fast and slow pointer 
+  technique.
+  2. Once at the middle of LL, perf. reversal. Basically,
+  reverse only the 2nd half of the list.
+  3. After reversing second half, every node is spaced
+  n / 2 apart from its pair node, where n is num. nodes
+  in the list which we find from step 1.
+  4. With that in mind, create another fast pointer n / 2
+  ahead of slow. Now, iter. n / 2 times from head to find
+  every pair sum slow.val + fast.val
