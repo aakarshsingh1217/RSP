@@ -1,0 +1,127 @@
+- Idea is to have 2 pointers that don't move side by side.
+- Could mean they move at diff. speeds during iter., begin
+iter. at diff. locations, or any other abstract diff.
+
+- When pointers move at diff. speed, usually fast ptr. moves
+2 nodes per iter., whereas slow ptr. moves 1 node per iter.
+(not always the case).
+
+- Pseudocode:
+  - // head is head node of a LL
+    function fn(head):
+        slow = head
+        fast = head
+        
+        while fast and fast.next:
+            Do something here
+            slow = slow.next
+            fast = fast.next.next
+
+- Need while condition to also check for fast.next is bc.
+if fast is at final node, then fast.next is null, and trying
+to access fast.next.next would res. in error (you'll be doing
+null.next).
+
+*************************************************************
+Example 1: Given the head of a linked list with an odd number 
+of nodes head, return the value of the node in the middle.
+*************************************************************
+
+- Pointers use O(1) space, and if there're n nodes in the LL,
+time compl. is O(n) for the traversals.
+  - Fast moves twice as far per loop iter., not twice as many
+  iters.
+  - Loop cond. is:
+    - while fast and fast.next:
+  - Loop runs until fast reaches end, since fast moves 2
+  nodes per iter., reaches end after about:
+    - iterations = n / 2
+  - We care about how many pointer advances (edge traverals)
+  happen - not how many distinct nodes visited.
+  - Therefore:
+    - slow moves 1 step per iter. for n / 2 iters, total
+    steps = n / 2.
+    - fast moves 2 steps per iter. for n / 2 iters., total
+    steps = n (2 * (n / 2) = n pointer advances).
+    - slow advances n / 2 nodes total, fast advances n nodes
+    total.
+    - Total pointer hops = (n / 2) + n = 3n / 2 = O(n) (ignore
+    constants).
+
+*********************************
+Example 2: 141. Linked List Cycle
+*********************************
+
+- If LL has a cycle, can imagine some group of nodes forming a 
+circle and traversal never ends as it moves around circle 
+infinitely.
+
+- Best approach is to use a fast and slow pointer.
+- Imagine a straight racetrack (like one used in 100m sprint).
+- If two runners of diff. speeds're racing, then slower one
+will never catch up to faster one.
+- Faster runner finishing race is like fast pointer reaching
+end of LL.
+
+- But what if runners instead run. around circular racetrack,
+and needed to compl. many laps?
+- In that case, faster runner will eventually pass (lap)
+slower runner.
+
+- Can apply this logic - move fast pointer twice speed of slow 
+pointer.
+- If they ever meet (except at start) then we know there's a 
+cycle.
+- If fast pointer reaches end of LL., then no cycle.
+
+- Fast pointer will meet with slow pointer and won't just skip
+over it in cycle because:
+  - After looping around cycle first time, if fast ptr. is 1 
+  pos. behind, then pointer meets at next iter.
+  - If fast pointer 2 pos. behind, then it'll be one pos.
+  behind on next iter.
+  - This pattern continues - after looping around once, fast
+  ptr. moves exactly one step closer to slow pointer at each
+  iter., so impossible for it to skip over.
+
+- Approach gives us time compl. O(n) and space compl. O(1),
+where n is no. nodes in the LL.
+- Note this prob. can also be solved using hashing, which
+reqs. O(n) space.
+
+***********************************************************
+Example 3: Given the head of a linked list and an integer k, 
+return the kth node from the end.
+***********************************************************
+
+- Prob. very similar to first e.g.
+- If we seperate two pointers by a gap of k, and them move them
+at same speed, they'll always be k apart.
+- When fast pointer (one further ahead) reaches the end, then
+slow pointer must be at desired node, since it's k units behind.
+
+- Time compl. O(n) and space compl. O(1), where n is no. nodes
+in LL.
+
+**************************************
+83. Remove Duplicates from Sorted List
+**************************************
+
+-------------------------------------
+Approach 1: Straight-Forward Approach
+-------------------------------------
+
+- Alg.
+  - Simply a prob. that tests your ability to manip. list node
+  pointers.
+  - Because input list is sorted, we can determine if a node's 
+  a duplicate by comparing its val. to the node after it in the
+  list.
+  - If it's a duplicate, we change next pointer of curr. node 
+  so that it skips the next node and points directly to the one
+  after the next node.
+
+- Compl. analysis:
+  - Time compl. O(n) as every node in list checked exactly once,
+  n is num. nodes in list.
+  - O(1) space.
