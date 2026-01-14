@@ -1,0 +1,92 @@
+- String qns. utilize stack that'll involve iter. over the str.
+and putting chars. into the stack.
+- Stacks useful for str. matching because it saves "history" of
+prev. chars.
+
+********************************
+Example 1: 20. Valid Parentheses
+********************************
+
+- Correct order determined by whatever prev. opening bracket
+was.
+- Whenever there's a closing bracket, it should corresp. to
+most recent opening bracket.
+- E.g., if string starts "({[" and next 3 chars. closing
+brackets, then they should be in order of how recently their
+opening bracket appeared: "]})" (otherwise end up with something
+like [) occuring).
+- Order is LIFO - last opening brack. we saw is first one we should
+close, which is perf. func. for a stack to prov.
+
+- As we iter. over str., if we see an opening bracket, put it
+on stack.
+- If we see a closing bracket, check most recent unclosed
+open..
+
+..ing brack. by popping it from top of stack.
+- If match, continue, if doesn't or there's no opening brack.
+on stack at all (occurs in case {}]) then we know string invalid.
+- In end, there should be no unmatched open brackets (like in
+case "(){", so stack should e empty for string to be valid).
+
+- How can we assoc. opening and closing bracks. together?
+- Use a hashmap to map each opening brack. to its closing brack.
+- Then when we see a closing brack., we can use top of stack as a
+key and check if val. equal to curr. char.
+
+- Because stack's push & pop oper. are O(1), this gives us time
+compl. of O(n), where n's size of input arr.
+- Each elem. can be pushed/popped once.
+- Space compl. is also O(n) as stack's size can grow linearly
+with input size (all opening bracks).
+
+*********************************************************
+Example 2: 1047. Remove All Adjacent Duplicates In String
+*********************************************************
+
+- Alg. has time and space compl. of O(n), where n len. of input.
+- This's beca use stack opers. in all implementations above're 
+O(1) and stacks themselves can grow to O(n) size.
+
+****************************************
+Example 3: 844. Backspace String Compare
+****************************************
+
+- Time and space O(n + m), where n is size of str. s and m is
+size of str. m.
+
+*****************
+71. Simplify Path
+*****************
+
+-------------------
+Complexity Analysis
+-------------------
+
+- Time compl.: O(N) if there're N chars. in orig. path.
+- First, we spend O(N) trying to split input path into
+components and then we process each component one by one
+which is again O(N) oper.
+- Space Compl. - O(N):
+  - Actually, 2N because we have the array that contains
+  split components and then we have stack.
+
+***************************
+1544. Make The String Great
+***************************
+
+-------------------
+Complexity Analysis
+-------------------
+
+- Let n be len. input str. s.
+
+- Time compl. - O(N):
+  - Only need one iter. over s.
+  - At each step, we either remove last char. from stack or
+  add char. to stack, both of which takes const. time.
+  - Therefore, overall time compl. O(n).
+- Space compl. - O(n):
+  - Use stack to store all chars. we encounter.
+  - Since we only pop chars. when finding a pair, in worst
+  case scenario, may have O(n) chars. stored in stack.

@@ -1,0 +1,22 @@
+- Another term used to descr. stacks is LIFO, stands for last in,
+first out.
+- Last (most recent) elem. placed inside is first elem.
+to come out.
+
+- Inserting into a stack called pushing and removing from a stack
+called popping.
+- Also peek oper., which means looking at elem. at top of stack.
+
+- If stack implem. using dynamic arr., time compl. of opers. is
+same as dynamic arr.
+  - O(1) push, pop and random access and O(n) search.
+- Sometimes stack implemented w/ a linked list w/ a tail pointer.
+
+- Stack is a good option when you can recognize LIFO pattern.
+- Usually, some component of the prob. that involves elems.
+in input interacting w/ each other.
+- Interacting could mean matching elems. together, querying some
+prop. such as "how far is next largest elem.", eval. a math oper.
+given as a str., just comparing elems. against each other, or 
+any other abstract interaction.
+- LIFO prop. sometimes hard to see.

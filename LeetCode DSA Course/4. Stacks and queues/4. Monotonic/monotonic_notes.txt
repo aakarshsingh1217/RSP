@@ -1,0 +1,359 @@
+- Monotonic: (of a func./quantity) varying in such a way that
+it never decr. or never incr.
+
+- Monotonic stack/queue is one whose elems. are always sorted.
+- Can be sorted either asc./desc., depending on alg.
+- Monotonic stacks & queues maintain their sorted prop. by
+removing elems. that would violate the prop. before adding
+new elems.
+- E.g., let's say you had monotonically incr. stack, curr.
+stack = [1, 5, 8, 15, 23].
+  - You want to push 14 onto stack.
+  - To maintain sorted prop., need to first pop 15 and 23
+  before pushing 14 - after push oper., we have
+  stack = [1, 5, 8, 14].
+
+- Pseudocode:
+  - Given an int arr. nums
+    
+    stack = []
+
+    for num in nums:
+        # >= because we want strictly increasing.
+        while stack.length > 0 AND stack.top >= num:
+            stack.pop()
+        # Between above and below lines, do some logic.
+        stack.push(num)
+
+- Before we push num onto stack, we first check if monotonic 
+propr. violated, and pop elems. until it's not.
+
+- Despite nested loop, time compl. still O(n) where n is
+len. of arr, because inner while loop can only iter. over
+each elem. once across all for loop iters., making for
+loop iters. amortized O(1).
+
+- Monotonic stacks & queues useful in probs. that, for each
+elem., involves finding the "next" elem. based on some
+criteria, e.g. the next greater elem.
+- Also good when you have dynamic window of elems. and want
+to maintain knowledge of max./min. elem. as window changes.
+- In more advanced probs., monotonic stack/queue sometimes
+only one part of alg.
+
+**********************************
+Example 1: 739. Daily Temperatures
+**********************************
+
+- Brute force approach to iter. over input and for each
+temp., iter. through rest of arr. until we find a warmer
+temp.
+- If we had temperatures = [34, 33, 32, 31, 30, 50],
+first 5 days share same "answer" day, 6th day.
+- Can we leverage this fact to improve from an O(n^2)
+time compl.?
+
+- Second elem. 33 not warmer than first elem. 34.
+- 3rd elem. 32 not warmer than 2nd elem. 33.
+- This prop. transistive and implies that third elem.
+not warmer than first elem (32 ≯  33 ≯  34).
+- Means there's no point worrying about first elem.
+until we've found warmer temp. than 2nd elem. bc.
+any temp. that isn't warmer than second elem. also 
+not warmer than 1st elem.
+
+- Logic of handling elems. in backwards order should
+remindn you of a stack.
+- Can push temps. onto a stack, and pop them off once
+we find a warmer temp.
+- Another e.g.: temperatures = [40, 35, 32, 37, 50].
+- Once we get to 4th elem., we have
+stack = [40, 35, 32].
+- Now we see that 37 > 32 and 37 > 35, so we can pop
+both of them off stack.
+- This leaves us with stack = [40, 37] after pushing
+37.
+- At 50, we can pop both elems. off stack bc. 50
+greater than both of them.
+
+- Bc. stack monotonically decr., we're guaranteed
+to pop elems. only when we find first warmer temp.
+
+- Prob. wants dist. b/w elems., so we can store
+indices instead of actual temps.
+
+********************
+Detailed explanation
+********************
+
+- If you have temperatures = [34, 33, 32, ...],
+we know that until we see day warmer than 32, we def.
+won't see day warmer than 33 or 34.
+- Thus can process days in reverse order.
+
+- When we find a temp. warmer than 32, can start moving
+backward to see if it's warmer than 33 or 34 as well.
+
+- Essentially, stack holds temps. that we have not yet
+found a warmer temp. for.
+- Because we're forcing it to be monotonically decr.,
+the temp. at the top of the stack always coldest one.
+
+- As we iter., for each temp curr, we check if curr
+warmer than temp. on top of stack.
+- Bc. we perform this check every iter., if it is,
+then curr must be first day warmer than day at top
+of stack.
+- We pop from stack and continue checking top of
+stack until stack either empty or curr no longer
+warmer.
+- Maintaining monotonic propr. conveniently has side
+effect of processing all answers.
+
+- Because prob. wants num. days between temps., we
+need to store indices instead of temps. themselves.
+- Not an issue because given an index we can easily
+access temp. from input.
+
+- When we pop, j is index of day we already passed.
+- Curr. day is first warmer day after j.
+- i - j num. days b/w two indices.
+
+**************************************
+Example 2: 239. Sliding Window Maximum
+**************************************
+
+- Easy to know what max. num is for a window, just
+record it when you build it.
+- Difficult part of prob. is, when max. num leaves
+the window, how'd you know what's the second
+largest?
+  - When that num. leaves, what next?
+
+- Concerned about largest elems.
+- We want to store elems. in a way that when max.
+elem. removed, we know second max., and when that
+elem. removed, we know third max. and so forth.
+- This should be updated on new elems. being
+added.
+- Let's say that window was [5, 3, 7, 1].
+  - Order of max elems. would be [7, 5, 3, 1].
+- What happens if we add 6?
+  - No longer care about 5, 3, 1.
+  - Because 6 came after them, it won't be removed
+  before them, and since it's larger, there's no
+  chance that 5, 3 or 1 will ever be a max.
+
+- When we see a num., we no longer care about any
+nums. in window smaller than it, because they have
+no chance of ever being max.
+- Thus, monotonically decr. DS is what we should
+aim for (we remove elems. smaller than new 
+ones = newest elem. is smallest elem.).
+- Should we use stack/queue?
+- Prob descr. sliding window, which we know adds
+elems. on right and removes from left - suggest
+queue since opers. happen on opposite ends.
+- However, lgoic of removing elems. smaller than
+curr. num. needs to happen from right when we're
+talking about monotonic logic.
+- Therefore, we'll add/remove from right, and
+removing from left as window tightens - Means
+we should use a double ended queue (deque)
+for efficient O(1) opers.
+
+- Because we need to keep window of size k, should
+store indices instead of actual numbers in our
+deque.
+- This way we know when max. elem. beyond our
+window.
+
+- Time compl. O(n), where n is size of nums.
+- Space compl. is O(k), since deque can't grow
+beyond that size (k = size of sliding window).
+
+- To summarize:
+  - Use a monotonic decr. deque, which implies that
+  first elem. is max.
+  - Once max. elem. too far away to stay in window
+  we remove it from deque, and next greatest elem.
+  moves to pos. 0.
+  - To maintain decr. order, we remove elems. from
+  deque that're smaller than elems. being added.
+
+*************************************************
+Example 3: 1438. Longest Continuous Subarray With 
+Absolute Diff Less Than or Equal to Limit
+*************************************************
+
+- Max. abs. diff. b/w any 2 elems. is max. elem. minus
+the min. elem.
+- Question's asking for longest subarr. and has a
+constraint on the subarr.: max - min <= lim.
+- These characteristics suggest using sliding
+window.
+
+- Just learned how to keep max. elem. in a sliding
+window in prev. example.
+- Need to do that here again but also keep min.
+elem.
+- Use two deques: one monotonic incr. and one
+monotonic decr.
+- Monotonic incr. one has min. elem. in window
+at first index.
+- Then, we can use same sliding window format we
+learned in arrs. and strs. chapter.
+- Add elems. to deques from right, remove from
+left when max - min > limit, and make sure to 
+maintain deques at each iter.
+
+- Formula for len. of window is right - left + 1.
+
+- With efficient queues, alg. has time & space compl.
+of O(n) as each for loop iter. amortized O(1) and
+deques can grow to size n, where n is size of nums.
+
+***************************
+496. Next Greater Element I
+***************************
+
+- Make us of pre-processing first so as to make results
+easily avail. later on.
+- Make use of a stack and a hashmap.
+  - Hashmap used to store result for every possible num.
+  in nums2 in the form of (elem., next_great._elem).
+
+- We iter. over nums2 arr. from left to right.
+- We push every elem. nums2[i] on the stack if it's Less
+than the prev. elem. on the top of the stack (stack[top]).
+- No entry is made in map for such nums2[i]'s right now.
+- This happens because the num2[i]'s encountered so far
+are coming in a desc. order.
+
+- If we encounter an elem. nums2[i] such that nums2[i] >
+stack[top], keep on popping elems. from stack[top]
+until we encounter stack[k] such that stack[k] >= nums2[i].
+- For every elem. popped out of stack stack[j], we put
+the popped elem. along with its next greater num. (result)
+into the hashmap map, in the form stack[j], nums2[i].
+- Now, next greater elem. for all elems. stack[j], such that
+k < j <= top is nums2[i] (since this larger elem. caused
+all the stack[j]'s to be popped out).
+- We stop popping the elems. at stack[k] bc. this nums2[i]
+can't act as next greater elem. for next elems. on stack.
+
+----------------
+Compl. analysis.
+----------------
+
+- Let n and m repr. len. of nums2 and nums1 arr. respectively.
+- Time compl. - O(n):
+  - Entire nums2 array (of size n) is scanned only once.
+  - Each of the stack's n elems. are pushed and popped
+  exactly once.
+  - nums1 arr. also scanned only once.
+  - All togeth. this reqs. O(n + n + m) time.
+  - Since nums1 must be a subset of nums2, we know m must be
+  less than or equal to n.
+  - Therefore, time compl. simplified to O(n).
+- Space compl. - O(n):
+  - Map will store n key-val. pairs while stack will contain 
+  at most n elems. at any given time.
+
+**********************
+901. Online Stock Span
+**********************
+
+---------------------
+Use a monotonic stack
+---------------------
+
+- Calls to next are in order: [100, 80, 60, 70, 60, 75, 85].
+
+- Correct output given: [1, 1, 1, 2, 1, 4, 6].
+
+- At the 100: this's first day, which means answer is auto.
+1 (only count curr. day).
+
+- At the 60: look at prev. day, it's 80, which's greater than
+60, answer is 1.
+
+.
+.
+.
+
+-----------------------------------------------------------
+We can implement this logic with a monotonically decreasing 
+stack.
+-----------------------------------------------------------
+
+- When we walked through e.g., we stopped as soon as we found
+a greater val. than price.
+- We iter. backwards ass long as elems. we looked at were less
+than price.
+- This's the exact same logic descr. earlier (w/ e.g. of
+pushing 615 onto a stack that was [623, 532, 125]).
+
+- Decl. a monotonic decr. stack stack, and push stock prices
+onto stack.
+- For any given call to next(price), look at top of stack.
+- While top of stack has a val. (stock price) <= price, it
+should be incl. in our ans., so pop it off stack.
+
+- How do we calc. answer?
+- Need to "remember" answer for old calls.
+- Lets push answer for each day onto stack along with
+price.
+
+- Min. answer for any day is 1, bc. we can just incl. the
+curr. day as part of span.
+- Then, if we pop from stack, we should also add ans. assoc.
+with day popped to our ans.
+- E.g., when we got to 85, we see prev. elem. 75, and took
+4 days.
+  - That means 4 days were included in span for 75, and of
+  course all those days will also be incl. in span for 85
+  since 85 > 75.
+
+- Summary of alg:
+  - For a given price, say prev. elem. was y, where
+  y <= price.
+  - However many days are included in span for y must also
+  be included in the span for price.
+  - This must be true because if there was an x > price
+  earlier, that x would have also terminated the y 
+  since y <= price.
+
+- Alg.:
+  1. Initialize a stack. Stack will store elems. in
+  format [price, answer] in a monotonic decr. manner.
+  2. On each call to next:
+    - First set ans = 1 repr. the ans.
+    - The top of the stack has a format [priceTop,
+    answerTop]. While priceTop <= price, add answerTop
+    to ans and pop from stack.
+    - Push curr. [price, ans] onto stack.
+    - Return ans.
+
+-------------------
+Complexity Analysis
+-------------------
+
+- Given n as num. calls to next.
+
+- Time compl. of each call to next - O(1):
+  - Even though there's a while loop in next, that while
+  loop can only run n times total across entire alg.
+  - Each elem. can only be popped off the stack once,
+  and there're up to n elems.
+  - This is called amortized analysis - if you average
+  out time it takes for next to run across n calls,
+  works out to be O(1).
+  - If one call to next takes a long time bc. while
+  loop runs many times, the other calls to next won't
+  take as long bc. their while loops can't run as long.
+
+- Space compl. - O(n):
+  - Worst case scenario for space (where all stock prices
+  decr.), while loop will never run, which means stack
+  grows to a size of n.

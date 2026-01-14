@@ -1,0 +1,46 @@
+- Queue follows FIFO (first in first out) pattern.
+
+- If you use a dynamic arr. for a queue (like a stack), opers.
+on front of arr. (adding or removal) are O(n) where n's the
+size of the arr.
+- Adding to queue is called enqueue and deletions called
+dequeue, to have them at O(1) use better implem.
+
+- Efficient queues can be implem. using a doubly LL.
+- With a doubly LL, if you have pointer to a node, you can
+add/delete at location in O(1).
+- Doubly LL. maintains pointers to head and tail (both ends,
+usually with sentinel nodes) can implem. an efficient queue.
+
+- A deque, short for double-ended queue, is a DS where you
+can add/delete elems. from both ends.
+- A normal queue designates adding to one end and del. from
+other.
+
+- Queue's mostly used to implement BFS.
+
+------------------------------------
+Example: 933. Number of Recent Calls
+------------------------------------
+
+- Stream of increasing ints and every time we add int. to
+stream, need to find how many nums. in stream within 1000.
+- Brute force method would be to put all ints. in an arr.,
+and iter. over arr. each time to count how many ints.
+within 3000.
+- Very ineff. - let's say we have val. x:
+  - Once t goes beyond x + 3000, every future call to ping
+  would iter. over x, even though we know x won't be incl.
+  - Should get rid of x as soon as it's outdated.
+
+- With dynamic arr., remove vals. less than t - 3000 from
+front.
+- Still ineff. bc. removing from front of arr. is O(n),
+where n's size of arr.
+- If we use efficient queue instead, then those removals
+become O(1).
+- At each call t, remove nums. stored in queue that're
+outdated before returning count.
+
+- In python, collections.deque allows us to perf.
+dequeue opers. from front in O(1).
