@@ -45,3 +45,41 @@ has depth log n.
 - However, if you had lopsided tree (e.g. straight line), BFS will
 have O(1) space compl. while DFS will have O(n) (but lopsided tree
 edge case whereas more full tree is expectation).
+
+------------------------
+BFS code implementations
+------------------------
+
+- W/ an efficient queue, dequeue and enqueue opers. are O(1) which
+means time compl. of BFS same as DFS.
+- We visit each node only once, so time compl. is O(n * k), where 
+n total num. nodes and k is amount work done at each node, usually
+O(1).
+
+*******************************************
+Example 1: 199. Binary Tree Right Side View
+*******************************************
+
+- Time and space compl. of O(n) for same reasons as algs. in
+prev. article (visit each node only once and perf. a constant amt.
+work each node, queue can hold up to O(n) nodes).
+
+*********************************************
+103. Binary Tree Zigzag Level Order Traversal
+*********************************************
+
+- Time compl. Θ(n) (tight bound):
+  - Each node dequeued once.
+  - Each node's val appended once.
+  - Reverse list on every odd level.
+  - Cost of reversals:
+    - Total elems. reversed across all levels = n.
+    - Each node participats in at most one reverse.
+  - So total reversal cost is: ∑ level sizes = n.
+  - Total: Θ(n).
+- Space complexity Θ(n) (tight bound):
+  - Let w be max. width of tree.
+  - BFS queue can hold up to w nodes.
+  - In a perfect binary tree, w = Θ(n).
+  - Output stores all n vals.
+  - Total space: Θ(n).
