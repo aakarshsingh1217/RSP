@@ -1,0 +1,135 @@
+- Process of binary search on a BST has avg. time compl. of O(log n).
+  - BST is O(log n) on avg. because each comparison cuts remaining
+  search space roughly in half, just like binary search on arr.
+  - Why?
+    - A balanced BST has height approx. = log base 2 n.
+    - Each comparison moves on level down tree.
+    - You do one comparison per level.
+    - So search time proprtional to tree height => O(log n).
+- In worst case scenario, let's say w/ a tree that had no right children
+and straight line (a LL), time compl. is O(n).
+- Inorder DFS traverssal prioritizing left before right on a BST will 
+handle nodes in sorted order.
+
+********************************
+Example 1: 938. Range Sum of BST
+********************************
+
+- Trivial approach: normal BFS or DFS, visit every node, and only add 
+nodes whose values are between low and high to sum.
+- However, we can make use of BST property to develop a more efficient
+alg.
+- In a BST, every node has a val. greater than all nodes in the left
+subtree and a val. less than all nodes in the right subtree.
+- Therefore, if curr. node's val is less than low, we know it's
+pointless to check left subtree because all nodes in left subtree
+out of range.
+- Similarly, if curr. node's val is greater than high, pointless
+to check right subtree.
+
+- Although time compl. still O(n) for case when all nodes in tree b/w.
+low and high, on avg. this alg. will perform better than simply
+searching all nodes.
+- E.g., if you had a full tree with 1 million nodes, and roots val.
+was greater than high, you can immediately save 500,000 visits based
+on logic that all nodes in right subtree greater than root's val.
+which is already outside of range.
+
+- Space compl. O(n) for the stack/recursion call stack.
+
+**************************************************
+Example 2: 530. Minimum Absolute Difference in BST
+**************************************************
+
+- One approach would be to go through tree and put all vals. in
+an arr., then loop over all pairs of the arr. to find min. diff.
+- This is O(n^2).
+- Better approach is to sort arr., and then iter. over adjacent
+elems.
+- Answer must be between adj. elems. in the sorted arr., improving
+time compl. to O(n * log n).
+
+- If you perf. a inorder traversal on a BST, you will visit nodes
+in sorted order.
+- Therefore, if we do an inorder DFS, we can get nodes in sorted
+order w/o O(n * log n) sort, resulting in overall time compl.
+of O(n).
+
+- We'll pass an array vals. in our dfs func.
+- To perf. in order traversal, first call on left child, then add
+curr. val. to cals., then call on right child.
+- This will add vals. in sorted order.
+
+- Time and space compl. is O(n), able to get vals. in sorted
+order in linear time by taking advantage of BST property.
+
+******************************************
+Example 3: 98. Validate Binary Search Tree
+******************************************
+
+- Using recursion we can construct a func. dfs that takes a node
+and returns true if tree rooted at node is a BST.
+- First, what args. do we need to pass (other than the node)?
+- In a BST, the root node can be any val. bc. it's not the
+child of any node, but every node in left subtree should be
+less than it and every node in right subtree should be
+greater than it.
+- To enforce this, we can use 2 integer args. small and large,
+and make sure small < node.val < large holds.
+
+- If we're defining (small, large) as interval for allowed vals.,
+how do we update them to maintain BST property?
+- At each node, left subtree nodes should be less than node.val 
+so we can update large = node.val.
+- Right subtree nodes should be greater than node.val so we can
+update small = node.val.
+- For root node, we can init. small = -inf. and large = inf. -
+the root can be any val. since it has no parent.
+
+- In a BST, at any given node, let's say your data's val.
+- All data in left subtree is less than val, and all data in right
+subtree is greater than val.
+- Because of "at any given node", this means that in a BST, all
+subtrees are also BSTs.
+- Therefore, given an input node, need to make sure that node.left
+and node.right are also BSTs.
+
+- Base case?
+  - An empty tree (no nodes) is technically a BST.
+  - Therefore, return True when curr. node is null.
+
+*************************************
+701. Insert into a Binary Search Tree
+*************************************
+
+- Time compl.: O(H), where H is a tree height.
+  - Results in average case O(log N) and O(N worst case).
+    - Alg. follows one root -> leaf path in BST to find where
+    new val. belongs.
+    - Num nodes visited equals tree height H, so time's O(H).
+    - Why O(H):
+      - At each node, you do constant work (a few
+      comparisons).
+      - You recurse only left or only right, never both.
+      - So recursion depth = num. levels traversed =
+      tree height.
+        - root → child → child → … → insert point.
+    - How that becomes O(log N) vs O(N):
+      - Average/balanced BST:
+        - Height H approx. = log base 2 N , because
+        num nodes = 2^(h + 1) - 1 if all levels
+        completely full (geometric series), but just use
+        num nodes = n = 2^h then solve using logs.
+          - => O(log N).
+      - Worst case (skewed BST):
+        - Tree looks like a LL so H = N => O(N).
+- Space compl.: O(H) to keep recursion stack i.e. O(log N)
+in avg. case and O(N) in worst case.
+
+*************************************
+701. Insert into a Binary Search Tree
+*************************************
+
+- Time: O(H).
+- Space: O(H).
+  - Where H is height of BST.
