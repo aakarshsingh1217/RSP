@@ -1,0 +1,47 @@
+***********************
+When to use BFS vs DFS?
+***********************
+
+- May be asked some trivia regarding BFS vs DFS, such as their
+drawbacks.
+- Main disadvantage of DFS is that you could end up wasting a
+lot of time looking for a val.
+- Let's say you had a huge tree and you were looking for a val.
+stored in the root's right child.
+  - If you do DFS prioritizing left before right, then you'll
+  search entire left subtree, which could be hundreds of
+  thousands/millions of opers.
+  - Meanwhile, node's literally one oper. away from root.
+- Main disadvantage of BFS is that if node you're searching for
+is near bottom, then you'll waste alot of time searching through
+all levels to reach bottom.
+
+- In terms of space compl., DFS uses space linear w/ height of tree
+(max depth), whereas BFS uses space linear with level that has most
+nodes.
+- In some cases, DFS uses less space, in others BFS uses less.
+
+- E.g., in a perfect binary tree, DFS uses O(log n) space, whereas
+BFS uses O(n).
+- Final level in a perfect binary tree has n/2 nodes, but tree only
+has depth log n.
+  - Has n/2 nodes because a perfect binary tree has:
+    - Every internal node with exactly 2 children.
+    - All leaves at same depth.
+    - Height = h (root at level 0).
+  - Nodes at level i = 2^i, so:
+    - level 0: 1
+      level 1: 2
+      level 2: 4
+      .
+      .
+      .
+      level h: 2^h <- last level.
+  - Total num. nodes is sum of geom series:
+    - n = 1 + 2 + 4 + ... + 2^h = 2^(h+1) - 1.
+    - Solve for last level size:
+      - 2^h = (n + 1)/2 (after rearranging geom. series sum formula).
+
+- However, if you had lopsided tree (e.g. straight line), BFS will
+have O(1) space compl. while DFS will have O(n) (but lopsided tree
+edge case whereas more full tree is expectation).

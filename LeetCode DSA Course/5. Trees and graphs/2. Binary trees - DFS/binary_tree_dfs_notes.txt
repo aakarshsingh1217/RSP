@@ -1,0 +1,656 @@
+************************
+Depth-first search (DFS)
+************************
+
+------------------
+Preorder traversal
+------------------
+
+- In preorder trav., logic is done on curr. node before
+moving to children.
+- Let's say we wanted to just print val. of each node in 
+tree to console.
+- In that case, at any given node, we'd print curr. nodes
+val., then recursively call left child and then recursive. 
+call right child.
+
+- Because logic (printing) done immediately at start of
+func. call, preorder handles nodes in same order func.
+calls happen.
+
+-----------------
+Inorder traversal
+-----------------
+
+- For inorder trav., we first recursively call left child,
+then perf. logic (print etc.) on curr. node, then
+recursively call right child.
+- This means no logic done until we reach node w/o left
+child since calling on left child takes prio. over
+perf. logic.
+
+- For any give node, val. not printed until all vals. in
+left subtree printed and vals. in right subtree not
+printed until after that.
+
+-------------------
+Postorder traversal
+-------------------
+
+- Recursively call on children first and then perf. logic
+on curr. node.
+- No logic done until we reach a leaf node since calling
+on children takes priority over perf. logic.
+- Root is last node where logic's done in postorder trav.
+
+- For any given node, no vals. in right subtree printed
+until all vals. in left subtree printed, and its own
+val. not printed until after that.
+
+- The name of each traversal is describing when the current 
+node's logic is performed.
+- Pre -> before children
+- In -> in the middle of children
+- Post -> after children
+
+********************************************
+Example 1: 104. Maximum Depth of Binary Tree
+********************************************
+
+- Start w/ recursive approach.
+- When thinking about designing recursive funcs., good
+starting point is always base case.
+- What's the depth of an empty tree (zero nodes,
+root is null)?
+  - Depth is 0.
+
+- Usually depth of root is 0.
+- In this prob., depth for root is def. as 1 (as it's 
+asking for how many nodes are on the path from root
+to leaf), and we need to incl. the root on this path,
+hence why we start at one.
+
+- Next, need to think about rel. between curr. node
+and its children.
+- Prob. states we're looking for a path from root to
+leaf, which means that at curr. node, can only
+consider either left or right subtree, not both.
+- If maxDepth(node.left) repr. max. depth of left
+subtree and maxDepth(node.right) repr. max depth
+of right subtree, then we should take greater val.
+and add 1 to it (bc. curr. node contribs. 1 to
+depth).
+
+-----------------------------------
+More detailed explanation if needed
+-----------------------------------
+
+- Need to think recursively for binary tree probs.
+
+- Root given is a binary tree, but children of root
+are also binary trees.
+- Children of those children also binary trees,
+every node's subtree is a binary tree.
+
+- Func. provided to us maxDepth(root) takes a
+binary tree as an input and rets. max. depth - we need
+to implem. it.
+- If you give it empty tree null, it should ret. 0 -
+there're no nodes to form any paths.
+
+- Otherwise we have a non-empty binary tree root.
+- Need to find "len. of longest path from root to about
+leaf".
+- Bc. path needs to start at root, then root def. apart
+of path.
+- Therefore, curr. node contribs. 1 to ans.
+- Now we need to find a leaf.
+
+- Bc. of how maxDepth defined, if we call 
+maxDepth(root.left) it should give us len. of longest
+path from left child to a leaf.
+- Whatever that path is, can follow it to give us ans.
+of 1 + maxDepth(root.left).
+- Same for maxDepth(root.right), then choose max len.
+b/w 2 children.
+
+- We initially call maxDepth(root) where root's the
+actual root of the tree.
+- DFS moves down the tree until it reaches a leaf.
+- A leaf has no children, so both calls to left and
+right will hit base case and ret. 0.
+- This makes call to leaf ret. 1 + max(0, 0) = 1.
+
+- Makes sense - if you take a leaf and treat it as
+subtree, then ans. for this subtree is 1.
+
+- After we ret. 1 from leaf, we're back at parent of
+leaf.
+- If leaf was left child, we'll have val. of 1 for
+left subtree (which was a leaf).
+- Lets say there's no right subtree, so that call
+rets. 0.
+- Now ans. for parent is 1 + max(1, 0) = 2.
+
+- The + 1 perf. at each node propogates upwards
+from leaves.
+
+- Important concept regarding recursion is that each
+func. call stores its own vars.
+- Because we're calling func. for each node, that means
+every node has its own unique vals. of left and right.
+- When we get to node labeled 6, there's 4 diff vals.
+of left simultaneously.
+
+- Time and space compl. of tree qns. almost always O(n),
+where n's total num. of nodes, bc. each node only visited
+once, and at each node, O(1) work done.
+- If more than O(1) work done at each node, say O(k)
+work, then time compl. is O(n * k).
+
+- For space compl., even if you're using recursion, calls
+are still placed on call stack which counts as extra
+space.
+- Largest the stack will be at any time depends on the
+tree.
+- For recursion, in work case it's O(n) of tree's 
+straight line.
+- If the tree's complete (all nodes have 0 or 2 children
+and each level except last is full), then space compl.
+is O(log n) (best case).
+  - Space is determined by max. depth of tree, not by
+  how many nodes you visit.
+  - Max. num stored at once = tree height.
+  - In a complete (balanced) binary tree, num. nodes
+  doubles at each level.
+  - To derive:
+    - Level 0: 1 node
+    - Level 1: 2 nodes
+    - Level 2: 4 nodes
+      .
+      .
+      .
+    - Level h: 2^h nodes.
+    - Total nodes
+    n approx. = 1 + 2 + ... + 2^h = 2^(h + 1)
+    - Take log base 2 of both sides to solve for
+    h, h = log base 2 n.
+    - Max recursion/stack depth equals tree height, so space
+    is O(log n).
+
+************************
+Example 2: 112. Path Sum
+************************
+
+- Info. we need at each func. call is curr. node.
+- We also need to keep an integer curr. that repr. the curr.
+sum of the nodes from the root to curr. node, we can check
+this val. against targetSum when we find a leaf.
+- Thus, let's have a helper func. dfs(node, curr) that rets.
+true if there's a path starting at node and ending at a leaf
+w/ a sum equal to targetSum, if we already have curr contrib.
+towards this sum.
+
+- What're the base cases?
+- First of all, if we have an empty tree, we can't have a path
+as there're no nodes, so return false.
+- If we're at a leaf node (which we can check by seeing if
+both children are null), then return 
+(curr + node.val) == targetSum.
+
+- Otherwise, if we're not at a leaf, we could either cont.
+down left path or right path.
+- We only need one path to equal targetSum, so ret. true
+if either works.
+- Don't forget to add current node's val. to curr.
+
+-----------------------------------
+More detailed explanation if needed
+-----------------------------------
+
+- When we encounter leaf, we need to know sum of vals. from
+root to this leaf.
+- We use additional arg. curr in our DFS func. to keep track
+of this path sum.
+
+- At any given node, we make following observ.: all possib.
+paths that start at root and move through a child of node
+must pass through node.
+
+- Therefore, first thing we do after checking base cases
+is perform curr += node.val.
+- Because every call has its own versions of curr and we
+perf. this addition at every node, it'll always be
+accurate.
+
+- This allows us to easily check for condition descr. in 
+prob.
+- When we encounter a leaf node (checkable by seeing if
+both children null), we check (curr + node.val) == target_sum.
+  - If so, ret. true. 
+
+- Calling dfs(node.left, curr) rets. a boolean indicating if
+there exists a path starting from node.left and ending at a
+leaf w/ a sum of targetSum, starting with curr.
+- Simply put, tells us if an answer can be found by using
+left subtree.
+  - Same logic applies to dfs(node.right, curr).
+
+- Bc. probs. asking if any path exists, we ret. true from a
+call if either child's calls rets. true (use OR ||).
+
+- As we're using ||, any return true will eventually propog.
+up to root.
+- If base case descr. earlier (being at a leaf and
+(curr + node.val) == targetSum) is satisfied, it'll ret.
+true and cause original call (to root) to return true
+as well.
+
+- Time and space compl. are both O(n), where n's num. nodes
+in the tree, as each node is visited at most once and
+each visit involves constant work.
+- In worst case scenario for space (straight line),
+recursion call stack will grow to same size as num. nodes
+in tree.
+
+************************************************
+Example 3: 1448. Count Good Nodes in Binary Tree
+************************************************
+
+- Let's start by thinking abt. what info we need at each
+func. call (other than node).
+- At each node, we want to know if node's good and to know if
+node's good, we need to know largest val. b/w root and node.
+- Let's use int. maxSoFar to store this.
+
+- Then, we can have a func. dfs(node, maxSoFar) that rets.
+num. good nodes in subtree rooted at node, where max. num.
+seen so far is maxSoFar.
+
+- Base case?
+  - If we have empty tree, then ans. is 0 bc. there're no
+  nodes, so no good nodes.
+
+- Total good nodes in a subtree is num. good nodes in left
+subtree + num. good nodes in right subtree + 1 if curr.
+node is a good node.
+- Then we also need to find how many good nodes in left
+and right subtrees, which we can do by making recursive
+calls while updating maxSoFar.
+
+-----------------------------------
+More detailed explanation if needed
+-----------------------------------
+
+- In this prob. we need to know max. val. seen so far on
+curr. path.
+- Can use arg. maxSoFar to indicate this.
+
+- Recall observ. we made in prev. example: all possible
+paths that start at root and move through a child of
+node must pass through node.
+
+- This observ. implies that for any given node, paths
+starting at root and ending in subtree of node must
+incl. node.
+- Therefore we should update maxSoFar with node.val
+before calling on children.
+- By perf. this update, we ensure maxSoFar accurate
+at every node.
+
+- We have dfs(node, maxSoFar) ret. num. good nodes in
+subtree rooted at node, with maxSoFar being greatest
+val seen so far.
+- Num. good nodes is num. good nodes in left subtree
++ num. good nodes in right subtree.
+- Can find these easily by calling dfs on node.left and
+node.right.
+- Also, if curr. nodes a good node, we count it as well.
+- Can check this by checking node.val against maxSoFar.
+
+- Time and space compl. both O(n) due to visiting all
+nodes once and recursion stack.
+
+*************************
+Example 4: 100. Same Tree
+*************************
+
+- Prob. demonstrates recursive nature of binary trees.
+
+- If p and q are same tree, then following true:
+  1. p.val = q.val.
+  2. p.left and q.left are same tree.
+  3. p.right and q.right are same tree.
+
+- Main idea is if any two trees are same, then their subtrees
+must also be the same.
+- This gives us recursive def. of prob.
+- Because func. we're trying to implement is supposed to tell us
+if two trees are same, we can use func. itself to answer
+conditions 2 and 3.
+
+- Following condition can be used to check if p and q are
+same tree:
+  - p.val == q.val && isSameTree(p.left, q.left) && 
+  isSameTree(p.right, q.right).
+
+- Now, we need base cases so that recursion eventually
+terminates.
+- If p and q are both null, then we can return true, because 
+they're technically both the same (empty) tree.
+
+- If either p or q is null but not the other, should ret.
+false, as they're clearly not the same tree.
+
+- Good way to think about base cases is to think about tree
+with only one node.
+- Let's say p and q are both one-node trees with same val.
+- First boolean check p.val = q.val passes, so now we check
+subtrees.
+- Because both nodes don't have children, then both calls to
+left and right subtrees will trigger base case and return
+true.
+
+- This's the beauty of recursion - if you're at the root,
+left and right subtrees could have thousands of nodes.
+- Process of actually going through the trees will have
+many cascading calls, but you don't need to worry - you
+know that simply making the call will give you ans. you
+need.
+
+- Time and space compl. both O(N).
+
+***********************************************************
+Bonus example: 236. Lowest Common Ancestor of a Binary Tree
+***********************************************************
+
+- We want our recursive func. to ret. the answer to the qn.
+- What's the base case?
+- If we have empty tree, then no LCA exists - ret. null.
+
+- Otherwise, how can we tell if a node is the LCA?
+- Let's say we're at root, then 3 possibilities:
+  1. Root node is p or q. Answer cannot be below root node,
+  because then it would be missing the root (which's either
+  p or q) as a descendant.
+  2. One of p or q is in left subtree, and other is in
+  right subtree. The root must be the ans. because it's the
+  connection point b/w. two subtrees, and thus the lowest
+  node to have both p and q as descendants.
+  3. Both p and q are in one of the subtrees. In that case,
+  root is not the answer because we could look inside the
+  subtree and find a "lower" node.
+
+- Bc. of the recursive nature of trees, can translate the
+cases into an alg.
+- Just need to figure out how to find ans. if it's in first
+or third case.
+
+- In first case, if we see that curr. node is either p or q,
+we don't need to worry about subtrees at all, because we know
+ans. cannot be in them.
+- Therefore, we can ret. something (non - null) right away.
+- In base case, we ret. null.
+- Therefore, a call to a subtree rets. a non-null val. only
+if one of p or q is in that subtree.
+- We should return null for a subtree that contains neither p nor 
+q.
+
+- Then, second case implied if both calls to left and right
+subtere return something non-null, and third case is implied
+if only one of the calls returns something.
+
+- Alg. has usual time and space compl. of O(n) - each node visited
+at most once and constant work done at each node.
+- Recursion call stack could use up to O(n) space.
+
+**************************************************
+1026. Maximum Difference Between Node and Ancestor
+**************************************************
+
+----------------------
+Approach #1: Recursion
+----------------------
+
+- Typical brute force approach is to compare every node with its
+ancestors.
+- Worst case, we have to compare every node pair (where tree is
+single line).
+
+- Time compl. would be O(n^2), given N is num. nodes in tree.
+
+- Since prob. asks us for max. diff., maybe we don't need to
+compare all ancestors for a given node and only need to compare
+ancestors w/ max. val. and min. val.
+
+- Therefore, for a given node, we only need max. val. and min.
+val. from the root to this node.
+
+- To achieve this, can def. a func. helper to start recursion,
+which receives a node and two ints., the max. and min. val. of
+its ancestors, as input.
+
+- In func. helper, we need to update the max diff., the curr.
+max. val., and the curr. min. val.
+
+1. Init. a var. result to record the required max. diff.
+2. Def. a func. helper, which takes 3 args. as input.
+  - First arg. is the curr. node, 2nd and 3rd args. are the
+  max. and min. vals. along the root to the curr. node,
+  respectively.
+  - In func. helper, update result and call helper on left and
+  right subtrees.
+3. Run helper on root, it'll automatically do recursion on
+every node.
+4. Return result.
+
+-------------------
+Complexity Analysis
+-------------------
+
+- Let n be no. of nodes in tree.
+- Time compl.: O(n), as we visit all nodes once.
+- Space compl.: O(n), since we need stacks to do recursion, and
+max. depth of recursion is height of tree, which is O(N) worst
+case and O(log(N)) in best case.
+
+**********************************
+Approach #2: Maximum Minus Minimum
+**********************************
+
+- Given any two nodes on the same root-to-leaf path, they must
+have the required ancestor relationship.
+
+- Therefore, we just need to record the max. and min. vals of
+all root-to-leaf paths and return the max. diff.
+
+- To achieve this, we can record the max. and min. vals. during
+the recursion and return the diff. when encountering leaves.
+
+1. Define a func. helper, which takes 3 args. as input and rets.
+an int:
+  - First arg. node is curr. node, and second arg. cur_max and
+  3rd arg. cur_min are max. and min. vals along root to the
+  curr. node respectively.
+  - Function helper rets. cur_max - cur_min when encountering
+  leaves. Otherwise, it calls helper on left and right
+  subtrees and rets. their max.
+2. Run helper on root and ret. the result.
+
+-------------------
+Complexity Analysis
+-------------------
+
+- Let n be no. of nodes in tree.
+- Time compl.: O(n), as we visit all nodes once.
+- Space compl.: O(n), since we need stacks to do recursion, and
+max. depth of recursion is height of tree, which is O(n) worst
+case and O(log(n)) in best case.
+
+****************************
+543. Diameter of Binary Tree
+****************************
+
+- A leaf node is any node that has 1 deg., including root node if
+it has 1 deg. or less.
+
+- Longest path has to be between 2 leaf nodes.
+- Proof by contrad.:
+  - Imagine we found the longest path and it's not b/w 2 leaf
+  nodes.
+  - Can extend that path by 1, by adding child node of one of the
+  end nodes (as at least one must have a child given they're
+  not both leaves).
+  - This contradicts fact that our path is longest path.
+  - Therefore, longest path must be b/w. 2 leaf nodes.
+
+- We know that in a tree, nodes are connected with their parent
+node and 2 children.
+- Therefore we know that the longest path in the tree would
+consist of a node, its longest left branch, and its longest
+right branch.
+- So our alg. to solve this prob. will find the node where
+the sum of its longest left and right branches is maximized.
+- This hints at DFS to count each node's branch lengths,
+bc. it allows us to dive deep in leaves first, then start
+counting edges upwards.
+
+- To count lengths of each node's left and right branches,
+we can implement a recursive function longestPath which takes
+a TreeNode as input and returns the longest path from it to the
+leaf node.
+- It'll recursively visit children nodes and retrieve the longest
+paths from them to the leaf first, and then add 1 to the longer
+one before returning it as the longest path.
+
+- In the midst of DFS, also need to take the following 2 cases
+into account:
+  1. Current node's both left and right branches might be part 
+  of the longest path.
+  2. One of the current node's left/right branches might be apart
+  of the longest path.
+
+- You'll see we're going to address them by:
+  1. Applying DFS to recursively find longest branches starting with 
+  the node's left and right children.
+  2. Initializing a global var. diameter to keep track of the
+  longest path and updating it at each node with the sum of the
+  node's left and right branches.
+  3. Returning the length of the longest branch between a node's
+  left and right branches.
+
+- Alg.:
+  - Init. an int. var. diameter to keep track of the longest
+  path we find from the DFS.
+  - Implement a recursive func. longestPath which takes a
+  TreeNode as input. It should recursively explore the entire
+  tree rooted at the given node. Once it's finished, it should
+  ret. the longest path out of its left and right branches.
+    - If node is None, we've reached end of the tree, hence we
+    should ret. 0.
+    - We want to recursively explore node's children, so we call
+    longestPath again with node's left and right children. In
+    return, we get the longest path of its left and right
+    children: leftPath and rightPath.
+    - If leftPath + rightPath longesr than the curr. longest
+    diameter found, then we need to update diameter.
+    - Finally, we return the longer one of leftPath and
+    rightPath. Remember to add 1 as edge connecting it with its
+    parent.
+  - Call longestPath with root.
+
+-----------
+Longer e.g.
+-----------
+
+- Sol. seperates 2 diff. ideas:
+  1. What DFS returns -> height of subtree (in edges).
+  2. What we want globally -> diam. (longest path b/w. any
+  2 nodes).
+
+- Diam. of a tree is the max., over all nodes, of (height of left
+subtree + height of right subtree).
+- Sol. checks that at every node.
+
+- Why base case is -1:
+  - We're measuring height in edges, not nodes.
+  - So:
+    - A leaf node should have height 0.
+    - Its children are None.
+  - Check:
+    - leaf:
+        left = None  → -1
+        right = None → -1
+        return max(-1, -1) + 1 = 0
+
+- What longest_path(node) returns:
+  - return max(left_path, right_path) + 1
+    - This returns the longest downward path (in edges) from
+    node to any leaf.
+    - Vals. used by parent to compute its diameter contrib.
+
+- Where diameter is updated:
+  - diameter = max(diameter, left_path + right_path + 2)
+    - Why +2? Because:
+      - left_path = edges from node -> deepest left leaf.
+      - right_path = ""         ""  -> deepest right leaf.
+      - Plus two edges:
+        - One from node -> left child.
+        - One from node -> right child.
+
+- Consider this tree:
+  -     1
+       / \
+      2   3
+     / \
+    4   5
+         \
+          6
+- Start from bottom:
+  - Node 4:
+    - left = -1
+      right = -1
+      diameter = max(0, -1 + -1 + 2) = 0
+      return 0
+  - Node 6:
+    - return 0
+  - Node 5:
+    - left = -1
+      right = 0
+      diameter = max(0, -1 + 0 + 2) = 1
+      return 1
+    - Path found: 5 -> 6.
+  - Node 2:
+    - left = 0   (from node 4)
+      right = 1 (from node 5)
+
+      diameter = max(1, 0 + 1 + 2) = 3
+      return max(0,1) + 1 = 2
+    - Path found: 4 -> 2 -> 5 -> 6, edges = 3.
+  - Node 3:
+    - return 0
+  - Node 1 (root):
+    - left = 2
+      right = 0
+
+      diameter = max(3, 2 + 0 + 2) = 4.
+    - Path found:
+      - 4 → 2 → 1 → 3
+    - Earlier diameter (inside subtree) was alr. 3, and now longest
+    overall is 4.
+
+---------------
+Compl. analysis
+---------------
+
+- Let N be no. nodes in tree:
+  - Time compl. - O(N): 
+    - Recursion func. longest path only enters and exits from
+    each node once.
+    - We know this because each node is entered from its parent,
+    and in a tree, nodes only have 1 parent.
+  - Space compl. - O(N):
+    - Depends on size of implicit call stack during DFS, which
+    rels. to height of tree.
+    - Worst case tree skewed so height is O(N), if balanced it's
+    O(log N).
