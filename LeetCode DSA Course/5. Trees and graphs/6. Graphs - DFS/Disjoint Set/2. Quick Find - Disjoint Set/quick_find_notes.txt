@@ -1,0 +1,68 @@
+*************************
+Explanation of Quick Find
+*************************
+
+- Pseudocode:
+  - class UnionFind:
+        root[];
+
+        UnionFind(size):
+            # Root init. to have size of num. vertices.
+            root = [0] * size;
+            # Root of each vertex initially itself, as
+            # each vertex isolated.
+            for i in [0, size):
+                root[i] = i;
+
+        # Returns val. at index x in root array
+        # (x's root).
+        # O(1) time compl. as we lookup arr. directly.
+        int find(x):
+            return root[x];
+
+        # For loop goes through array every time,
+        # so O(n).
+        void union(x, y):
+            # If root's equal, they're already connected,
+            # so we don't have to perform union operation.
+            rootX = find(x);
+            rootY = find(y);
+
+            # If not equal, have to go through entire root
+            # arr., once we see val. equal to Y, change to 
+            # new root X so each elem. in root arr. will
+            # the root node at that index.
+            if rootX != rootY:
+                for i in [0, root.length):
+                    if (root[i] == rootY):
+                        root[i] = rootX;
+
+        # Check if roots of x and y are equal.
+        # Also O(1) because find() is O(1).
+        boolean connected(x, y):
+            return find(x) == find(y);
+
+***************
+Time Complexity
+***************
+
++------------------+--------------------------+--------+--------+-----------+
+|                  | Union-Find Constructor   | Find   | Union  | Connected |
++------------------+--------------------------+--------+--------+-----------+
+| Time Complexity  | O(N)                     | O(1)   | O(N)   | O(1)      |
++------------------+--------------------------+--------+--------+-----------+
+
+- Note: N is num. vertices in graph.
+  - When initializing a union-find constructor, we need to
+  create an arr. of size N w/ vals. equal to corresp. arr.
+  indices; this reqs. linear time.
+  - Each call to find reqs. O(1) time since we're just
+  accessing an elem. of the arr. at the given index.
+  - Each call to union reqs. O(N) time because we need to
+  traverse through entire arr. and update root vertices of
+  the set that's going to be merged into another set.
+  - Connected oper. takes O(1) time since it involves the
+  two find calls and the equality check oper.
+
+- Space compl.:
+  - O(N) space needed to store arr. of size N.

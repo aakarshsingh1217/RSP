@@ -1,0 +1,122 @@
+**************************
+Explanation of Quick Union
+**************************
+
+- Pseudocode:
+  - class UnionFind:
+        root[];
+
+        UnionFind(size):
+            root = [0] * size;
+
+            for i in [0, size):
+                root[i] = i;
+
+        # O(N) worst case complexity.
+        int find(x):
+            # Loop checking if root vert. is equal to curr.
+            # elem. If not equal continue searching through
+            # parents until we find curr. index or when vert.
+            # is equal to its parent (found root node).
+            while (x != root[x]):
+                x = root[x];
+            
+            return x
+
+        # Worst case O(N) because we're using find
+        # method.
+        void union(x, y):
+            # Have to find root nodes for x and y.
+            rootX = find(x);
+            rootY = find(y);;
+
+            # Check if roots are equal, because if they
+            # are, they're already connected. If not
+            # equal, want to set root of Y (parent node
+            # of root of Y) to root of X (connected them
+            # together).
+            if rootX != rootY:
+                root[rootY] = rootX;
+
+        # Worst case O(N) because we're using find
+        # method.
+        boolean connected(x, y):
+            return find(x) == find(y);
+
+**************************************************
+Why is Quick Union More Efficient than Quick Find?
+**************************************************
+
+- 2 major differences: find func. and union func.
+
+- For quick find: 
+  - Time compl. of find is O(1) because it stores root nodes 
+  for each corresp. vert. in root arr.
+  - For union func., time compl. is O(n) because each time we
+  find the root node for x and y.
+    - We have a for loop, we have to iter. the root arr. from
+    left to right (entire arr.), so we get time compl. O(n).
+
+- For quick union:
+  - Worst case for find method is O(n) when trees constructed
+  in a line, e.g.:
+    - 1
+      |
+      2
+      |
+      3
+      |
+      4
+  - To find the root of 4, we have to search node 3, 2 then 1,
+  so it's O(n) in this case.
+  - Union funcs. runtime depends on find func., which is
+  based on worst case straight line tree (O(n)), so
+  overall time compl. <= O(n).
+
+- For quickfind, to connect N elems., since each union
+oper. calls find method, each union will take O(n) time,
+so overall time compl. is N * O(N) = O(N^2).
+- For quick union, to connect N elems., worst case
+runtime for each union is O(N), so overall time compl.
+is <= N * O(N) = O(N^2).
+
+- Therefore quick union more efficient than quickfind,
+because only in worst case is time compl. O(N^2).
+
+***************
+Time Complexity
+***************
+
++------------------+--------------------------+--------+--------+-----------+
+|                  | Union-Find Constructor   | Find   | Union  | Connected |
++------------------+--------------------------+--------+--------+-----------+
+| Time Complexity  | O(N)                     | O(N)   | O(N)   | O(N)      |
++------------------+--------------------------+--------+--------+-----------+
+
+- N is the num. vertices in the graph.
+  - Worst case scenario, the num. opers to get the root vert.
+  will be H where H is height of tree.
+  - Because this implementation doesn't always point the
+  root of the shorter tree to the root of the taller tree,
+  H can be at most N where the tree forms a LL.
+
+- Same as quick find implementation, when initializing a
+union-find constructor, need to create arr. of size N with
+vals. equal to corresp. arr. indices; reqs. linear time.
+- For find oper., in worst case scenario, need to traverse
+every vert. to find root for input vert.
+  - Max num. of opers. to get the root vert. would be no
+  more than tree's height, so takes O(n) time.
+- Union oper. consists of two find opers. which (only in
+worst case) take O(n) time., and 2 constant time opers.,
+incl. equality check and updating arr. val. at given
+index.
+  - Therefore, union oper. also costs O(N) in worst case.
+- Connected oper. also takes O(N) time in worst case
+since it involves two find calls.
+
+****************
+Space Complexity
+****************
+
+- Need O(N) space to store arr. of size N.

@@ -1,0 +1,476 @@
+***********************************
+Example 1: 547. Number of Provinces
+***********************************
+
+- We can see that this's an undir. graph where graph's
+given as an adj. matrix, and prob. asking for num.
+connected components/
+- Can think of each city as a node and each connected
+component as a province.
+
+- Because graph's undir, a DFS from any given node
+will visit every node in the connected component
+it belongs to.
+- To avoid cycles with undir. graphs, we need to use
+a set seen to track which nodes we've already visited.
+- After performing a DFS on a connected component, all
+nodes in that component inside seen (bc. DFS will
+visit every node in that component).
+- Therefore, we can iter. from 0 until n, and each
+time we find node that hasn't been visited yet, we 
+know we also have a component that hasn't been
+visited yet, so we perf. a DFS to "mark" the component
+as visited and increm. our ans.
+- Use of the set will prevent us from counting same
+component more than once.
+
+- For convenience, convert adj. matrix to a hashmap
+that maps nodes to an arr. of their neighbours
+b4. starting.
+
+- Here, nodes aren't given to us.
+- We're simply told there exists some nodes numbered
+from 0 to n - 1 and we're given some info. regarding
+edges.
+
+- Thus we treat ints. from [0, n - 1] as the nodes.
+- That's why our dfs(node) func. is taking an int.
+as an arg.
+- With trees, we passed node obj. as an arg.
+- Here, we pass int. label of the node.
+- With graphs, the graph only "exists" as an idea,
+we must implement a method of repr. nodes and edges
+and traversing over them.
+- Most graph probs. will have nodes labeled
+[0, n - 1].
+
+- W/ binary tree qns., we argued each node visited
+at most once, and each visit costs O(1).
+- With graphs, we also only visit each node at
+most once, but work is not necessarily O(1), bc.
+there's a for loop that iters. over the node's
+neighbours.
+
+- Visits were O(1) in a binary tree bc. a node could
+have at most 2 children/neigbhours, so no loop needed,
+just referenced node.left and node.right.
+- With graph, node could have any amt. of neighbours, so we
+need a non constant loop.
+
+- As such, time compl. for DFS on graphs usually O(n + e),
+where n is num. nodes and e is num. edges.
+- In worst case scenario where every node is connected to every
+other node, e = n^2.
+  - Each node visited only once.
+  - We iter. over a node's edges only when we're visiting that
+  node.
+  - Because we can only visit a node once, a node's edges
+  iter. over once.
+  - Therefore, all edges are iter. over only once, which costs
+  O(e).
+
+- Why e = n^2 worst case:
+  - In worst case, graph fully connected: every node has an edge
+  to every other node.
+  - So each of the n nodes connects to about n - 1 others,
+  giving approx. n^2 edges.
+  - To derive (for a simple graph, no self loops):
+    - Each node can connect to (n - 1) other nodes.
+    - Total possible connections: n(n - 1) / 2.
+      - Drop constants and lower order terms: O(n^2).
+  - Why this matters for DFS:
+    - DFS visits:
+      - Each node once -> O(n).
+      - Each edge once -> O(e).
+    - Worst case:
+      - O(n + e) = O(n + n^2) = O(n^2).
+  - Example of why e = n^2 worst case:
+    - Take n = 4 nodes: 0, 1, 2, 3, 4.
+      - Connect every node to every other node:
+        - 0—1, 0—2, 0—3
+          1—2, 1—3
+          2—3
+      - Total edges = 6 
+    - Generalising to n nodes:
+      - Each node connects to n - 1 other nodes.
+      - So total connections counter per node: n(n - 1).
+      - But each edge counted twice (once from each
+      endpoint), so divide by 2:
+        -     n(n - 1)
+          e = -------- = O(n^2).
+                 2
+
+- Similar arg. we made for sliding window that justified
+O(n) time compl. despite nested while loop.
+- Nested while loop could only iter. n times across entire
+alg.
+- Here, for loop inside func. iters. e times across entire
+alg.
+
+- Technically in this prob., time compl. O(n^2) bc. input
+given as an adj. matrix, so always need O(n^2) to build
+hashmap.
+- The e dominated by n^2 (because O(e < n^2)), so it can
+be ignored.
+
+- Space compl.?
+  - When we build graph, we're storing all edges in the
+  arrs.
+  - Also need some space for recursion call stack
+  (O(n) worst case) as well as for seen.
+  - Therefore, space compl. is O(n + e).
+
+- Space compl. explanation - O(n + e):
+  - What memory used?:
+    1. Graph (defaultdict(list)):
+      - Stores only existing edges.
+      - Each edge stored twice (undir. graph).
+      - Space: O(e).
+    2. Seen set:
+      - Stores each node at most once.
+      - Space: O(n).
+    3. DFS recursion stack:
+      - Worst case: DFS goes through all nodes in one 
+      chain.
+      - Space: O(n).
+  - Total space: O(e) + O(n) + O(n) = O(n + e).
+  - Why not always O(n^2):
+    - n^2 is the size of the input matrix, not what you
+    store.
+    - You don't store the matrix.
+    - You only store edges that actually exist.
+    - So:
+      - Sparse graph -> e << n^2 -> space smaller.
+      - Dense graph -> e approx. = n^2 -> space O(n^2).
+  - But Big-O space written as O(n + e) because e is an
+  independent var., not always dominated by n.
+
+- In time compl., we always iterated over entire matrix to
+build graph, but in terms of space compl., the hash map only
+grows if edges actually exist.
+
+*********************************
+Example 2: 200. Number of Islands
+*********************************
+
+- Graph can be given in form of a matrix where squares are
+nodes and their neighbours are adj. squares.
+- Prob. says land is connected horizontally (left/right) and
+vertically (up/down).
+- Can think of each land square as a node, and 
+up/down/left/right rel. forming edges.
+- Prob asking us for num. islands aka num. connected
+components.
+
+- Problem is find num. connected components in an undir.
+graph w/ a different format.
+
+-----------------------------------
+More detailed explanation if needed
+-----------------------------------
+
+- Treat each land cell as a node and edges determined
+by prob. descr.
+
+- Island is formed by connecting adj. land cells horizontally
+or vertically.
+- Therefore, two land cells share an edge if they're adjacent.
+- For a node at (row, col), neighbours are (row - 1, col),
+(row, col - 1), (row + 1, col), (row, col + 1) (if in bounds).
+
+- In an island, you can start at any land cell and reach any
+other land cell (island's like a province).
+
+- Find number of islands = find num. connected components.
+- Only thing that's changed is format in which input
+provides us with graph.
+
+- First we declare an arr. 
+directions = [(0, 1), (1, 0), (0, -1), (-1, 0)] which holds
+coord. deltas to move in 4 dirs.
+- This makes code cleaner when iterating over neighbours.
+- Next, we use helper func. valid that checks if a square's
+in bounds and an island.
+
+- We only care about squares whose val. is "1" (land).
+- Can def. helper func. valid that first checks if a given
+(row, col) is in bounds, and then checks if it's land.
+- Can also decl. an arr. directions that makes iterating
+over 4 neighbours cleaner.
+
+- Avoid using set here by modifying input.
+- Point of set is to avoid visiting same square multiple
+times.
+- We only visit squares with vals. "1", so instead of
+putting a square in a set, we could just change that
+square's val. to "0".
+- However, some interviewers may not want you to modify
+input (especially if it's passed by refr. like an arr).
+
+- DFS on a graph has time compl. of O(nodes + edges).
+- This was bc. we didn't know how many edges a given
+node could have.
+- Here, prob. explicitly defs. that a node can have (at most)
+4 edges.
+- Therefore, work done at each node is O(1), and since we're
+only visiting each node once, time compl. equal to num.
+nodes, which is O(m * n).
+
+*************************************************************
+Example 3: 1466. Reorder Routes to Make All Paths Lead to the 
+City Zero
+*************************************************************
+
+- Format of this graph fits technical def. of a tree, w/ 0
+being root.
+- Typical when a prob. states there're n nodes and n - 1
+edges.
+
+- Here, we have dir. graph given as an arr. of edges.
+- What edges do we need to swap?
+- Prob. states there's only one way to travel b/w 2 diff.
+cities.
+- We want every city to be able to reach 0 and because
+there's only one road between all cities, all roads must
+be dir. towards 0.
+- This means we can traverse away from 0 and anytime we 
+see an edge pointing away from 0, we know we need to swap
+it.
+
+- Although graph is a dir. graph, let's convert it into
+an undir. one so that we can reach all nodes from 0.
+- Then we can do a DFS starting at 0.
+- Bc. our traversal dir. is away from 0, at every node,
+every traversal to a neighbour that hasn't been visited
+will be away from 0.
+- Therefore, if (node, neighbour) is in connections, we
+know we need to swap that road.
+- To have fast O(1) checking for if a given edge is in
+connections, we can put original directed edges in a set
+roads.
+
+- To summarize:
+  - Treat graph as undir. so we can do a DFS starting at 0.
+  - During this DFS, every traversal we do is away from 0,
+  so when we see an edge that we're crossing (node, neighbour)
+  is in connections, we know we need to swap it (increm.
+  ans).
+
+- Time and space compl. is O(n) because we only visit each
+ode once, do constant work and are told num. edges is
+n - 1 = O(n).
+- roads, graph and seen all take up at most O(n) space.
+
+******************************
+Example 4: 841. Keys and Rooms
+******************************
+
+- Only extra space we use is seen and the recursion call
+stack, which're both O(n).
+- Time compl. is O(n + e) as we visit each node once and
+for loops inside each visit iter. up to e times total
+across entire alg.
+
+**************************************************************
+Example 5: 1557. Minimum Number of Vertices to Reach All Nodes
+**************************************************************
+
+- Prob. wants smallest set of nodes from which all other
+nodes can be reached.
+- Can be rephrased as smallest set of nodes that can't be
+reached from other nodes, because if a node can be reached
+from another node, then we'd rather include the "parent"
+rather than the "child" in our set.
+
+- A node cannot be reached from another node if it has an
+indegree of 0 (no edges are entering the node).
+- Therefore, we can just find the indegree of all nodes
+and only include the ones with a zero indegree.
+
+- If graph had cycles, we'd run into some edge cases.
+- Imagine if the graph was just one cycle (a circle).
+- Which node do we return?
+- Tecnically, returning any of them would be
+correct.
+- Our alg., however, would return nothing because none
+of the nodes would have indegree of 0.
+- Fortunately, given graph is acyclic.
+
+**********************************
+1971. Find if Path Exists in Graph
+**********************************
+
+-------------------
+Complexity Analysis
+-------------------
+
+- Let n be no. of nodes and m be no. of edges.
+- Time compl. - O(n + m):
+  - In typical DFS, time compl. is O(V + E) where V, E num. of
+  vertices and edges.
+  - We build adjacent list of all m edges in graph which
+  takes O(m).
+  - Each node is visited only once, it takes O(n) to traverse
+  all nodes.
+- Space compl. - O(n + m):
+  - Use hashmap to store m edges, which takes up O(m) space.
+  - We use a bool arr. seen to keep track of visited nodes,
+  which reqs. O(n) space.
+  - Recursive func. takes O(n) space.
+  - Therefore, overall space compl. is O(n + m).
+
+------------------------------------
+Approach 4: Disjoint Set Union (DSU)
+------------------------------------
+
+- If there exists a path connecting source and dest.,
+these two nodes must be in same group.
+
+- First assume no edge in graph and all nodes're isolated.
+- Then we connect them using edges, for each edge
+edge = [node_a, node_b], we connect node_a with node_b,
+repr. that these two nodes belond to the same group.
+- After we finish adding all edges, check if source and
+dest. are in same group.
+
+- Algorithm
+  1. Initialize the DSU data struct. UnionFind containing
+  all nodes. Each node i has:
+    - A distinct root, which means each point is
+    individual.
+    - A group size of 1, which means each set only
+    contains one node.
+    - The DSU struct. also suppports:
+      - find(x): find the root of node x.
+      - union(x, y): if two given nodes x and y aren't
+      in same group, modify one of the roots as the
+      other root, which means 2 groups containing x
+      and y are merged into one group.
+        - Not we use the union-by-rank method to
+        optimize the time compl., basically, we modify
+        the root of the smaller group as the root of the
+        larger group.
+  2. Iter. over all edges. For each edge = [node_a, node_b],
+  use DSU data struct. we initialized to connect node_a
+  and node_b.
+  3. Check if node source and node dest. in same group. 
+
+------------------------------
+Complexity Analysis Approach 4
+------------------------------
+
+- Let n be no. of nodes and m be no. of edges.
+
+- Time compl.: O(m * a(n)):
+  - Amortized complexity for performing m union find opers.
+  is O(m * a(n)), where a is Inverse Ackermann Func (in
+  practice, assume Inverse Ackermann is const., so
+  regarded as O(1) on avg.).
+- Space compl.: O(n):
+  - Used two arrs. root and rank to save root and rank
+  of each node in DSU data struct., each takes O(n)
+  space.
+
+**********************************************************
+323. Number of Connected Components in an Undirected Graph
+**********************************************************
+
+---------------------
+Time and space compl.
+---------------------
+
+1. Building adj. list:
+  - graph = [[] for _ in range(n)].
+    - Creates n empty lists, time: O(V).
+  - for x, y in edges:
+      graph[x].append(y)
+      graph[y].append(x)
+    - Each edge processed once.
+    - Two appends per edge (constant work).
+    - Time: O(E).
+  - So far: O(V + E).
+2. DFS traversal:
+  - Outer loop:
+    - for i in range(len(graph)):
+      - Runs V times.
+      - Each node is:
+        - Added to seen once.
+        - DFS called once per connected component.
+  - DFS func.
+    - for neighbour in graph[node]:
+      - Each vert. visited once.
+      - Each edge examined at most twice (undir. graph).
+      - Across all DFS calls combined:
+        - Total neighbour iters. = sum of adj. list lens. = 2E.
+        - Set lookups (neighbour not in seen) O(1) on avg.
+      - So DFS total cost = O(V + E).
+
+- Space compl.: O(V + E).
+- How to derive:
+  - Adj. list stores one list per vert. -> O(V).
+  - Each undir. edge stored twice in adj. list -> O(E).
+  - Seen set can hold up to all vertices -> O(V).
+  - DFS recursion stack can go as deep as V worst case
+  so O(V).
+
+------------------------------------
+Approach 2: Disjoint Set Union (DSU)
+------------------------------------
+
+- Imagine we have graph with N vertices and 0 edges.
+- Num. connected components will be N in that graph.
+
+- We have this edge list and these nodes:
+  - Nodes: 1, 2, 3.
+  - Edges: 1 -- 2
+            \   |
+             \  |
+              \ 3
+
+- Let's now add edge from vert. 1 to vert. 2.
+- This'll decr. num. components by 1.
+- This's because vertices 1 and 2 are now in same component.
+
+- When we add the edge from vert. 2 to vert. 3, num. components
+decr. by 1 again.
+
+- However, pattern won't continue when we add edge from vert.
+1 to vert. 3.
+- Num components wont change bc. vertices 1, 2 and 3 alr.
+in same component.
+
+- Alg.:
+  1. Init. a var. count with num. vertices in input.
+  2. Traverse all edges one by one, perf. union-find method
+  combine on each edge. If endpoints alr. in same set, keep
+  traversing. If not, decrem. count by 1.
+  3. After traversing all edges, var. count will contain num.
+  components in graph.
+
+- Compl. analysis, here E = num. edges and V = num. vertices:
+  - Time compl. - O(V + E * a(n)):
+    - Iterating over every edge requires O(E) opers., and for
+    every oper., we're performing combine method which is
+    O(a(n)), where a(n) inverse ackermann func. (treat as
+    const.).
+    - Also req. O(V) time to init. DSU arrs.
+  - Space compl. - O(V):
+    - Storing repr./immediate parent of each vertex takes
+    O(V) space.
+    - Storing size of components takes O(V) space.
+
+***********************
+695. Max Area of Island
+***********************
+
+- If we're on land square and explore every square connected
+to it 4-directionally (and recursively squares connected to
+those squares, and so on), then total number of squares
+explored will be area of that connected shape.
+
+- Compl. analysis:
+  - Time compl. - O(R * C), where R is num. rows in given grid,
+  and C is num. columns (we visit every square once).
+  - Space compl. - O(R * C), space used by seen to keep track
+  of visited squares and space used by call stack during
+  recursion.

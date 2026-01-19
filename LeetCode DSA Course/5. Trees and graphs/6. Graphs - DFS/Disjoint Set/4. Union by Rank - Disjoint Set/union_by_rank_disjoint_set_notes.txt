@@ -1,0 +1,101 @@
+****************************
+Disjoint Set - Union by Rank
+****************************
+
+- 2 kinds of disjoint sets implemented so far have concerning
+inefficiency.
+- Quick find implementation will always spend O(n) time on
+union oper. and in quick union implement., as show below:
+  - 1
+    |
+    2
+    |
+    3
+- , possible for all vertices to form a line after connecting
+them using union, which results in worst-case scenario for
+find func.
+
+- Union by rank optimizes these implements.
+- Word rank means ordering by specific criteria.
+- Previously for union func., we always chose root node of
+x and set it as new root node for other vert.
+- However, by choosing parent node based on criteria (rank),
+we can lim. max. height of each vertex.
+
+- Rank refers to height of each vertex.
+- When we union 2 vertices, instead of always picking root of
+x (or y) as new root node, we choose root node of vert.
+with larger "rank"
+- We'll merge the shorter tree under the taller tree and
+assign the root node of the taller tree as the root node
+for both vertices.
+- In this way, we effectively avoid possibilty of
+connecting all vertices in a straight like.
+- This optimization called disjoint set with union by
+rank.
+
+- Pseudocode:
+  - class UnionFind:
+        root[];
+        # Use rank arr. to record height of each vertex
+        # (where they are in tree).
+        rank[];
+
+        UnionFind(size):
+            root = [0] * size;
+            rank = [0] * size;
+
+            for i in [0, size):
+                root[i] = i;
+                # Since each vertex isolated at start,
+                # each has a height of 1.
+                rank[i] = 1;
+
+        int find(x):
+            while (x != root[x]):
+                x = root[x];
+            
+            return x;
+
+        void union(x, y):
+            rootX = find(x);
+            rootY = find(y);
+
+            if rootX != rootY:
+                # if X and Y not equal, compare height
+                # of 2 nodes. If height of root node
+                # x is taller (higher "rank"), then update
+                # parent of Y's root node to node X.
+                if rank[rootX] > rank[rootY]:
+                    root[rootY] = rootX;
+                # Swap it if Y's higher.
+                else if rank[rootX] < rank[rootY]:
+                    root[rootX] = rootY;
+                # Else, same height, choose either as
+                # root and update rank of chosen root.
+                # (it's taller now).
+                else:
+                    root[rootY] = rootX;
+                    rank[rootX] += 1
+
+        boolean connected(x, y):
+            return find(x) == find(y);
+
+***************
+Time Complexity
+***************
+
+- Time compl.:
+  - Union-find constructor: O(N).
+  - Find: O(log N).
+  - Union: O(log N).
+  - Connected: O(log N).
+
+- N is no. vertices in graph.
+- For find oper., in worst case scenario, when we repeatedly
+union components of equal rank, tree height will be at most
+log(N) + 1, so find oper. reqs. O(log N).
+- For union and connected opers., also need O(log N) time
+since these opers. dominated by find oper.
+
+- O(N) space needed to store arr. of size N. 

@@ -1,0 +1,58 @@
+- Given the vertices and edges between them, how could we
+quickly check whether 2 vertices're connected?
+- E.g, this figure shows edges between vertices, so how can
+we efficiently check if 0 is connected to 3, 1 is connected
+to 5, or 7 is connected to 8?:
+
+- Figure (r signifies root):
+-   0r       4r     5r ← 6
+  ↗  ↖       ↑      ↑
+  1   2       8      7
+  ↑
+  3       9r ← (lone node)
+
+- We can use the "disjoint set" data struct., also known as the
+"union-find" DS.
+
+- Primary use of disjoint sets is to address connectivity b/w.
+components of a network.
+- The "network" here can be a comp. network or a social network.
+- E.g. we can use a disjoint set to determine if two people
+share a common ancestor.
+
+*************
+Terminologies
+*************
+
+- Parent node: the direct parent node of a vertex.
+  - E.g., in the figure above, the parent node of vert. 3 is
+  1, the parent node of vert 2 is 0, parent of 9 is 9.
+- Root node: a root without a parent node, it can be viewed as
+the parent node of itself.
+  - E.g., in the figure above, root node of vert. 3 and 2 is
+  0, as for 0 it is its own root node, same as 9 being
+  root and parent node of itself.
+
+************************************************
+The two important functions of a “disjoint set.”
+************************************************
+
+- find func. finds the root node of a given vert., in above
+figure, output of find func. for vert. 3 is 0.
+- union func. unions two verticfes and makes their root
+nodes the same.
+  - In figure above, if we union vert. 4 and 5, their root
+  node'll be the same, which means union func. will modify
+  root node of vert. 4 or vert. 5 to the same root node.
+
+*************************************************
+There are two ways to implement a “disjoint set”.
+*************************************************
+
+- Implement. with Quick Find:
+  - In this case, time compl. of find func. is O(1), however,
+  union func. takes more time w/ time compl. O(N).
+- Implement. with Quick Union:
+  - Compared with quick find implem., time compl. of union
+  func. is better.
+  - Meanwhile, find func. will take more time in this case.

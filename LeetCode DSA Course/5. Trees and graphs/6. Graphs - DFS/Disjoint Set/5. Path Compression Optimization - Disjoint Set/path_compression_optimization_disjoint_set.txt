@@ -1,0 +1,47 @@
+- In prev. implement., to find root node, we need to traverse
+parent nodes sequentially until we reach root node.
+- If we search root node of same elem. again, we repeat same
+opers.
+- Any way to optimize this process?
+
+- After finding the root node, we can update the parent node
+of all traversed elems. to their root node.
+- When we search for root node of same elem. again, we only
+need to traverse two elems. to find its root node, which is 
+highly efficient.
+- So, how could we efficiently update parent nodes of all
+traversed elems. to the root node?
+- Using recursion, optimization is called path compression,
+which optimizes find func.
+
+- Pseudocode:
+  - class UnionFind:
+        root[];
+        rank[]
+
+        UnionFind(size):
+            root = [0] * size;
+
+            for i in [0, size):
+                root[i] = i;
+                rank[i] = 1;
+
+        int find(x):
+            if x = root[x]:
+                return x;
+            
+            return root[x] = find(root[x]);
+
+        void union(x, y):
+            rootX = find(x);
+            rootY = find(y);
+
+            if rootX != rootY:
+                if rank[rootX] > rank[rootY]:
+                    rootX, rootY = rootY, rootX;
+
+                rank[rootY] += rank[rootX];
+                root[rootX] = rootY;
+
+        boolean connected(x, y):
+            return find(x) == find(y);
