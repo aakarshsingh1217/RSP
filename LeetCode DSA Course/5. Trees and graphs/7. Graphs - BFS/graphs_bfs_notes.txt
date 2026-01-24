@@ -1,0 +1,643 @@
+- In graphs, BFS usually good for finding shortest path.
+
+- BFS visited nodes in binary tree according to their dist. from root.
+
+- 99% of time, graph won't have tree struct.
+- Same logic still applies, imagine whatever node you start from as a
+"root".
+  - Then, neighbours of the root repr. the next level, and neighbours
+  of those nodes repr. level after that.
+
+- BFS on a graph always visits nodes according to their dist. from starting
+point.
+- Key idea BFS on graphs: every time you visit a node, you must have reached
+it in min. steps possible from wherever you started your BFS.
+  - Above statement always case on binary trees, even if you did DFS,
+  because there's only one possible path to any node from root.
+  - In a graph, there could be many paths from a given starting point to any
+  other node, using BFS will ensure out of all possible paths, shortest one
+  taken.
+
+***********************************************
+Example 1: 1091. Shortest Path in Binary Matrix
+***********************************************
+
+- Can treat matrix as a graph where each square is a node and all squares
+have up to 8 edges to adjacent squares (up to, because squares on edges
+have less due to potential neighbours being out of bounds).
+- Could be many paths on the matrix, but we want shortest one.
+- With traversals, only want to visit each square at most once, not just
+for efficiency but also to avoid cycles.
+
+- With BFS, guaranteed every time we visit a node that we reached it in
+fewests steps possib.
+
+- With BFS on trees, every iter. of while loop repr. a level/depth.
+- Same with BFS on graphs, move to next level on graph.
+- Each level has same dist. from start (0, 0) if you were to take
+optimal path.
+- With trees, used a for loop inside a while loop because we cared
+about levels as a whole - wanted to analyze each level seperately
+(find max elem. etc.).
+- Here, don't care about levels as whole, just want to reach end
+(n - 1, n - 1).
+- As such, don't need for loop, just while loop on a queue.
+- Can store num. steps we have taken with each node, and once we
+reach bottom right we know that we have ans.
+- Bc. the first time we visit a node with BFS, we know we must've 
+reached it in min. possible steps.
+
+- Can keep using format from binary tree probs:
+  - Then you won't need to store num. steps taken so far with each
+  node.
+  - Could init. a var. level before starting the BFS and increm.
+  it every time you move up a level (each while loop iter. = one
+  level).
+  - When you encounter target node (n - 1, n - 1), return level.
+
+- If queue implement. is efficient, then removing from left is O(1)
+which makes work at each node O(1).
+- This means time compl. equal to no. nodes, which is O(n^2).
+- Space compl. is also O(n^2) as seen can grow to that size.
+
+- With efficient queue, BFS has same time and space compl. as DFS.
+
+- Steps:
+  - At each node, do some logic, then iter. over neighbours (in
+  this case, the 8 dirs.), check if neighbour in seen, and if not,
+  add to seen and the queue.
+  - Main diff. is we're using queue instead of stack compared to
+  DFS iter.
+
+***************************************************
+Example 2: 863. All Nodes Distance K in Binary Tree
+***************************************************
+
+- In binary tree, only have pointers from parents to children.
+- Can easily find nodes at dist. k that're in target node's 
+subtree, but what about all other nodes?.
+- Convert ree into graph by assigning every node a parent ptr.
+- Then, tree becomes undir. graph and can use simple BFS. to
+find nodes at dist. k.
+
+- Can perf. parent assns. using either BFS or DFS - doesn't
+matter, so use DFS.
+- Then, perf. a BFS starting at target, and after we've
+reached k steps, return nodes in queue.
+
+- Use for loop inside while loop because we want all nodes on
+kth level.
+
+- Assigning a parent attrib. to node objects.
+
+- Assigning new attribs. may be seen as bad practice, hashmap
+considered safer approach.
+
+- Both DFS and BFS perf. constant work at each node and only
+visit each node at most once.
+- Therefore, time and space compl. of O(n) (space comes from
+recursion call stack when we assign parents, queue and seen).
+
+*************************
+Example 3: 542. 01 Matrix
+*************************
+
+- For all 0, dist. is 0, so don't need to change those.
+- For all 1, need to find nearest 0.
+- Could BFS from each 1 that stops upon finding first 0 - but
+this would be very ineff.
+  - Imagine huge matrix with only 1, time compl. would be
+  O(m^2 * n^2) (each BFS costs O(m * n) and we need to perf.
+  O(m * n) diff. BFS if entire matrix is only 1, except for
+  single 0 in corner).
+  - Is there linear approach that avoids visiting same square
+  multip. times?
+
+- Instead of BFS from ones, what if we start from 0s.
+- If we have square x with val. 1 and its nearest square with
+val. 0 is y, then doesn't make a diff. if we traverse from 
+x -> y or y -> x, both take same num. steps.
+- If we perf. a BFS starting from all zeros, whenever we
+encounter a 1, we know curr. num. steps is the ans. for that
+1.
+- Using seen will prevent answer from being overriden.
+
+-------------------------
+More detailed explanation
+-------------------------
+
+- In prev. BFS examples, init. queue with only one node - node
+we start BFS from.
+- This node repr. 0th level - nodes that have dist. of 0 from
+source.
+- Nothing stopping us from having multiple nodes in 0th level.
+
+- With BFS, every time we visit a node, do so in fewest steps
+possible from source.
+- Source is actually 0th level - not a single node.
+  - So far, we've only look at problems where 0th level had
+  only one node.
+
+- Can have source be any node with a val. of 0.
+- Do this by initializing queue with all 0 nodes.
+- Assoc. steps taken so far (the level) with each node.
+- By def. of BFS, every time we visit a node, we'll have done 
+so in the fewest steps possible from 0, which is what probs.
+asking for.
+- By using seen, we'll not override any shortest distances
+already found.
+
+-------------------
+Complexity analysis
+-------------------
+
+- Alg. improves time compl. to O(m * n), because BFS now only visits
+each square once, and does a constant amt. of work each time.
+- Space compl. also O(m * n) for queue and seen.
+
+*******************************************************************
+Example 4: 1293. Shortest Path in a Grid with Obstacles Elimination
+*******************************************************************
+
+- Have binary matrix, allowed to walk along one of nums., and need
+to find shortest path from top left to bottom right.
+- Diff. with this prob. is that we're allowed to elim. up to k 
+obstacles.
+
+- Eliminating an obstacle same as walking over it.
+- Can add another state var. remain that repr. how many removals
+remaining.
+- At each square, if a neighbour is an obstacle, we can still walk
+to it if remain > 0.
+
+-----------------------------------
+More detailed explanation if needed
+-----------------------------------
+
+- For every (node, remain) pair, we consider neighbours like
+usual.
+- If neighbour 0, move without modifying remain, if 1, can move
+it, but we use up a removal, so pass remain - 1 w/ neighbour
+(only if remain > 0).
+
+- Seen was prev. used to avoid visiting same node twice, but in
+reality, seen prevents us from visiting same state twice.
+- Prev., only looked at probs. where node entirely descr. state.
+- Need to store (node, remain) in seen instead of just node.
+
+-------------------
+Complexity analysis
+-------------------
+
+- Time compl. for graph algs. is O(nodes + edges).
+- Arg. was that we never visited a node more than once.
+- Technically, should be using s instead of nodes, where s denotes
+num. states, and we never visit a state more than once during
+seen.
+
+- In prev. probs., node entirely described a state Therefore
+s = nodes.
+
+- In this prob., two vars. repr state: (node, remain).
+- There're m * n vals. for node and k vals. for remain, giving
+us m * n * k states.
+
+- Work done at each state O(1), giving us time compl. of
+O(m * n * k).
+- Space compl. the same, as seen grows linearly with num.
+states.
+  - True BFS time compl. is 
+  O(number of states + number of transitions).
+  - In grid probs., each state has <= 4 transitions, so this
+  collapses to O(number of states).
+  - How many distinct states can be visited is what matters.
+  - In simpler graph probs., state = node, which is why you
+  usually see O(nodes + edges).
+  - (row, col) not full state:
+    - Future choices depend on:
+      - Position (row, col).
+      - How many elims. still avail. in remain.
+    - Two visits to same cell with diff. remain aren't equiv.,
+    so real state is (row, col, remain).
+    - Counting num states:
+      - (row, col) has m * n possibilities.
+      - remain can be 0, 1, 2, ..., k -> k + 1 vals.
+    - Total states: (m * n) * (k + 1) = O(m * n * k).
+  - Because we store seen = {(row, col, remain)} each such
+  triple enqueued at most once.
+  - At each state we do constant work (4 neighbours, arithmetic,
+  set lookups).
+  - Space compl O(m * n * k):
+    - seen dominates memory and stores one entry per visited
+    state (row, col, remain).
+    - Worst case, BFS explores all states so
+    |seen| = O(m * n * k).
+    - Queue size is bounded by states, BFS can never hold more
+    elems. than the num. states 
+    (queue.append(row, col, remain, steps)), which in worst case
+    |queue| = O(m * n * k).
+  - Time and space complexity scale with num. distinct states,
+  not just num. nodes.
+
+******************************************************
+Example 5: 1129. Shortest Path with Alternating Colors
+******************************************************
+
+- In this prob. start at node 0 and find shortest path to all other
+nodes.
+- New constr. that edges we cross must be alternating in color.
+- Can assign RED = 0 and BLUE = 1.
+- When doing BFS, store either RED or BLUE along with node to
+indicate what color last edge was.
+- Then perform a BFS starting from both (0, RED) and (0, BLUE).
+
+- Everytime we traverse an edge, need to first make sure that
+we're only considering edges of current colour, and then when
+making traversal need to switch RED <-> BLUE.
+
+- Trick to flip betweem 1 and 0: f(x) = 1 - x, f(1) = 0 and
+f(0) = 1.
+
+- Whenever we introduce new state vars., need to also incl. those
+vars. in seen.
+- So treat (node, colour) as one state and store those states in
+seen.
+
+-------------------------
+More detailed explanation
+-------------------------
+
+- Simple prob. premise - start at node 0 and find shortest dist.
+to every other node.
+- On a regular graph, just assoc. steps taken with each node and
+perf. BFS starting from 0.
+
+- However, added constraint: must alternate between colours.
+- For each state, incl. var. colour indicating the colour of the
+next edge we should use.
+- Then when we iter. over neighbours, only consider edges of colour.
+- When we push neighbour onto queue, push opposite of colour
+w/ neighbour (push red if colour = blue and blue if colour = red).
+
+- Input gives graph as arr. of edges, thus we need to build
+hashmap graph.
+- Normally, want graph[node] to access all neighbours of a node,
+can add one extra layer so graph[node][color] gives us all
+neighbours of node accessed through an edge of colour.
+
+- Now we start BFS from node 0 considering both colours.
+- Means we start with queue = [(0, 0, 0), (0, 1, 0)].
+- Each elem. repr. (node, colour, steps).
+- Init. queue is 0th level and can have any num. states.
+- Init ans. var. that is an arr. of length n and update it as
+we perf. BFS.
+
+- To make implement. clean, use ints. 0 and 1 to repr. colours.
+- Doesn't matter which colour is 0 and which is 1, when we push
+neighbour onto queue and want to swap the colour, use Trick
+1 - color as mentioned.
+- Remember, bc. state (node, colour), may visit a node twice,
+once for each colour, which is why seen's 2D.
+
+- Extra notes:
+  - What does lambda: defaultdict(list) do?:
+    - graph = defaultdict(lambda: defaultdict(list)) creates
+    a two-level dict.
+    - After construction, graph behaves like:
+      - graph = {
+          RED: defaultdict(list)
+          BLUE: defaultdict(list)
+        }
+    - lamba is a way to create a small anonymous func., these
+    2 identical:
+      - f = lambda x: x + 1
+      - def f(x):
+          return x + 1
+    - So lambda = "define an inline func. w/o. a name.
+    - Now for graph = defaultdict(lambda: defaultdict(list))
+    means:
+      - Whenever graph is accessed with a missing key, call this
+      func. and use its return val as default.
+      - Rewritten w/o. lambda:
+        - def make_inner_dict():
+            return defaultdict(list)
+          - Same as lambda ^.
+      - What happens at runtime:
+        - If you do graph[RED][0].append(1):
+          1. Graph[RED] doesn't exist, so python does
+          graph[RED] = make_inner_dict(), which creates
+          graph[RED] = defaultdict(list).
+          2. graph[RED][0] doesn't exist, so that defaultdict
+          does graph[RED][0] = [], then .append(1) works.
+      - graph stores RED and BLUE dictionary keys, which map to 0 to n 
+      where n is num nodes dictionary keys and associated lists.
+    - What each level means:
+      - First key -> edge colour (RED or BLUE).
+      - Second key -> source node.
+      - Value -> list of neighbours reachable via that colour.
+    - So:
+      - graph[RED][x]   # all nodes reachable from x via red edges.
+      - graph[BLUE][x]  # all nodes reachable from x via blue edges.
+    - After reading edges:
+      - graph[RED][0] = [1, 2].
+      - graph[BLUE][0] = [3].
+      - Clearly seperates edge colours.
+  - How alternation happens:
+    - This line: "for neighbour in graph[colour][node]:" means
+    we only traverse edges of curr. colour.
+    - Then we enqueue: ((neighbour, 1 - colour, steps + 1)).
+      - We flip colour for next step.
+    - Walkthrough:
+      - Suppose:
+        - redEdges = [[0, 1]].
+        - blueEdges = [[1, 2]].
+      - Initiqual queue:
+        - queue = [(0, RED, 0), (0, BLUE, 0)].
+      - Step 1 - (0, RED, 0):
+        - graph[RED][0] -> [1].
+        - We enqueue: (1, BLUE, 1).
+          - Meaning: "I arrived at node 1, and next I must
+          take a BLUE edge"
+      - Step 2 - (1, BLUE, 1):
+        - graph[BLUE][1] -> [2].
+        - We enqueue (2, RED, 2), alteration happened
+        automatically.
+      - Why we start with BOTH colours - 
+        queue = [(0, RED, 0), (0, BLUE, 0)]:
+        - This means first edge can be red or blue, and w/o 
+        this you'd arbitrarily restrict first move.
+      - seen includes colour (seen = {(node, colour)}) because
+      reaching same node with diff. "next edge colour" is not
+      the same state:
+        - From (node, RED) you can take red edges, from (node, BLUE)
+        you can take blue edges.
+        - Diff. future -> diff. states.
+
+- Number of states is prod. of ranges of each state.
+- Here, range of colour is always 2, so it doesn't affect time
+compl., therefore standard time compl. applied O(n + e) where
+e is total num. edges (both colours).
+
+- Space compl. the same due to graph, seen and queue.
+
+- BFS problems generally follow same implement.
+- Need to identify: what're the nodes, what're the edges,
+do we need state vars. other than node and where should BFS
+start?
+
+****************************************
+1926. Nearest Exit from Entrance in Maze
+****************************************
+
+- Let m, n be size of input matrix maze.
+- Time compl. - O(m * n):
+  - This's BFS on a grid.
+  - Each cell (row, col) is a state and is visited at most
+  once because of seen.
+  - From each cell we try at most 4 dirs. (constant work).
+  - So total work is proportional to num. cells: m * n.
+- Space compl. - O(m * n):
+  - In worst case:
+    - seen can store every cell in grid.
+    - BFS queue can also hold up to m * n cells.
+
+***********************
+909. Snakes and Ladders
+***********************
+
+- Can model grid as graph.
+- Each square is a node, there're edges between squares within
+6 of each other, and the snakes and ladders add new edges.
+
+- Probs. asking for the min. num. moves, which suggests shortest
+path prob.
+
+- Given an unweighted dir. graph, shortest path prob. is the prob.
+of finding a path from one vertex to another, such that num.
+edges is min. possible.
+
+- Can consider input as an unweighted dir. graph, edges are moves
+corresp. to results of a 6 sided die roll.
+
+--------------------------------
+Approach 1: Breadth-first search
+--------------------------------
+
+- Alg.:
+  1. Find cell (row, col) assoc. with each label from 1 to n^2.
+  Start from bottom left cell and traverse the board alternately
+  left to right and right to left. One can do this by maintaining
+  the order of cols. and reversing it after each row.
+
+  2. Maintain a queue of cells and an arr. to store dist. of all
+  cells from first one. By dist. of cell, we mean least num.
+  moves req. to reach it. Mark all other cells as initially
+  unreachable from first one (denote dist. to such cells as -1).
+  Push first cell to queue.
+
+  3. While queue is not empty:
+    - Pop a cell from the queue, let's label it curr.
+    - For each square next with a label in the range curr + 1
+    to min(curr + 6, n^2) (as descr. by prob.), if next has a
+    snake or a ladder, set dest. to dest. of that snake or 
+    ladder, otherwise set dest. to next.
+    - If dist[dest] is -1 (i.e. dest. hasn't been visited yet)
+    set dist[destination] to dist[curr] + 1 (num. moves to get 
+    to curr. cell, plus one more move to get to dest.) and push
+    dest. onto queue.
+    - Return dist. to cell n^2, if unreachable, result -1.
+
+- Extra:
+  - First we must map 2-D board to linear square nums.
+
+  1. What cells arr. is for:
+    - In snakes and ladders, board numbered from 1 to n^2, but
+    input is a 2D grid w/ zigzag numbering.
+    - So we build: cells[label] = (row, col).
+      - This lets us convert: square number -> (row, col) in board
+      in O(1) time during BFS.
+
+  2. How zigzag numbering works:
+    - For a board of size n * n:
+      - Numbering starts at bottom left.
+      - Goes left -> right on one row.
+      - Then right -> left on one row.
+      - Alternates upwards.
+    - E.g. (n = 3):
+      - Board indices:
+        - (0,0) (0,1) (0,2)
+          (1,0) (1,1) (1,2)
+          (2,0) (2,1) (2,2)
+      - Snakes and ladders numbering:
+        - 7 ← 8 ← 9
+          6 → 5 → 4
+          1 → 2 → 3
+  3. How code builds cells:
+    - cells = [None] * (n ** 2 + 1)
+      label = 1
+      columns = [0, 1, 2]
+    - Loop breakdown:
+      - for row in range(n - 1, -1, -1) iterates:
+        - row = 2 -> 1 -> 0 (bottom to top).
+      - First row (row = 2):
+        - columns = [0, 1, 2].
+        - cells[1] = (2, 0)
+          cells[2] = (2, 1)
+          cells[3] = (2, 2)
+        - Then: columns.reverse() (columns = [2, 1, 0]).
+      - Second row (row = 1):
+        - cells[4] = (1, 2)
+          cells[5] = (1, 1)
+          cells[6] = (1, 0)
+        - Reverse again...
+      .
+      .
+      .
+    - Final cells mapping:
+      - 1 → (2,0)
+        2 → (2,1)
+        .
+        .
+        .
+        5 → (1,1)
+        6 → (1,0)
+        .
+        .
+        .
+        9 → (0,2)
+        - Matches snakes and ladders numbering.
+  4. BFS part:
+    - Now boards treated as a graph:
+      - Each square has edges to +1 through +6 (dice roll).
+      - If there's a snake or ladder, jump immediately.
+    - State: node = square number (1 -> n^2).
+    - Distance arr.: dist[i] = min. dice rolls to reach square
+    i.
+    - BFS logic:
+      - q = deque([1])
+        dist[1] = 0
+        - Start at square 1.
+      - for next in range(curr + 1, min(curr + 6, n * n) + 1)
+        - Simulates rolling a die.
+      - row, col = cells[next]
+        dest = board[row][col] if board[row][col] != -1 else next
+        - If board[row][col] == -1: normal square.
+        - Otherwise, snake or ladder -> jump to dest.
+      - if dist[dest] == -1:
+            dist[dest] = dist[curr] + 1
+            q.append(dest)
+        - Standard BFS relaxation.
+  5. Why BFS guarantees min. moves:
+    - Each edge (dice roll) has cost 1.
+    - BFS explores by incr. num. rolls.
+    - First time reaching square n^2 is optimal.
+  - For loop extra example:
+    - Setup a tiny snakes and ladder board:
+      - Use n = 3.
+      - Board (input, -1 means normal square, otherwise snake
+      and ladder jump):
+        - board = [
+            [-1, -1, -1],
+            [-1, -1,  9],   # ladder at (1,2) → square 9
+            [-1, -1, -1]
+          ]
+          - Meaning: landing on square 4 sends you to 9.
+    - cells mapping (built with snakes and ladders numbering):
+      - 7 → 8 → 9
+        6 ← 5 ← 4
+        1 → 2 → 3
+      - So:
+        - cells = {
+            1:(2,0), 2:(2,1), 3:(2,2),
+            4:(1,2), 5:(1,1), 6:(1,0),
+            7:(0,0), 8:(0,1), 9:(0,2)
+          }
+    - BFS setup:
+      - q = deque([1])
+        dist = [-1] * 10
+        dist[1] = 0
+      - Queue: [1].
+    - BFS iter. 1:
+      - curr = 1
+        dist[1] = 0
+      - BFS for loop:
+        - for next in range(curr + 1, min(curr + 6, 9) + 1)
+        - Sub. vals.:
+          - for next in range(2, 8):
+          - So we try:
+            - next = 2, 3, 4, 5, 6, 7
+        - Case 1 - next = 2:
+          - row, col = cells[2] # 2, 1
+            board[row][col] == -1
+            dest = 2
+          - Unvisited:
+            - dist[2] = 1
+              q.append(2)
+        - Case 2 - next = 3:
+          - cells[3] = (2, 2)
+            dest = 3
+          - Unvisited -> enqueue.
+        - Case 3 - next = 4 (ladder case):
+          - cells[4] = (1, 2).
+            board[1][2] = 9
+            dest = 9
+          - This means: rolled die, landed on 4, and immediately
+          climbed to 9.
+          - Now:
+            - dist[9] = 1
+              q.append(9)
+        - Case 4-6: next = 5, 6, 7 (each is normal, dest = next,
+        dist[dest] = 1, q.append(dest) so
+        q = [2, 3, 9, 5, 6, 7]).
+        - Queue after first BFS layer: q = [2, 3, 9, 5, 6, 7].
+        - Distances:
+          - dist[2] = 1
+            dist[3] = 1
+            dist[9] = 1
+            .
+            .
+            .
+            dist[7] = 1
+    - BFS iter. 2:
+      - Now BFS pops in order: curr = 2 and dice outcomes are
+      3, 4, 5, 6, 7, 8, but:
+        - 3, 5, 6, 7, 9 already visited.
+        - 4 leads to 9, already visited.
+        - 8 is new -> enqueue with dist = 2.
+    - Why BFS immediately finds best path:
+      - We already reached square 9 in 1 move via ladder.
+      - Because BFS explores: 
+        - All 1-move possibilities.
+        - Before any 2-move possibilities.
+      - First time we hit square n^2, that dist. is minimal.
+    - What for loop is really doing:
+      - Each iter. of for next in range(curr + 1, curr + 7):
+      represents:
+        - What if the die roll were 1? 2? 3? ... 6?
+      - And this line:
+        - dest = board[row][col] if board[row][col] != -1 else next
+      - , represents "Apply snake/ladder immediately if present".
+  - BFS loop enumerates all possible dice rolls from curr. square,
+  converts them to board positions using cells, applies any snake
+  or ladder instantly, and enqueues resulting square if it
+  hasn't been reached before.
+
+---------------
+Compl. analysis
+---------------
+
+- Time compl. - O(n^2):
+  - Run BFS on a graph whose vertices are board cells, and edges
+  are moves between them.
+  - n^2 vertices and no more than 6n^2 = O(n^2) edges.
+  
+  - Time compl. of BFS is O(|v| + |e|) where |v| is num. vertices
+  and |e| is num edges.
+  - We have |v| = n^2 and |e| < 6n^2, thus total time compl. is
+  O(7n^2) = O(n^2).
+  - Also spend some time associating each (row, col) with a label
+  but this also costs O(n^2), so overall time compl. O(n^2).
+- Space compl. - O(n^2):
+  - We maintain cells for each label from 1 to n^2, dist for
+  distances to all cells and a queue for BFS.
+  - Columns arr. takes only O(n) space.
