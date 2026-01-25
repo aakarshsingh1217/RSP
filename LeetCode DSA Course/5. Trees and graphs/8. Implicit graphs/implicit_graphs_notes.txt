@@ -1,0 +1,258 @@
+- A graph is any abstract collection of elems. (nodes) connected
+by some abstract rel. (edges).
+- If a prob. involves transitioning between states, then try to 
+think about if states can be nodes and transition criteria can be
+edges.
+- Also, if prob. wants shortest path or fewest opers. etc., great
+candidate for BFS.
+
+*****************************
+Example 1: 752. Open the Lock
+*****************************
+
+- In this prob., consider each lock state as a node.
+- Edges are all nodes that differ by only one pos. by a value of 1.
+- E.g., "5231" and "5331" are neighbours.
+- From here, can just perf. a simple BFS from "0000" with the one
+condition that we cannot visit any nodes in deadends.
+- For O(1) checking, lets turn deadends into a set before starting
+BFS.
+
+- To find neighbours of a node, we can loop over each of the 4 slots,
+and each slot, increment and decrement the slot by 1.
+- To handle wrap-around case, use modulo oper. -
+decrement(x) = (x - 1) % 10 and increment(x) = (x + 1) % 10.
+- This works because decrement(0) = 0 and increment(9) = 0.
+
+- Can put all blocked codes from deadends in seen before starting
+BFS instead of adding additional if check for if a neighbour is
+in deadends.
+
+-----------------------------------
+More detailed explanation if needed
+-----------------------------------
+
+- Whenever probs. asking for min. num. steps/opers./moves to do
+something, immediately think of BFS.
+
+- Can think of each number in range [0, 9999] as node.
+- For a given node, neighbours are all nums. that differ in one
+pos. only by val. of one (while considering wrap around case of
+0 and 9).
+
+- Can use helper func. neighbours that takes a node and generates
+all strs. that differ in one pos. by a val. of one.
+
+- Once we have this func., implement. comes down to a very simple
+BFS.
+- Assoc. num. steps taken so far with each node in queue.
+- For each (node, steps) pair, if node = target, then return
+steps.
+- Otherwise, iterate over neighbours(node) and for each neighbour,
+check if it's been visited (using seen set), if it hasn't, push
+(neighbour, steps + 1) onto queue.
+- Start BFS from "0000".
+
+- Can initialize seen with all the deadends nodes since seen
+already provides us with the function of not visiting nodes.
+
+- Extra explanation:
+  1. What graph actually is:
+    - Each lock config. (like "0000", "0912") is a node.
+    - Two nodes are connected by an edge if you can reach one from
+    the other in one wheel turn.
+    - So from "0000" you can go to:
+      - 1000, 9000,
+        0100, 0900,
+        0010, 0090,
+        0001, 0009
+    - That's the graph - it's just generated on the fly instead
+    of stored.
+  2. What neighbours(node) is doing:
+    - def neighbours(node):
+        ans = []
+        for i in range(4):
+            num = int(node[i])
+            for change in [-1, 1]:
+                x = (num + change) % 10
+                ans.append(node[:i] + str(x) + node[i + 1:])
+        return ans
+    - This says: for each of the 4 wheels, turn it one step
+    forward or backward.
+    - Inside second for loop code:
+      1. What num and change are:
+        - Earlier in loop num = int(node[i]),
+        for change in [-1, 1]:
+        - So num = digit at pos. i and change = either -1 (turn
+        wheel backward) or +1 (turn wheel forward).
+        - E.g.:
+          - node = "7093"
+            i = 1
+            num = 0
+      2. node[:i] + str(x) + node[i + 1:] - build new lock state:
+        - Line constructs a new string where only i-th digit is
+        changed and all other digits are the same.
+        - E.g., assume:
+          - node = "7093"
+            i = 1
+            x = 1
+          - node[:i] == node[:1] == "7".
+          - str(x) == "1".
+          - node[i + 1:] = node[2] == "93".
+    - Example - node = "0000":
+      - i = 0 (first wheel):
+        - num = 0.
+        - change = -1 -> (0 - 1) % 10 = 9 -> "9000".
+        - change = +1 -> (0 + 1) % 10 = 1 -> "1000".
+      - i = 1 (second wheel):
+        - "0900", "0100".
+      .
+      .
+      .
+      - i = 3 (fourth wheel):
+        - "0009", "0001".
+      - So neighbours("0000") returns exactly 8 valid one-move
+      states.
+      - That's all a die roll/edge expansion ever is in BFS.
+  4. How BFS gives min. num. moves:
+    - Key invariant of BFS: the first time you reach a node, it's
+    via shortest path.
+    - It holds here because:
+      - Each edge = 1 wheel turn.
+      - BFS explores:
+        - All states reachable in 1 move.
+        - Then all states reachable in 2 moves.
+        - Then 3, etc.
+    - Even though graph's implicit, BFS still level by level and
+    uniform cost.
+    - So when you do: queue = deque([("0000", 0)]), every time you
+    enqueue queue.append((neighbour, steps + 1)), you're assigning
+    the correct dist.
+  - Mental mode: each lock state is a node, turning one wheel is an
+  edge, neighbours() generates edges on demand, and BFS guarantees
+  min. num. turns bc. all edges have equal cost.
+
+- Technically, time compl. of alg. is O(d), where d = deadends.length
+for converting deadends into a set.
+- This is because everything else in prob. is constant (4 wheels, 10
+digits).
+- However, if lock have var. num. wheels, e.g. n, then this changes
+time compl. to O(10^n * n^2 + d).
+- 10^n diff. states because each wheel has 10 options.
+- At each state, we perform O(n^2) work because we loop over n wheel
+while performing string concat, which is O(n) for immutable strs.
+- If you have mutable strs. (e.g. C++), time compl. reduces to
+O(10^n * n + d).
+
+*********************************
+Example 2: 399. Evaluate Division
+*********************************
+
+- We have some eqs. x/y = val., hard to imagine but these eqs. are
+enough to descr. a graph!
+
+- Graph probs. looked at so far, graph's unweighted.
+- A weight is a val. assoc. with an edge.
+- For most interviews, weighted graphs out of scope and require
+advanced algs.
+- Can treat vars. x and y as a node, the edges are provided in
+eqs., and weights provided in values.
+
+- Let's say we have 3 vars., a, b and c.
+- We're given a / b = 5 and b / c = 2, what's a / c?
+- Substitute some vals., let's say a = 10, b = 2, c = 1.
+- Then the eqs. work, and we can see that a / c = 10.
+- How to accomplish through graph traversal instead of analysis?
+
+- a / b = 5 tells us that a is 5 times bigger than b.
+- If a and b are nodes in a graph, then using edge a -> b gives us
+multiplier of 5.
+- b / c = 2 tells us that b is 2 times bigger than c.
+- If we use edge b -> c it gives us multiplier of 2.
+- Thus, traversing from a -> c would give us multiplier of 
+5 * 2 = 10.
+
+- Can create graph using a hashmap where each node maps to another
+hashmap containing relationships given in input.
+- So in e.g. above, a would map to a hashmap which maps b: 5.
+- Then, we can do traversal (BFS/DFS) for each query - start at
+numerator and search for denom. which associating the curr.
+ratio/multiplier (initially 1) with each node.
+- On each neigbhour traversal, we multiply curr. ratio with
+whatever ratio is b/w. neighbours.
+
+- If we have x / y = val., implies y / x = 1 / val., so we should
+incl. this when building graph (edges undirected).
+
+- If we have n as no. vars. given from equations (which is linear
+w/ equations.length in worst case) and q as len. queries, we have
+time compl. of O(q * (n + e)).
+- Each call to answerQuery is a traversal of graph built, which
+we know costs no. nodes plus no. edges (n + e).
+- We perf. q traversals.
+- If we aren't counting space used for output as extra space,
+then space compl. is O(n + e) for building graph, seen and
+recursion call stack.
+
+*****************************
+433. Minimum Genetic Mutation
+*****************************
+
+- Time compl. - O(B) where B = bank.len.:
+  - We're not converting bank to a set due to low size.
+  - If we did convert bank to set, would still cost O(B) to do so.
+  - Checking if a neighbour is in bank costs O(B) with an arr.
+
+  - Technically, BFS runs in constant time because prob. limits len.
+  of gene strs. to 8 and strs. can only have 4 chars.
+  - However, let's say gene strings could have length n and could
+  have m kind of chars.
+  - In prob., we have n = 8 and m = 4.
+  - Then, how many possible nodes're there?
+  - There would be m^n possible nodes, because for each n chars.
+  there're n options.
+
+  - If we analyze compl. like this, let's assume converting bank to
+  a set prior to BFS.
+  - In that case, time compl. would be O(nB + m^n * n^2 * m).
+  - Converting bank costs O(nB), then there're m^n states we could
+  visit.
+  - At each state, we perform nested for loop which iters. n * m
+  times, and also perform string opers. which cost O(n).
+
+- Space compl. - O(1):
+  - Because prob. limits input explicitly, we technically use const.
+  space.
+
+  - However, with same scenario as above, space compl. would be
+  O(nB + m^n), converting bank to a set would create a set taking
+  up O(nB) space and seen set could grow to m^n if all states
+  visited.
+
+**************************
+Detonate the Maximum Bombs
+**************************
+
+- Can transform map of bombs into a graph by repr. each bomb i as
+a node i in same location, equivalent of bomb 1 detonating bomb 2
+is a directed edge from node 1 to node 2.
+
+- To determine whether bomb 1 detonates bomb 2, can compare
+euclidean distance between their centers and radius of bomb 1.
+- If dist <= rad. bomb 1, then bomb 1 can detonate bomb 2.
+- This rel. commutative: bomb 1 deton. bomb 2 doesn't
+necessarily imply converse is also true.
+
+- distance^2 = (x1 - x2)^2 + (y1 - y2)^2
+
+- Therefore, orig. prob. can be transformed into a graph
+traversal prob. where we calc. total num. reachable nodes from
+each node i.
+
+- Starting with building the graph, we need to traverse each
+pair of two distinct bombs (i, j) to check if bomb i deton.
+bomb j.
+- If so, create a dir. edge from node i to node j.
+- Consider all diff. pairs of nodes, and note that two
+pairs of the same bombs in diff. orders considered diff.
+- In short, consider both (i, j) and (j, i).
