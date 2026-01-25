@@ -256,3 +256,29 @@ bomb j.
 - Consider all diff. pairs of nodes, and note that two
 pairs of the same bombs in diff. orders considered diff.
 - In short, consider both (i, j) and (j, i).
+
+-------------------
+Complexity Analysis
+-------------------
+
+- Let n be num. bombs, so there're n nodes and at most n^2
+edges in equivalence graph.
+  - For every ordered pair (i, j) with i ≠ j:
+    - You may add dir. edge i -> j.
+  - How many such ordered pairs exist?:
+    - n * (n - 1)  = n^2 - n = O(n^2).
+
+- Time compl. - O(n^3):
+  - Building graph takes O(n^2) time.
+  - Time compl. of a typical DFS is O(V + E) where V repr. num.
+  nodes and E repr. num. edges.
+  - More specifically, n nodes and n^2 edges in this problem.
+    - Each node visited only once, which takes O(n) time.
+    - For each node, need to explore up to (may) n - 1 edges
+    to find all its neighbours.
+    - Since there're n nodes, total number of edges explored
+    is at most n(n - 1) = O(n^2).
+  - Need to perf. n depth first searches:
+    - n DFS runs * O(n^2) = O(n^3).
+    - You explore a graaph with up to n edges n seperate times
+    , n * n^2 = n^3.
