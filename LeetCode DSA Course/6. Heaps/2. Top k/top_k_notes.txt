@@ -1,0 +1,30 @@
+***************************************
+Example 1: 347. Top K Frequent Elements
+***************************************
+
+- Given n as len. of nums, time compl. of this alg. is
+O(n * log k).
+- Counting freqs. only costs O(n), which'll be dominated.
+- In main loop, we iter. n times and perf. some heap opers.
+- Size of heap never exceeds k, so each iter. costs O(log k).
+- Space compl. is O(n + k) for the hashmap used to count freqs.
+and the heap.
+  - Inside loop over hashmap:
+    - Heap never grows larger than k.
+    - Heap height = log(size of heap).
+    - So:
+      - heappush -> O(log k).
+      - heappop -> O(log k).
+    - Do O(1) heap opers. per iter.
+  - Since loop runs O(n) times (worst case: all elems. distinct),
+  time = O(n log k).
+
+***************************************
+Example 2: 658. Find K Closest Elements
+***************************************
+
+- Time compl. is O((n + k) * log k), where n is len. of input
+arr.
+- Heap size never grows beyond k, so push and pop opers. are
+O(log k) which we perf. n times.
+- Then we need O(k * log k) at end to sort output.
