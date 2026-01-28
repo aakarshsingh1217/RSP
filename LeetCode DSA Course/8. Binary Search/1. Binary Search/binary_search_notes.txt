@@ -1,0 +1,24 @@
+************************
+Binary Search Complexity
+************************
+
+- Binary search time compl. = O(log n) because:
+  - Start w/ n elems.
+  - Each comparison halves the search space.
+- So sizes go like:
+  - n -> n / 2 -> n / 4 -> n / 8 -> ... -> 1.
+- After k steps:
+  - n / 2^k = 1
+- Solve for k (because k is the num. steps (comparisons) the alg. 
+takes until problem size reaches 1 (worst case), we're asking
+"After how many halving does an arr. of size n become size 1?,
+because how many steps is running time):
+  - 2^k = n 
+    k = log base 2 n.
+
+*******************************************************
+Example 3: 2300. Successful Pairs of Spells and Potions
+*******************************************************
+
+- Sorting potions costs O(m log m), then n O(log m) opers. for
+binary search, so total time compl. is O((m + n) * log m).

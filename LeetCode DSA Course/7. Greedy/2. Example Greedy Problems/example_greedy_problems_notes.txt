@@ -1,0 +1,111 @@
+*************************************
+Example 1: 2126. Destroying Asteroids
+*************************************
+
+- Alg. has time compl. of O(n * log n) due to the sort, where n is
+the no. of asteroids.
+- Amount of space used is dependent on language, e.g. Python
+uses timsort which takes O(n) space, while quicksort langs.
+use O(log n) space.
+
+*******************
+Example 3: 502. IPO
+*******************
+
+- Alg. has time compl. of O((k + n) * log n), where n is the no.
+of projects given.
+- Heap's max size is n, which means its opers. are log n in worst
+case, and we do k + n opers. (k pop opers., n push opers.).
+- Sort at start also costs O(n * log n), but this doesn't change
+compl.
+- Space compl. is O(n) due to heap.
+- Extra:
+  - Worst case behaviour (no early exits, not limited by k yet):
+    - Pushes:
+      - Every project can become affordable at some point.
+      - Each project pushed once.
+      - Total pushes = n.
+      - Cost = n log n.
+    - Happens independently of k.
+  - Pops (seperately bounded):
+    - You can only complete up to k projects.
+    - Total pops = k.
+    - Cost = k log n.
+  - K doesn't limit n because pushes depend on capital
+  availability, pops depend on proj. lim. k.
+
+************************************
+Example 5: 881. Boats to Save People
+************************************
+
+- Every iter. of while loop will put curr. heaviest person in a
+boat (that's why we do j-- on every iter.).
+- If the lightest pers. can come along, we incl. them as well
+(i++).
+
+- Like w/ 2 pointer implements. we've already seen, two pointers
+part of this alg. runs in O(n), where n = people.length.
+- However, we needed to sort input for this alg. to work, which
+gives us time compl. of O(n * log n).
+- Only extra space we used is for the sort, which as mentioned
+prev. will depend on lang. you're using.
+
+**********
+Conclusion
+**********
+
+- As we can see from e.g.s, most greedy probs involve sorting
+input.
+
+***********************
+1323. Maximum 69 Number
+***********************
+
+-------------------------------
+Approach 3: Check the remainder
+-------------------------------
+
+- Can we locate highest digit of 6 without converting num to a
+str, yes!
+- Can always get the last digit of a nonneg. int. by taking
+remainder of num divided by 10, e.g. to get last digit
+of 613:
+  - 613 % 10 = 3.
+
+- How about second last digit?
+- Can remove last digit by taking quotient of num and 10:
+  - 613 / 10 = 61
+
+- Therefore, we can check every digit of num from low to high and
+record the highest digit 6.
+- Assume that it's the k-th digit (0 based), 'converting' this
+digit from 6 to 9 equals adding 3 * 10^k to the original int. num!
+- As shown below, we find highest 6 in 2nd digit and increm. 9669
+by 3* 10^2 to make ans. 9969!:
+  - 9 6 6 9
+      ↓ + 300
+    9 9 6 9
+      i (2nd digit).
+
+- Alg.:
+  1. Init. an int. num_copy = num for checking digits.
+  2. Get the remainder of num_copy and 10.
+  3. If remainder is 6, record curr. digit as first (highest)
+  digit of 6.
+  4. Divide num_copy by 10 using int. division:
+    - If num_copy = 0, go to step 5.
+    - Otherwise, repeat step 2.
+  5. If we find first digit of 6, let's say index_first_six,
+  increm. num by 3*10^(first_index_six) and return num,
+  otherwise return num.
+
+------------------------------
+Complexity Analysis Approach 3
+------------------------------
+
+- Let L be max. num digits nums can have.
+- Time compl. - O(L):
+  - Need to make at most L time of int. divisions, which takes O(L)
+  time.
+- Space compl. - O(1):
+  - We only need to update several vars., which takes O(1) space.
