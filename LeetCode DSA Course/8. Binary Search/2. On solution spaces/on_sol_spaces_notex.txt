@@ -1,0 +1,91 @@
+***********************************
+Example 1: 875. Koko Eating Bananas
+***********************************
+
+- You want min. eating speed k such that Koko can eat all
+banana piles within h hrs.
+  - Speed k = bananas/hour.
+  - Each pile takes ceil(pile / k) hours.
+  - Total hours must be <= h.
+
+- The func. check(k) is monotonic:
+  - If you can finish with speed k.
+  - Then you can also finish with any speed > k.
+- So the predicate:
+  - k works? (True / False).
+- Looks like:
+  - False False False True True.
+- That's what binary search needs.
+
+- check(k):
+  - Computes total hours needed if eating at speed k.
+  - Returns True if feasible within h.
+- Search space:
+  - left = 1
+    right = max(piles)
+    - Min. possible speed: 1.
+    - Max. needed speed: largest pile (eat one pile in 1
+    hour).
+
+- Binary search loop:
+  - mid = (left + right) // 2.
+- Case 1: check(mid) is True:
+  - right = mid - 1.
+    - mid works.
+    - Try smaller speed to minimize k.
+- Case 2: check(mid) is False:
+  - left = mid + 1.
+    - Too slow.
+    - Need a larger speed.
+
+- When loop ends:
+  - left points to smallest valid speed.
+  - Thats ans.
+
+- Check runs in O(n) time where n = piles.length.
+- Binary search runs in O(log k) time, where k = max(piles),
+this gives us O(n * log k), no extra space except for few
+int. vars.
+
+*****************************************
+Example 2: 1631. Path With Minimum Effort
+*****************************************
+
+- DFS runs in O(m * n) time and binary search runs in O(log k)
+time, where k is max. elem. in input.
+- This gives us time compl. O(m * n * log k), to perform DFS,
+we're using O(m * n) space for stack and seen.
+
+*************************************************
+1283. Find the Smallest Divisor Given a Threshold
+*************************************************
+
+- Binary search compl. analysis:
+  - Here, N is the num. elems. and M is the max. elem. of the
+  nums arr.
+  - Time compl. - O(N * log M):
+    - Every time we reduce the search space of possible divisors
+    by half, M -> M / 2 -> ... - > 1.
+    - There're log M levels, thus we iterate on only log M divisors.
+    - And for each divisor, we iterate on the whole nums array to
+    find the division result sum, which takes O(N) time.
+  - Space compl. O(1).
+
+**********************
+1231. Divide Chocolate
+**********************
+
+1. Set up two boundaries (left and right) of search space, that is:
+left = 1, right = total / (k + 1).
+2. Get middle val. from left and right, that is 
+mid = (left + right + 1) / 2.
+3. Check if we can cut chocolate into k + 1 pieces with sweetness
+no less than mid, where mid is our curr. guess at optimal
+workable val.
+4. If cutting chocolate bar in this method results in everyone
+receiving a piece of chocolate atleast as sweet as mid, Then
+let left = mid, otherwise let right = mid - 1.
+5. Repeat steps 2, 3 and 4 until two boundaries overlap i.e. 
+left == right, which means that you've found max. total sweetness
+of a piece you can receive by cutting chocolate bar optimally, can
+either return left or right as ans.

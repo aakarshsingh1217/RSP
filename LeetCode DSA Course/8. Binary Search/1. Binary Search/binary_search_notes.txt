@@ -22,3 +22,43 @@ Example 3: 2300. Successful Pairs of Spells and Potions
 
 - Sorting potions costs O(m log m), then n O(log m) opers. for
 binary search, so total time compl. is O((m + n) * log m).
+
+******************************************
+2389. Longest Subsequence With Limited Sum
+******************************************
+
+- Can take advantage of prefix sum array presum of the sorted nums,
+each value presum[i] represents the sum of all numbers from nums[0]
+to nums[i].
+- Therefore, we can get the sum of the range from presum in
+constant time, rather than iterating over nums which requires O(n)
+time in worst case scenario.
+
+- To build prefix sum arr. for an arr. nums, we start from an
+empty arr. presum:
+  - presum[0] = nums[0].
+  - presum[1] = nums[0] + nums[1], which equals presum[0] + nums[1].
+  - presum[2] = ...
+
+- Can tell that all the terms presum[i] follow 
+presum[i] = presum[i - 1] + nums[i] apart from first term
+presum[0] = nums[0].
+- Therefore, we only need to iter. over nums once it builds its
+prefix arr. presum.
+- Moreover, since we don't need original arr. nums once we have
+presum, thus we can build presum by modifying nums inplace to
+save some space.
+  - nums[0] = nums[0].
+  - nums[1] = nums[1] + nums[0].
+  - nums[2] = nums[2] + nums[1].
+  .
+  .
+  .
+
+- Next subprob. is to find max. size of subseq. of each query.
+- Since vals. in prefix sum arr. presum are strictly. incr.,
+thus we can use binary search to find insertion index of
+query to presume.
+- Assume insertion index is index, it means sum of the first
+index smallest nums. does not exceed query, thus index is the
+longest subseq. consisting of the first index smallest nums.
