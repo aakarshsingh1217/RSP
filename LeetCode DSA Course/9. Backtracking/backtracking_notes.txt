@@ -1,0 +1,259 @@
+***********************
+Backtracking pseudocode
+***********************
+
+- // let curr repr. the thing you're building.
+  // it could be an arr. or a comb. of vars.
+
+  function backtrack(curr)
+  {
+    if (base case)
+    {
+        Increment or add to answer
+
+        return
+    }
+
+    for (iterate over input)
+    {
+        Modify curr
+        backtrack(curr)
+        Undo whatever modification was done to curr
+    }
+  }
+
+***************************
+Example 1: 46. Permutations
+***************************
+
+- Time compl. of this alg. very slow, but input says that 
+1 <= nums.length <= 6, so it's to be expected.
+- Let n = nums.length.
+- Initial call to backtrack (Root of tree) makes n calls.
+- Each of those calls makes n - 1 calls (avoiding duplicates), and 
+each of those makes n - 2 calls and so on.
+- We can expect approx. O(n!) calls.
+- In the func., we have a loop over the n input elems., and in each
+iter., we check if num's already in curr, which costs O(n).
+- Thus, we can estimate each func. call to cost O(n^2).
+- Note we could optimize this process by keeping track of elems. in
+curr using a seperate hash shet, allowing s to perf. checks in O(1).
+
+- Now, using this logic we could say that time compl. is O(n^2 * n!)
+or O(n * n!) if we implemented optimization.
+- However, this isn't true time compl., which is very complicated and
+requires high level math. 
+
+**********************
+Example 2: 78. Subsets
+**********************
+
+- Extra example:
+  - Setup:
+    - nums = [1, 2, 3].
+  - Call 1: backtrack(curr=[], i = 0).
+    - ans.append([]).
+      ans = [[]].
+    - for j in range(0, 3):
+      - j = 0 -> nums[0] = 1.
+        curr.append(1) -> curr = [1].
+        backtrack(curr=[1], i = 1).
+  - Call 2: backtrack(curr[1], i = 1):
+    - ans.append([1]).
+      ans = [[], [1]].
+    - for j in range(1, 3):
+      - j = 1 -> nums[1] = 2.
+        curr.append(2) -> curr = [1, 2].
+        backtrack(curr=[1, 2], i = 2).
+  - Call 3: backtrack(curr[1, 2], i = 2):
+    - ans.append([1, 2]).
+      ans = [[], [1], [1, 2]].
+    - for j in range(2, 3):
+      - j = 2 -> nums[2] = 3.
+        curr.append(3) -> curr = [1, 2, 3].
+        backtrack(curr=[1, 2, 3], i = 3).
+  - Call 4: backtrack(curr=[1, 2, 3], i = 3):
+    - ans.append([1, 2, 3]).
+      ans = [[], [1], [1, 2], [1, 2, 3]].
+    - for j in range (3, 3) -> loop does nothing.
+      - return.
+        curr.pop() -> curr = [1, 2].
+  - Back to call 3:
+    - loop finished.
+      return.
+      curr.pop() -> curr = [1].
+  - Back to call 2:
+    - j = 2 -> nums[2] = 3.
+      curr.append(3) -> curr = [1, 3].
+      backtrack(curr = [1, 3], i = 3).
+  - Call 5: backtrack(curr = [1, 3], i = 3):
+    - ans.append([1, 3]).
+      ans = [[], [1], [1, 2], [1, 2, 3], [1, 3]].
+    - for j in range(3, 3) -> none.
+      return
+      curr.pop() -> curr = [1].
+  - Back to call 2:
+    - loop finished.
+      return
+      curr.pop -> curr = [].
+  - Back to call 1:
+    - j = 1 -> nums[1]
+      backtrack(curr=[2], i = 2).
+  - Call 6: backtrack(curr=[2], i = 2):
+    - ans.append([2])
+      ans = [[], [1], [1, 2], [1, 2, 3], [1, 3], [2]].
+    - for j in range(2, 3):
+      - j = 2 -> nums[2] = 3.
+        curr.append(3) -> curr = [2, 3].
+        backtrack(curr=[2, 3], i = 3).
+  - Call 7: backtrack(curr=[2, 3], i = 3):
+    - ans.append([2, 3]).
+      ans = [[], [1], [1, 2], [1, 2, 3], [1, 3], [2], [2, 3]].
+    - return
+      curr.pop() -> curr = [2].
+  - Back to call 6:
+    - return.
+      curr.pop() -> curr = [].
+  - Back to call 1:
+    - j = 2 -> nums[2] = 3.
+      curr.append(3) -> curr = [3].
+      backtrack(curr=[3], i = 3).
+  - Call 8: backtrack(curr=[3], i = 3):
+    - ans.append[3].
+      ans = [
+                [],
+                [1],
+                [1, 2],
+                [1, 2, 3],
+                [1, 3],
+                [2],
+                [2, 3],
+                [3]
+            ]
+    - return.
+      curr.pop() -> curr = [].
+  - Back to call 1:
+    - loop finished.
+      return.
+
+  - i tells you where you are allowed to start choosing.
+  - j picks the next elem.
+  - backtrack(curr, j + 1) enforces no reordering, no reuse.
+  - curr is always prefix of a valid subset.
+  - Every call adds one valid subset.
+
+- Base case is when i > nums.length: we've run out of nums. to use, the
+modif. of curr and the undoing of the modif. remains the same.
+- Base case is never actually hit because func. can't be called with
+an arg. greater than length of input.
+
+-------------------
+Complexity analysis
+-------------------
+
+- There're 2^n subsets, where n is length of input arr: for each elem.,
+we can either take it or not take it.
+- For time compl., you can think of alg. as a DFS on a tree with 2^n 
+nodes.
+- At each node, we make a copy of curr so time compl. is O(n * 2^n).
+- Space compl. is O(n) for curr and recursion call stack.,
+  - Each elem. has 2 choices: include or exclude.
+    - Total subset = 2^n.
+  - Backtracking explores one node per subset:
+    - 2^n recursive calls.
+  - At each call, we do:
+    - ans.append(curr[:]), which copies curr, copy cost is O(N) in
+    worst case.
+  - So total time:
+    - 2^n calls * O(n) copy work = O(n * 2^n).
+
+************************************
+797. All Paths From Source to Target
+************************************
+
+- Let n be no. nodes in the graph.
+- First, let's estimate how many paths there're at max. to travel from 
+node 0 to node n - 1 for a graph n nodes.
+- Let's start from a graph w/ only 2 nodes.
+- There's only a single path to connect the only two nodes in the graph.
+- Now, let us add a new node into the previous two nodes graph, we now 
+have two paths, one from prev. path and other one is bridged by newly
+added node.
+
+- If we continue to add nodes to graph, one insight is that every time
+we add a new node into the graph, num paths doubles.
+- With newly added node, new paths could be created by preceding all
+prev. paths with the newly added node.
+
+- Extra example:
+  - Let N = num. nodes.
+  - Key observ:
+    - Graph is a DAG.
+    - Worst case, every subset of interm. nodes {1 ... N - 2} forms a
+    valid path => num. paths: P <= 2^(N - 1) - 1 = O(2^N).
+
+************************
+22. Generate Parentheses
+************************
+
+- Algorithm:
+  1. Initialize an empty list answer to store valid strings.
+  2. Define backtracking(currString, leftCount, rightCount) to
+  generate valid strings recursively:
+    - If len(currString) == 2n, add it to answer and return.
+    - If leftCount < n, add ( to currString and move on to
+    backtracking(newString, leftCount + 1, rightCount).
+    - If leftCount > rightCount, add ) to currString and move
+    on to backtracking(newString, leftCount, rightCount + 1).
+  3. Call backtracking on empty string ( backtrack("", 0, 0) )
+  and return answer once backtracking process complete.
+
+- Extra:
+  - At every call to backtracking we have:
+    - currStr -> curr partial str. being built.
+    - leftCount -> how many '(' used so far.
+    - rightCount -> how many ')' used so far.
+  - Rules (invariants):
+    1. leftCount <= n (can't use more than n '(').
+    2. rightCount <= leftCount (cant close more ')' than you've 
+    opened).
+    3. Stop when len(currStr) == 2n.
+  - Initial call:
+    - backtracking(currStr=[], leftCount=0, rightCount=0).
+    - Explore this depth-first.
+  - Step-by-step trace (n = 2).
+    1. Start:
+      - currStr = []
+        left = 0, right = 0
+        - Can add '('.
+        - Can't add ')' (right < left is false).
+      - Add '('.
+    2. After adding first '(':
+      - currStr = ["("]
+        left = 1, right = 0
+      - Options:
+        - Add '(' (1 < 2).
+        - Add ')' (0 < 1).
+      - DFS goes left first.
+
+  - Key intuition:
+    - leftCount = how many opers allowed to close.
+    - rightCount = how many closes used.
+    - Rule rightCount < leftCount guarantees validity.
+    - Backtracking = try -> recurse -> undo.
+
+([], 0, 0)
+│
+└── "(" → (["("], 1, 0)
+    │
+    ├── "(" → (["(", "("], 2, 0)
+    │   │
+    │   └── ")" → (["(", "(", ")"], 2, 1)
+    │       │
+    │       └── ")" → (["(", "(", ")", ")"], 2, 2) ✔ "(())"
+    │
+    └── ")" → (["(", ")"], 1, 1)
+        │
+        └── "(" → (["(", ")", "("], 2, 1)
+            │
+            └── ")" → (["(", ")", "(", ")"], 2, 2) ✔ "()()"
