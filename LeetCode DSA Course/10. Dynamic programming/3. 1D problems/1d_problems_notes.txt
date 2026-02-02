@@ -1,0 +1,142 @@
+************
+House Robber
+************
+
+- Time compl. of this alg. is O(n), where n is length of input arr.,
+because we only visit each state once.
+- At each state, applying recurrence rel. is O(1).
+- Space compl. also O(n) because that's how much space we need to
+cache results for each state.
+
+**********************************************
+Example 2: 300. Longest Increasing Subsequence
+**********************************************
+
+- Because of nested loop, alg. has time compl. of O(n^2), where
+n is length of input arr.
+- Notice this's because work done at each state linear with n,
+and there're n states.
+- Space compl. equal to num. states, O(n), and can't be improved
+in bottom up because recurrence relation is not static.
+
+*******************
+70. Climbing Stairs
+*******************
+
+--------------------------------------
+Approach 2: Recursion with Memoization
+--------------------------------------
+
+- In prev. approach we're redundantly calc. the result for every step.
+- Instead, we can store res. at each step in memo arr. and directly
+returning the result from the memo arr. whenever that func. called
+again.
+
+- We're pruning recursion tree by doing this with help of memo arr.
+and reducing size of recursion tree up to n.
+
+- Time compl.: O(n) as size of recursion tree can go up to n, and space.
+compl.: O(n) as depth of recursion tree can go up to n.
+
+-------------------------------
+Approach 3: Dynamic Programming
+-------------------------------
+
+- Prob. can be broken into subprobs. and it contains the optimal
+substruct. property i.e. its optimal sol. can be constructed
+efficiently from optimal solutions of its subproblems, we can use
+dynamic prog. to solve this prob.
+
+- One can reach the ith step in one of two ways:
+  1. Taking a single step from (i - 1)th step.
+  2. Taking a step of 2 from (i - 2)th step.
+
+- So, num. total ways to reach ith is equal to sum of ways of
+reaching (i - 1)th step and ways of reaching (i - 2)th step.
+
+- Let dp[i] denote the num. ways of reaching the ith step:
+  - dp[i] = dp[i - 1] + dp[i - 2].
+
+*****************************
+746. Min Cost Climbing Stairs
+*****************************
+
+- We can make 2 important observations about this prob.
+- First, we need to find max. or min. of something.
+- Second, we have to make decisions that might look different
+depending on decisions we made previously.
+- These characteristics are typical of a DP problem.
+- In this case, we need to make decisions about either taking 1 step
+or 2 steps at a time and our goal is to minimize overall cost.
+
+- Generally, 2 main ways to implement a DP alg. - top down and bottom
+up.
+
+- Top of the floor doesn't refer to the final index of costs, we need
+to arrive beyond the arrs. bounds.
+
+-------------------------
+Bottom Up DP (tabulation)
+-------------------------
+
+- Bottom up DP is also known as tabulation and is done iteratively.
+- DP is based on the concept of overlapping subprobs. and optimal
+substruct.
+- This is when sol. to a prob. can be constructed from sols. to similar
+and smaller subprobs.
+- Solving a smaller version of the prob. can be easier and faster, thus
+if we break up the prob. into smaller subprobs., solving them can lead
+us to the final sol. easier and faster.
+
+- Let's look at e.g. costs = [0, 1, 2, 3, 4, 5].
+- Since we can take 1 or 2 steps at a time, we need to reach either
+step 4 or step 5 (0 - indexed), and then pay the respective cost to
+reach the top.
+- For this e.g., to reach step 4 optimally would cost 2 by taking path
+0 -> 2 -> 4 (not counting cost of step 4 yet since we're only talking
+about reaching the step rn.).
+- To reach 5 optimally would cost 4 by taking path 1 -> 3 -> 5.
+
+- Now, imagine that before we started prob., someone came up to us and
+said "to optimally reach step 4 costs 2 and to optimally reach step 5
+costs 4".
+- Well, then prob. is trivial, ans. is minimum of 2 + cost[4] = 6
+and 4 + cost[5] = 9.
+- Only reason this's easy was because we alr. knew cost to reach steps
+4 and 5.
+
+- So how do we find min. cost to reach step 4 or step 5?
+- It's the exact same prob., just with smaller input.
+- E.g., finding min. cost to reach step 4 is like solving og. prob.
+with [0, 1, 2, 3] (step 4 is "top" of floor now).
+- To solve this subprob., we need to find min. cost to reach steps
+2 and 3, which reqs. us to ans. og. prob for inputs [0, 1] and
+[0, 1, 2].
+
+- This pattern known as recurrence rel. and in this case, min. cost
+to reach ith step = 
+minCost[i] = 
+min(minCost[i - 1] + cost[i - 1], minCost[i - 2] + cost[i - 2]).
+
+- W/ our base cases and recurrence rel., can solve prob.
+
+1. Define an arr. minCost where minCost[i] repr. the min. cost of
+reaching ith step. Arr. should be 1 elem. longer than costs and
+start with all elems. set to 0.
+  - Reason arr. should contain one additional elem. is because we
+  treat top floor as step to reach.
+
+2. Iter. over arr. starting at 2nd index. Prob. statement says we're
+allowed to start at 0th or 1st step, so we know min. costs to reach
+those steps is 0.
+
+3. For each step, apply recurrence rel. -
+minCost[i] = 
+min(minCost[i - 1] + cost[i - 1], minCost[i - 2] + cost[i - 2]). As you
+can see, as we populate minCost, it becomes possible to solve future
+subproblems. E.g., before solving 5th and 6th steps we're required to
+solve 4th step.
+
+4. At the end, ret. final elem. of minCost. Remember, we're treating
+this step as the top floor we need to reach.
+

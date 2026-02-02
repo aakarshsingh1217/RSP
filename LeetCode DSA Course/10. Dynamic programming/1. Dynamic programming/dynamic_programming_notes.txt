@@ -1,0 +1,224 @@
+- Fibonacci sequence:
+  - Each elem. is the sum of two elems. that precede it.
+  - Numbers part of Fib seq. known as Fib. numbers, denoted
+  Fn.
+  - Many begin seq. with 0 and 1:
+    - 0, 1, 1, 2, 3, 5...
+
+- Formula for nth fib. num. is Fn = Fn-1 + Fn-2, can write
+a func that finds nth fib. num.:
+  - def fibonacci(n):
+        if n == 0:
+            return 0
+        if n == 1:
+            return 1
+        
+        return fibonacci(n - 1) + fibonacci(n - 2)
+
+- Alg. has time compl. O(2^n), because every call to fib.
+creates 2 more calls to fib.
+
+- Alot of repeated computation - e.g., f(4) calc. twice, f(3)
+calc. 3 times, f(2) calc. 5 times.
+- At this size, not a big deal, but as n grows, repeated comp.
+grows exponentially.
+- If we want to calc. f(7), entire f(6) tree is just one
+side of root.
+
+- To avoid repeated computation, we can memoize the results
+from our func. calls.
+- Use hashmap to store results and check hashmap before making
+before making any recursive calls.
+  - def fibonacci(n):
+        if n == 0:
+            return 0
+        if n == 1:
+            return 1
+        
+        if n in memo:
+            return memo[n]
+        
+        memo[n] = fibonacci(n - 1) + fibonacci(n - 2)
+
+        return memo[n]
+
+    memo = {}
+
+- Improves time compl. to O(n) - which's extremely fast compared
+to O(2^n).
+- By memoizing results to avoid duplicate computation, it becomes
+dynamic prog.
+
+- Formula Fn = Fn - 1 + Fn - 2 is called a recurrence rel.
+
+**********************
+Top-down vs. bottom-up
+**********************
+
+- This method of using recursion and memoization is also known as
+"top-down" dynamic prog.
+- Named as such because we start from top (orig. prob.) and move
+down toward the base cases.
+  - DFS goes far left as possible.
+  - Base cases return immediately.
+  - Values memoized on the way back up.
+  - So insertion order is increasing n.
+  - Memoization stores res. bottom up, in order recursive calls
+  finish, not when they start.
+- E.g., we wanted nth Fib num., so we started by calling fib(n),
+we move down recursion until we reach base cases F(0) and F(1).
+
+- Another way to approach dynamic prog. is with bottom-up alg.
+- In bottom up, we start at bottom (base cases) and work our way
+up to larger probs.
+- Done iteratively and known as tabulation, here's bottom up vers.
+of Fib:
+  - def fib(n):
+        arr = [0] * (n + 1)
+        # Base case - second Fib. num. is 1.
+        arr[1] = 1
+
+        for i in range(2, n + 1):
+            arr[i] = arr[i - 1] + arr[i - 2]
+
+        return arr[n]
+
+- Top down and bottom up refer only to how you devide to implement
+alg.
+- Fundamentally nothing different b/w 2 approaches.
+- Every top down implement. can be implemented bottom up and vice
+versa.
+- Things that define a DP alg. are base cases and recurrrence rel.
+
+- Pros and cons to both, main args are:
+  - Usually bottom up implement. faster.
+  - This is because iteration has less overhead than recursion, less
+  impactful if lang. implements tail recursion.
+  - However, top down approach usually easier to write.
+  - With recursion, order we visit states does not matter.
+  - With iteration, if we have multidimensional prob., sometimes
+  difficult to figure out correct config. of for loops.
+
+********************************
+When should I consider using DP?
+********************************
+- Probs. that should be solved with DP usually have two main
+characteristics:
+  1. Prob. asking for an optimal val. (max or min) of something
+  or the num. ways to do something.
+    - What's the min. cost of doing...
+    - What's the max. profit of doing...
+  2. At each step, you need to make a "decision" and decisions
+  affect future decisions.
+    - A decision could be picking between two elems.
+    - Decisions affecting future decisions could be something like
+    "if you take an elem. x, then you can't take an elem. y in
+    the future".
+
+************
+House robber
+************
+
+- Second characteristic is usually what differentiates greedy and
+DP.
+- Idea behind greedy is that local decisions don't affect other
+decisions.
+- Let's say we had nums = [2, 7, 9, 3, 1] and we wanted to be
+greedy.
+- Iterating along array, first decision is to take 2 or 7, since
+we can't have both.
+- If we were greedy we would take 7, however now we can no longer
+take the 9.
+- In fact, optimal ans. involves taking 2, 9, 1.
+- Being greedy in our decisions affected future decisions which
+led to wrong ans.
+
+*****
+State
+*****
+
+- State refers to a set of vars. that can fully descr. a
+scenario.
+- In trees, every recursive call to dfs takes a node, and maybe
+some other vars. as args.
+- These args. repr. state.
+- First step to creating DP algs. is deciding on what state
+vars. necessary.
+
+- Each func. call to dfs would ret. ans. to original prob. as if
+state passed to call was input.
+- Same with DP, a call to dp(state) should ret. the ans. to orig.
+prob. as if state was input.
+
+- Following common state vars to think about:
+  - An index along an input string, arr. or num:
+    - This is most common state avr. and will be a state var. in
+    almost all probs., and is freq. only state var.
+    - With Fib., index refers to curr. Fib num.
+    - If dealing with an arr. or str., then this var. repr. 
+    arr./str. up to and including this index.
+    - E.g., if nums = [0, 1, 2, 3, 4] and state var i = 2, then
+    it'd be like if nums = [0, 1, 2] was input.
+  - A second index along input str. or arr:
+    - Sometimes need another index var. to repr. right bound of
+    arr.
+    - Again if you had nums = [0, 1, 2, 3, 4] and 2 state vars.
+    along input, let's say i = 1 and j = 3, then it'd be like
+    nums = [1, 2, 3] - only considering input between and incl.
+    i and j.
+  - Explicit numerical constraints given in prob:
+    - Usually given in input as k.
+    - E.g., you're allowed to remove k obstacles.
+    - This state var. would repr. how many more obstacles allowed
+    to be removed.
+  - Boolean descr. status:
+    - E.g., "true if curr. holding a package, false if not".
+
+- Num. state vars used is dimensionality of an alg.
+- E.g., if an alg. uses only one var. like i, then it's one dim.
+- If prob. has multiple state vars., it's multi dimensional.
+- Some probs. might require as many as five dimensions.
+
+******************************************
+Time and space complexity of DP algorithms
+******************************************
+
+- Like w/ trees and graps, we calc. each state only once.
+- Therefore, if there're N possible states and work done at each
+state is F, then time compl. is O(N * F).
+
+- Space compl. is O(N) - top down: hashmap stores all states
+at end, bottom up: arr. used for tabulation same size as num.
+states.
+
+- Space compl. can be improved when implem. bottom up, but not
+top down.
+
+- Num. states N is equal to cardinality of state vars.
+- To calc. N, look at each state var., calc. range vals. they
+can take and multiply them together.
+- Let's say we had prob. that needed 3 state vars.: i, k and
+holding.
+- i iter. over an input, k given in prob., and holding is a bool.
+- Then, num states is nums.length * k * 2.
+  - Num. DP states = prod. of num. possib. vals. each state var.
+  can take (count possibilities).
+  - DP state example uses 3 vars: i, k, holding.
+  1. i - index into nums:
+    - i ∈ {0, 1, 2, ..., nums.length - 1}
+      # values of i = nums.length = n
+  2. k - given int. param.:
+    - k ∈ {0, 1, 2, ..., K}.
+      # values of k = K   (or k, depending on notation)
+  3. holding - boolean:
+    - holding ∈ {True, False}
+      #values of holding = 2
+  - Now multiply togeth.
+  - Why multiplication (not addition)?:
+    - Because these variables are independent.
+    - For each:
+      - Index i.
+      - You can have any k.
+      - And either holding or not holding.
+- If calc. each state O(1), time and space compl. O(n * k),
+where n = nums.length.

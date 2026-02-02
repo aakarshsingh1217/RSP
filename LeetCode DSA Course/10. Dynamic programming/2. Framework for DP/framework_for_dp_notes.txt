@@ -1,0 +1,29 @@
+*********************************************
+Min. cost climbing stairs complexity analysis
+*********************************************
+
+1. Identify DP state:
+  - The state is: dp(i).
+  - i repr. the step index.
+  - Possible values: i ∈ {0, 1, 2, ..., n} where n = len(cost).
+  - So: num. states = n + 1 = O(n),
+2. Cost to compute one state:
+  - Inside dp(i) (excluding recursive calls):
+    - Dictionary lookup: O(1).
+    - Addition + min: O(1).
+    - Dictionary assignment: O(1).
+  - So: Work per state = O(1).
+3. Total time compl.:
+  - Each state:
+    - Is computed once (thanks to memoization).
+    - All future calls are memo hits.
+  - Therefore:
+    - Time = (# states) * (work per state)
+           = O(n) * O(1)
+           = O(n)
+4. Space compl.
+  - Two sources:
+    - Memo table: memo holds dp(0) ... dp(n) -> O(n).
+    - Worst case recursive calls: 
+    dp(n) -> dp(n - 1) -> ... -> dp(0).
+      - So: stack space = O(n).
