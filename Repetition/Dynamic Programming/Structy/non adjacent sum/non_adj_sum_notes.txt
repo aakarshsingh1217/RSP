@@ -1,0 +1,45 @@
+- Take in arr. containing sum nums., and return max. sum of non
+adj. sum in arr.
+  - For [2, 4, 5, 12, 7], ans. is 16 bc. 4 + 12 = 16.
+
+- E.g. with [2, 4, 5, 12, 7]:
+  - Need to find way to come up with all possib. for nums. taken
+  into sum and nums. excluded.
+  - Let's make decision tree, first elem. could be 2, resulting
+  elems. could 5, 12 and 7:
+    -        2, 4, 5, 12, 7
+             / 2          \ 
+            /              \
+        5, 12, 7       4, 5, 12, 7
+          /  \             /  \
+       5 /    \         4 /    \ 
+        /      \         /      \
+       7      12, 7     12, 7   5, 12, 7
+               /  \
+           12 /    \
+             /      \
+                     7            
+  - Given any partic. arr., can either take the first elem. or
+  not take the first elem. and that would decide what remaining
+  elems. I could choose from, either slicing of one or 2 elems.
+  from the front of my arr.
+  - To implem. DP, notice any duplicate subtrees e.g. 5, 12, 7 and
+  12, 7
+  - Toward bottom of tree we'll have leaves that repr. empty arrs.
+  which is good because as prob. size gets smaller we get smaller and
+  smaller arr.
+  - Base case is empty arr., empty arr. max sum = 0.
+  - For leftmost 7 node, bubble up the 0 and add the edge that takes it 
+  to 7 (to sum).
+
+- Complexity:
+  - n = len nums., brute force is exponential runtime of 
+  O(2^n) and space O(n).
+  - Time compl. is 2^n because for every node, it's going to give 
+  at most 2 children.
+    - Worst case from one level to next, double num. nodes.
+  - Height of tree is N because in some scenarios could keep
+  removing first elem. of arr. again and again meaning deepest
+  recursion would require N stack frames in call stack.
+  - Can optimize w/ dynamic prog. and memoization, which would
+  lead to runtime O(n) and space compl. O(n).

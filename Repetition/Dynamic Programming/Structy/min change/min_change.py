@@ -1,5 +1,5 @@
-def min_change(amount: list[int], coins: int):
-    def dp(amount: list[int], coins: int):
+def min_change(amount: int, coins: list[int]):
+    def dp(amount: int, coins: list[int]):
         if amount in memo:
             return memo[amount]
         if amount < 0:
@@ -14,7 +14,7 @@ def min_change(amount: list[int], coins: int):
 
         memo[amount] = min_coins
 
-        return min_coins
+        return memo[amount]
     
     memo = {}
 
