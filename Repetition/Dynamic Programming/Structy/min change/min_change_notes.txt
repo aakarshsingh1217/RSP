@@ -1,0 +1,58 @@
+- Taking in 2 things as input, amont = 5, coins = [1, 2, 3].
+- Need to ret. min. num. coins req. to create amt., min.
+amount is 2 + 3 = 2 coins = 5.
+
+- E.g. amount 4, coins [1, 2, 3]:
+  - Shrink problem size and notice any overlapping subprobs. in
+  long run.
+  - Break current amt. into smaller subamts.
+  - From 4 as root, could use 1, 2 or 3 cent coin, etc. etc.
+  - You get this tree:
+    -
+                          4
+               ┌──────────┼──────────┐
+               │          │          │
+               3          2          1
+         ┌─────┼─────┐    ├─────┐    │
+         │     │     │    │     │    │
+         2     1     0    1     0    0
+       ┌─┼─┐   │          │
+       │   │   │          │
+       1   0   0          0
+       │
+       0
+  - You get decision tree that repr. every choice of coin made
+  until 0 hit.
+  - Should interpret each path of tree, e.g. 4 -> 3 -> 1 -> 0
+  takes 3 coins.
+  - Shortest path is 4 -> 1 -> 0 which takes 2 coins.
+  - Min coins = shortest path from root to leaf.
+  - Base case, if amt. = 0 then return 0 (min. coins to make
+  0 cents is 0).
+  - E.g. for node 1, recieve 0 as child call and add one to it,
+  coounting edge between node 1 and child node (counting num
+  coins = counting num. edges in path through tree).
+  - Now at leftmost 2 node, recieve 0 child and 1 child, and
+  chooses smaller child (0 child) = 1 coin (edge).
+  - Finally at root, pick smallest (1 coin) and increment
+  to count edge between root and child nodes.
+
+  - Brute force complexity:
+    - Let c = num. coins, a = amount, time compl. is O(c^a)
+    (exponential), branching factor of tree is based on num.
+    coins (c), branching factor refers to, given a node, at
+    most how many times will it yield children (in e.g.,
+    branching factor is 3 and in worst case 3 children
+    coming out of a single node).
+    - Exponent is a because that's height of tree.
+    - Space compl. is O(a) due to call stack.
+  - DP time compl. using memoization:
+    - Duplicate subtrees e.g. rooted in 2, can be reused by
+    storing in hashmap.
+    - Time compl. is (a * c) (multi linear), based on num.
+    recursive calls we make, and every node repr. recursive
+    call.
+    - Tree of height a still exists, we're saying across every
+    level of this tree, we have at most c nodes.
+    - Think of a as height and c as width, so a * c nodes.
+    - Space compl. O(a) due to callstack and hashmap.
