@@ -139,4 +139,3 @@ solve 4th step.
 
 4. At the end, ret. final elem. of minCost. Remember, we're treating
 this step as the top floor we need to reach.
-
