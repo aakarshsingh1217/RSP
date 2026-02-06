@@ -1,0 +1,60 @@
+- 2 args., amt. = 5, numbers = [1, 2, 3] (e.g. 2 + 3 = 5 so true).
+
+- E.g.: amt. = 4, nums = [1, 2, 3].
+  - Smaller amts. easier to calc. than larger amts., try and shrink
+  amt. as much as possible until you get to trivially small amt. for
+  which ans. is known.
+  - If you start with amt. 4, what options?
+  - Can take first choice 1 and subtract it from 4:
+    -          4
+             / |\
+            /  | \
+           /   |  \
+          /    |   \
+         /  1  |  2 \  3
+        /      |     \
+       3       2      1
+  - Starting to shrink problem size, inside parent and child nodes,
+  we've listed amts. we're trying to break down and then nums. next
+  to edges repr. the choice of nums. we choose.
+  - Can break down further:
+    -          4
+             / |\
+            /  | \
+           /   |  \
+          /    |   \
+         /  1  |  2 \  3
+        /      |     \
+        3      2      1
+      / | \   2/\ 1    \ 1
+    1/ 2| 3\   0 1      0
+    2  1  0       \
+   /\   \          0
+   1 0   0
+   |
+   0
+  - Describing is decision tree for all options we can possibly make.
+  - Solvable using recursion.
+  - Base case is 0:
+    - if amount == 0:
+        return True
+  - Given a parent node, if it receives true from any of its children,
+  it'll also return true.
+  - Above is brute force way to descr. ans. here, complexity:
+    - Let a = amount and n = len. nums.
+    - Time compl.: O(n^a) (exponential), n is base of exponent bc.
+    given a node, it's going to give at most n children, a is exp.
+    because height of tree is at worse going to be a.
+    - Too large for large inputs.
+    - Space compl.: O(a) based on height of tree (call stack).
+  - Can make it better by noticing duplicate work such as subtree
+  rooted in 2 or 1, so we're solving duplicate probs., instead
+  should memoize ans. (store in cache so you can fetch later).
+  - Memoized compl.:
+    - a = amt., n = len. nums.
+    - Removed exponential nature of problem, time compl. is
+    O(a * n), no longer exponent, simply multipling them.
+    - a still repr. num. levels in tree (height) and n repr.
+    width of tree (for every level, have at most n nodes).
+    - Still O(a) space compl. as stack frames for height of
+    tree used, and memo is linear a.
