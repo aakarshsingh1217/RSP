@@ -1,0 +1,54 @@
+- 2 args., target amt. as well as arr. filles with some coin
+vals.
+- Want to return num. ways its possible to make amt. given
+coins in arr., can use coins as many times as needed.
+- E.g. for amount = 4, coins = [1, 2, 3]:
+  1. 1 + 1 + 1 + 1.
+  2. 3 + 1.
+  .
+  .
+  .
+- Alg. for e.g.:
+  - 4 at root:
+    -          4
+             / | \
+            /  |  \
+         1 / 2 |   \ 3
+          /    |    \
+         /     |     \
+        3      2      1
+        .
+        .
+        .
+  - Leaves are 0, so they're the termination cond. (base
+  case).
+- Too many 0s, 7 but 4 is correct amt.
+- 1 + 2 + 1 and 2 + 1 + 1 same coins in diff. order
+- Need to build tree w/o duplicate paths.
+- Starting from root of tree we'll make decision for single
+type of coin, until all possibilities exhausted for diff.
+quantities of 1 cent coins.
+- E.g. from one cent coin:
+    -          4
+             / | \
+         x0 /x1|x2\
+         4 / 3 |   \ 2 ... (etc.)
+  - Edges = quantity of coin taken.
+  - Alr. have node that ends in 0, meaning there's one way to
+  generate amt. of 4, which repr. taking 4 1 cent coins.
+- Next level of tree, make same decisions but with 2 cent
+coins.
+- etc. etc.
+- Choose different quantities for a single coin value before
+moving to next coin val. altogether.
+- If you choose diff. coins each time for every level, now we have 
+tree height which is len. of coins arr.
+  - But tree is now wide.
+- Can spot duplicate subtrees here.
+
+- Complexity:
+  - Implemented with DP and memoization, should end up with time 
+  compl. that's multilinear (so A * C), and space compl. also
+  A * C.
+    - Time compl. is a * c because a is width of tree and c is
+    height (nodes = height * width).
