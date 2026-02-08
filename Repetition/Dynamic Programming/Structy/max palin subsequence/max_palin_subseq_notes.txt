@@ -1,0 +1,60 @@
+- E.g. "lxuul" has longest palindrome subseq. "luul", ret. 4 as ans.
+- "sotsd" example, deleting t and d gives "sos" (len. 3).
+- If you had str. with single char inside e.g. "e", longest subseq.
+is 1 and it's also palindrome.
+
+- Step through "lxuul" e.g.:
+  - Can draw decision tree:
+    -          lxuul <- root
+             / 2
+           xuu 
+         0 / \ 0
+          uu   xu
+        2 /    /0 \0
+    empty str u    x
+  - First consider any palindromic chars. you can match right now,
+  e.g. from root you can see first and last chars. of curr. str.
+  (l and l) and match them up and cut them off of next str. (xuu).
+  - Need to return len. of longest palindromic subseq., so need to
+  remember how many chars. matched (e.g. from lxuul to xuu, matched
+  2 chars).
+  - x and u dont match, need to branch, along first branch remove
+  first char. (resulting in uu, label edge w/ num 0 as did not score
+  any matches).
+  - Could also remove last u, resulting in xu with 0 edge bc. no
+  match.
+  - Can remove 2 u's that match, ending up with empty str. (base case).
+  - xu is a mismatch so need to branch twice, removing x and removing
+  u.
+  - Base cases:
+    - if str.length == 0:
+        return 0
+    - If you get empty str. and ask for longest palondromic
+    subseq., it's 0.
+    - if str.length == 1:
+        return 1, char itself is palindrome.
+    - empty -> uu = 0 + 2 = 2, u + x = 1 or 1 + 0 = 1 (choose bigger
+    between two vals., but its tie), then move to xuu node and
+    choose b/w. 2 and 1 (choose larger, 2) and add it to edge
+    going from lxuul (2 + 2 = 4).
+  - Key pattern: any point in time look at first and last chars.
+  of str., if chars. match then we can remove both of those chars.,
+  if they're diff make two recursive calls, one call where we
+  remove first char. and one call when we remove last.
+  - If we take those branches then we'll cover every possib. substr.
+  we need to interpret.
+  - This's DP problem as there's overlapping probs.
+  - E.g. abdef:
+    -       abdef
+            /    \
+          bdef  abde
+          / \     / \
+        def bde bde abd
+  - Now bde overlapping, so save their res. to use later on.
+  - If s is length of str., for compl., we'd be considering every
+  possible substr. within each node, so it's O(s^2), bc. given str.
+  len. s, there's s^2 possib. substr.
+  - Same as space compl., O(s^2) because we have to store those
+  substr. in memo.
+  - Need to avoid costly substr. opers., use indices and repr.
+  using start and end indices.
