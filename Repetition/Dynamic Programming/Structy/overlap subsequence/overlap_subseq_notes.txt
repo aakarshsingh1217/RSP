@@ -1,0 +1,43 @@
+- Need to return length of common subseq.
+- Using e.g. cat & aot:
+  -         cat
+            aot
+            / \
+         0 /   \ 0
+          at   cat
+          aot  ot
+       1 /
+         t 
+         ot
+        / \
+       /   \ 1
+      ot    t
+            t
+            |
+            ""
+            ""
+  - Need to repr. all diff. options takeable as we match up chars.
+  - At any point in time, given two strs., look at first char. in
+  both strs (so consider c vs. a at root).
+  - Results in at vs aot (only shrunk str. 1), label edge as 0 bc.
+  no match.
+  - First chars. of at and aot is dir. match (a)., so only branch
+  once but remove both a's, treat as worth of 1 as matched 1 char.
+  - Can branch twice from t ot, delete first char. of str. 1 and
+  first char. of str. 2, in left child we emptied out str. 1 so
+  that's our base case.
+  - Since t t node is match, treat edge as 1 and remove matching chars.
+  from both inputs, resulting in empty str. (base case).
+  - It's a DP problem as there's duplicate nodes, and store result
+  in cache (memoization).
+  - Base case is, if one str. empty, ret. 0 as empty str. has longest
+  overlap 0.
+  - Should add values labelled along edge, choose bigger val. as you
+  want longest subseq.
+  - If 0 on edges don't incr., but choose max.
+
+- Complexity:
+  - If memoization used, n = len. str 1 and m = len. str 2, avoid
+  overlapping subprob., we have n * m diff. nodes.
+  - n * m space.
+  - Avoid str. slicing, use indexes.
