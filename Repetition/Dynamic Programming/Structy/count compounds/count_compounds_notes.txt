@@ -1,0 +1,27 @@
+- Build recursion tree for hocli given elems [C, Cl, I, Ho, Li, La, H,
+O]:
+  -              hocli (root)
+                    /      \
+                h  /        \ ho
+                  /          \
+                ocli         cli
+              o  /            .
+              1 + 1 = 2       .
+                cli           .
+              c / \ Cl        .
+               li  i
+            li /    \ i
+              ""     ""
+            ret. 1  ret. 1
+- Base case: empty str., return 1 as we found 1 way to get to
+empty compound.
+- True for all empty str.
+- If reach dead end, return 0.
+- Brute force time compl., if c = len. compound and e is num.
+elems., then e^c time compl.:
+  - At each pos. you have e choices.
+  - Total combs. = e * e * e * ... * e = (c times) = e^c.
+  - Depth of tree = c (one level per char. added), branching factor
+  e (one branch per possible elem.), num leaves = e^c.
+- Using DP, subproblems overlap, so we can do e*c time compl. and
+space.
