@@ -1,0 +1,71 @@
+- We first take in array that repr. prereq., each pair in arr.
+repr. course needed to be taken before some other course:
+  - prereqs = [
+        [6, 2],
+        [6, 5],
+        .
+        .
+        .
+        [3, 0]
+    ]
+- E.g. take course 6 before course 2.
+- Ret. min. num semesters req. to take all courses while obeying
+prereqs.
+- Need to visit 6 node before 2 node bc. [6, 2].
+- Therefore convert edge list into adj. list, to do traversal alg:
+  - 0 → [5]
+    1 → [4]
+    2 → []
+    3 → [0]
+    4 → []
+    5 → [2]
+    6 → [5, 2]
+- First two pairs in prereqs. ([6, 2] and [6, 5]), they translate
+into entry within adj. list (6 → [5, 2]).
+- In graph, have key 6 repr. node/course, and have an array containing
+all courses takeable using that 6 course as prereq.
+
+- Graph required to be DAG, if it was cyclic then you could have:
+  - A --> B 
+    ^     |
+    |   down
+    ------
+  - and no starting course as all courses req. each other.
+
+- In first sem., take courses that req. nothing., e.g. 3 6 and 1,
+which consists of semester 1.
+- Can't take anything else, so move onto sem. 2.
+- Sem 2. can take 0 and 4 but nothing else, as course 2 reqs.
+6 and 5.
+- Sem 3. takes 5, and sem. 4 is 2.
+- Prob. reqs min. num. semesters req., so in any sem. take max
+num. courses.
+- Main eq. 3 -> 0 -> 5 and -> 2 forces to take 4 sep. semesters.
+- Num. semesters min. = num. nodes in longest path in graph.
+- Now, we count number of nodes in longest path instead of num.
+edges.
+- Start traversal from terminal nodes (leading to no other nodes),
+since they lead to no other courses those must be last courses
+I possibly take.
+- Any longest seq. in graph must terminate at either two or four
+(terminal nodes).
+- For nodes 2 and 4, give them dist. 1 (dist = num nodes in path).
+- Only need 1 sem to take courses 2 and 4 which'll act as base
+case when DFS.
+- Set stage by marking init dist. for terminal nodes.
+- Could have diff. connected components, so start DFS at seperate
+nodes.
+- Visit 0 and 0 calls upon 5 whos gonna call upon 2, at this pt.
+2 is node alr. visited and marked with some dist., 2 should ret.
+its marked dist. to parent 5 and then add 1 to this.
+- Now we know we need 2 sems to take course 5 and everything that
+follows it.
+- 5 returns 2 to parent 0, 0 adds another sem to that = 3.
+- So need 3 sems. to take 0 and everything after it.
+- Go to next node 1 and begin another traversal, mark node
+1 as 2 sems needed.
+- If you start DFS from 6, itll explore 2 edges, and it should
+choose bigger num as we want longest path alg.
+
+- If p num. prereq and n num. courses, time compl. O(p), space
+compl. O(n). Num prereqs = num edges.
