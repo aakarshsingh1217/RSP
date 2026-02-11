@@ -1,0 +1,32 @@
+- Eulerian Path is a path of edges that visits all edges in
+a graph exactly once.
+- Choosing the wrong starting node can lead to having unreachable
+edges.
+
+- Eulerian circuit is an Eulerian path which starts and ends on
+same vertex.
+- Can begin circuit at any node.
+- If graph doesn't contain Eulerian circuit, may not be able to
+ret. to start node or won't be able to visit all edges of graph.
+
+- What cond. required for valid Eulerian path/circuit?:
+  - Depends on what kind of graph dealing with.
+  - 4 flavors of Euler path we care about:
+    - For Eul. circ. undir. graph, every vert. has even degree.
+    - For Eul. path undir. graph, either every vert. has even
+    deg. or exactly 2 verts. have odd deg.
+      - If 2 verts. have odd deg., they symbolize start and
+      end nodes.
+    - For Eul. circuit dir. graph, every vert. has equal indeg.
+    and outdeg.
+    - For Eul. Path dir. graph, at most one vert. has
+    (outdegree) - (indegree) = 1 and at most one vert.
+    has (indegree) - (outdeg.) = 1 and all other verts. have
+    equal in and out degs.
+
+- Node degree in undir. graph has num. edges attached.
+- In dir. graph, we have indegrees and outdegs.
+
+- An additional req. when finding paths/circuits is that all
+vertices with nonzero deg. need to belong to single connected
+component.

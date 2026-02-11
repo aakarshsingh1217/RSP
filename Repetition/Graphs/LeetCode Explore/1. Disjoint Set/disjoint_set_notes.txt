@@ -1,0 +1,38 @@
+************************************************
+The two important functions of a “disjoint set.”
+************************************************
+
+- The find func. finds the root node of a given vertex, e.g.
+for this graph:
+        0*
+       ↑  ↑
+       |  |
+       1  2
+       ↑
+       |
+       3
+
+
+        4*       5* ← 6
+        ↑        ↑
+        |        |
+        8        7
+
+        *
+        9
+- , the output of the find func. for vert. 3 is 0.
+- Union func. unions two vertices and makes their root node
+the same, e.g. for above graph, if we union vert. 4 and 5,
+their root node becomes the same, which means union func.
+modifies root node of vert. 4 or 5 to same root node.
+
+*************************************************
+There are two ways to implement a “disjoint set”.
+*************************************************
+
+- Implementation w/ quick find: time compl. of find func.
+will be O(1), however union func. will take more time with
+time compl. of O(N).
+- Implement. w/ quick union: compared w/ quick find
+implement., time compl. union func. better, meanwhile
+find func. takes more time.

@@ -1,0 +1,41 @@
+- Step 1 to finding Eulerian path is determining if there even
+exists an Eulerian path.
+
+- Recall that for an Eulerian path to exist at most one vert.
+has (outdegree) - (indegree) = 1 and at most one vert. has
+(indegree - outdeg.) = 1 and all other verts. have equal in
+and out degrees.
+
+- Once verified that no node has too many outgoing edges
+or incom. edges and there're just the right amt. start/end
+nodes we can be certain Eulerian path exists.
+- Next step is to find valid starting node.
+
+- If all in and out degs. equal (Eulerian circuit case) then
+any node with nonzero deg. serves as suitable starting node.
+
+- By randomly selecting edges during DFS we made it from start
+node to end node.
+- However, we didn't find Eulerian path because we didn't
+traverse all edges in our graph!
+
+- Modify our DFS to handle forcing traversal of all edges.
+
+- Once we get stuck (meaning curr. node has no unvisited
+outgoing edges), we backtrack and add curr. node to sol.
+  -      2
+        ↑ ↓
+    0 -> 1 -> 3 -> 4
+  - Go 0, 1, 3, 4 and once at 4, add 4 then backtrack to 3.
+  - Stuck again at node 3, so add and backtrack.'
+  - When backtracking, if curr. node has any remaining
+  univisited edges, we follow them calling DFS recursively
+  to expand path.
+  - Follow edge from node 1 to node 2 then from node 2 to
+  node 1.
+  - Stuck again at node 1, backtrack and add curr. node
+  (1) to sol. and do this until we return to start node.
+  - Final list: [0, 1, 2, 1, 3, 4].
+
+- O(E) time compl. as two calcs. (computing in/out degs.
++ DFS are both linear in num. edges).

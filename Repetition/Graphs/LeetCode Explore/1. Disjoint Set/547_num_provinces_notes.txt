@@ -1,0 +1,45 @@
+- Given:
+  -        Col
+            1   2   3   4          Row as array
+          +---+---+---+---+      ----------------
+    Row 1 | 1 | 1 | 0 | 0 |  -->  [1, 1, 0, 0]
+          +---+---+---+---+
+    Row 2 | 1 | 1 | 0 | 1 |  -->  [1, 1, 0, 1]
+          +---+---+---+---+
+    Row 3 | 0 | 0 | 1 | 0 |  -->  [0, 0, 1, 0]
+          +---+---+---+---+
+    Row 4 | 0 | 1 | 0 | 1 |  -->  [0, 1, 0, 1]
+          +---+---+---+---+
+
+- 2D arr. repr. relationship b/w 4 cities.
+- Rows & cols. 1, 2, 3 and 4 repr. 4 cities.
+- matrix[1][1] == 1 means city 1 conn. to city 1, any city
+is connected to itself.
+- matrix[1][2] means city 1 and city 2 conn.
+
+- Connections:
+  - 1 - 2
+        |
+    3   4
+- Root to parent vertex:
+  - 2 cities belong to same province if they're directly or
+  indirectly connected.
+  - So cities 1, 2 and 4 belong to same province, and 3 in
+  another province.
+  - Ans. is 2 (2 provinces).
+  - 1, 2 and 4 store same root node, and 3 has diff. root
+  node.
+  - root [0, 0, 2, 0] -> parent vertex
+          1  2  3  4
+ indices: 0  1  2  3
+    - When connecting 1 and 2 together, need to change
+    parent node of 2 to 1.
+    - 2 corresp. to index 1 and 1 corresp. to index 0,
+    so change parent node of index 1 to 0.
+
+- To find num. provinces, go through arr. left to right
+and count how many times root node is itself (0 and 0,
+2 and 2).
+- Better way to use count var., assume every city indep.
+and init var. to 4.
+- When we perf. union oper. can decr. num. by one.
