@@ -1,0 +1,36 @@
+***********
+Explanation
+***********
+
+- Prim's alg stores 2 sets, one which stores vertices alr.
+visited and one with non visited vertices.
+- Each time select a vertex never visited before and put it in
+visited set, then consider visited vertices as whole.
+- Among all edges coming out of from the whole that connect with
+the unvisited set, we'll select edge with min. weight and that
+edge will be part of min. spanning tree.
+
+- All we have to do is pick any arbitrary vertex from non-visited
+set as starting point, among all edges coming out from this vert.,
+select edge with min. weight and then found next vertex.
+- Then consider the two visited vertices as a whole, and all
+edges coming out from them to unvisited set, pick another edge
+with min. weight and expand visited set again etc. etc.
+
+*******************
+Complexity analysis
+*******************
+
+- v repr. num. vertices, e repr. num. edges.
+  - Time compl.: O(e * log v) for binary heap and O(e * v log v)
+  for fib. heap.
+  - For Binary heap:
+    - We need O(v + e) time to traverse all vertices of graph,
+    and we store in the heap all vertices that aren't yet incl.
+    in min. spanning tree.
+    - Extracting min. elem. and key decreasing opers. cost
+    O(log v) time.
+    - Therefore, overall time compl. is O(v + e) * O(log v)
+    = O(E * log V).
+  - Space compl.L O(v), need to store v vertices in our data
+  struct.
