@@ -1,0 +1,65 @@
+********************
+Dijkstra's algorithm
+********************
+
+- Dijkstra's focuses on one source node and will find shortest
+dist. to every other node in graph from source.
+
+- Idea is to use a min-heap to store nodes.
+- With each node, also keep track of weight of path used to
+reach node from source.
+- Min heap will judge each elem. according to this weight.
+- At each iter., we retrieve a node by popping from min-heap,
+which provides us node with min. weight path.
+
+- We also keep min. dist. so far from source for every node.
+- If our nodes numbered from 0 to n - 1, its convenient to
+use an arr. distances of length n to do this.
+- Initially, we'll have all vals. in this arr. as a large
+val. (like inf.) except for source which will have val. of 0.
+
+- At each node, iter. over neighbours.
+- Consider curr. dist. from source (which we store with each node
+in heap) as curr_dist.
+- For a given neighbour nei, consider weight of edge node -> nei
+as weight.
+- Traversing to this neighbour would result in path weight of
+dist = curr_dist + weight.
+- There're two possib.:
+  1. dist >= distances[nei], in this case, we already found path
+  with shorter dist. and thus traversing to nei on curr. path is
+  pointless.
+  2. dist < distances[nei], traversing to nei on curr. path is
+  shortest path we've seen so far to nei, should update
+  distances[nei] = dist and push (dist, nei) onto heap.
+
+- Pseudocode:
+  // array of length n with large vals.
+  distances = [infinity] * n
+  distancse[source] = 0
+
+  // min heap
+  heap = [(0, source)]
+
+  while (heap not empty)
+  {
+    curr_dist, node = heap.pop()
+
+    if (curr_dist > distances[node])
+    {
+        // Optimization step: ignore curr path if we found better.
+        continue;
+    }
+
+    for (nei, weight: [edges from node])
+    {
+        dist = currDist + weight
+
+        // add neighbour to heap if it creates shorter path
+        if (dist < distances[nei])
+        {
+            distances[nei] = dist
+            heap.push((dist, nei))
+        }
+    }
+  }
