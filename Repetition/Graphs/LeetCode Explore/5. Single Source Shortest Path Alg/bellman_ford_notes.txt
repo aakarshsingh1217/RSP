@@ -1,0 +1,103 @@
+*************
+Basic Theorem
+*************
+
+- Theorem 1: in a graph with no neg.-weigth cycles with N 
+vertices, shortest path between any two vertices has at
+most N - 1 edges.
+
+-----------
+Proof video
+-----------
+
+- Let's say we have regular (acyclic) graph.
+- In a reg graph with N vertices at most N - 1 edges between 
+any two vertices.
+
+- For graphs with cycles, we can divide into 2 cases, one
+with pos. weight cycle and one with neg. weight cycle.
+- Positive weight cycle means in cycle, sum of weights of
+edges is >= 0.
+- In a neg. weight cycle, sum of weights of edges is < 0.
+- In a cyclical graph, the num. edges between 2 vertices
+will be greater than N - 1.
+- Note Bellman Ford used to find shortest path.
+- For a graph, we can check weight without using cycle and with
+using cycle.
+- Come to conclusion, for a normal graph AND for a graph with
+a positive weight cycle, if we want to find shortest dist. b/w.
+2 points, dist. will be at most N - 1 edges.
+- If we find the shortest dist. between two points and end up
+getting lower weights with N, N + 1 or N + 2 edges, then we
+know graph has a neg. cycle, bc. as long as we keep going around
+the pos. cycle, dist. will grow larger, so shortest dist. occurs
+before going around cycle.
+
+-------------------------------------------------------------
+Theorem 2: In a “graph with negative weight cycles”, there is 
+no shortest path.
+-------------------------------------------------------------
+
+- If sum of weights of cycle is less than 0, it's neg. weight
+cycle.
+- No matter pos. or neg. cycle graph, if we want to go from
+A to B and there's a cycle, there'll be infinite num. paths.
+- For bellman ford we're trying to find shortest dist. (min
+sum of weights on a path).
+- If we go through neg. cycle infinitely, path always gets
+shorter, e.g. if sum of weights is -1, every time we go
+around cycle, weight decrem. by 1.
+- Therefore no shortest path b/w 2 points with neg. cycle.
+
+-----------------------------------------------------------
+How does the Bellman-Ford algorithm detect “negative weight 
+cycles”?
+-----------------------------------------------------------
+
+- Bellman-Ford can detect whether there exists a negative
+weight cycle in a graph.
+
+- Detection method:
+  - After relaxing each edge N - 1 times, perform the Nth
+  relaxation.
+  - According to BF alg., all dist. must be shortest after 
+  relaxing each edge N - 1 times, however after Nth relax.,
+  if there exists distances[u] + weight(u, v) < distances[v]
+  for any edge(u, v), it means there's a shorter path, and
+  at this point we can conclude there exists a neg. weight
+  cycle.
+
+*******************
+Complexity Analysis
+*******************
+
+- V repr. num. vertices, E repr. num edges.
+  - Time compl.: we iter. through all vertices, and in each
+  iter., we'll perf. a relaxation oper. for each appropr.
+  edge, therefore time compl. O(V * E).
+  - Space compl.: O(V), use two arrs. length V, one to store
+  shortest dist. from source vert. using at most K - 1
+  edges, other to store shortest dist. from source vert.
+  using at most k edges.
+
+***********************************************************
+Improved Bellman-Ford Algorithm with Queue — SPFA Algorithm
+***********************************************************
+
+- If you choose order optimally, you can make BF more
+efficient.
+
+--------------
+SPFA algorithm
+--------------
+
+- Improved var. of BF alg. uses a queue, improvement known as
+"shortest path faster alg." (SPFA).
+
+- Instead of choosing among any untraversed edges, as one
+does by using BF, SPFA uses a queue to maintain next starting
+vert. of the edge of the traversed.
+- Only when shortest dist. of a vert. is relaxed and that the
+vert. is not in "queue", we add vert. to the queue.
+- We iter. the process until queue empty, atp. we have calc.
+min. dist. from given vert. to any verts.
